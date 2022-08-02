@@ -9,33 +9,39 @@ type Msg
 
 
 type alias Model =
-    {}
+    { msg : String }
 
 
-init : ( Model, Cmd Msg )
-init =
-    ( {}, Cmd.none )
+type alias Flags =
+    { msg : String }
+
+
+init : Flags -> ( Model, Cmd Msg )
+init flags =
+    ( { msg = flags.msg }, Cmd.none )
 
 
 view : Model -> Html Msg
 view model =
-    text ""
+    text model.msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    ( model, Cmd.none )
+    case msg of
+        Msg ->
+            ( model, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
-subscriptions model =
+subscriptions _ =
     Sub.none
 
 
-main : Program () Model Msg
+main : Program Flags Model Msg
 main =
     Browser.element
-        { init = \_ -> init
+        { init = init
         , view = view
         , update = update
         , subscriptions = subscriptions

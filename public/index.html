@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Main</title>
+	<style>
+		body {
+			padding: 0;
+			margin: 0;
+			min-height: 100vh;
+			min-width: 100vw;
+		}
+	</style>
+	<script src="https://unpkg.com/elm-canvas@2.2/elm-canvas.js"></script>
+	<script src="elm.js"></script>
+</head>
+
+<body>
+	<div id="elm"></div>
+	<script>
+		try {
+			var app = Elm.Main.init({
+				node: document.getElementById("elm"),
+				flags: { "msg": "Hello World!!!" }
+			});
+		}
+		catch (e) {
+			// display initialization errors (e.g. bad flags, infinite recursion)
+			var header = document.createElement("h1");
+			header.style.fontFamily = "monospace";
+			header.innerText = "Initialization Error";
+			var div = document.getElementById("elm");
+			document.body.insertBefore(header, div);
+			div.innerText = e;
+			throw e;
+		}
+	</script>
+</body>
+
+</html>
