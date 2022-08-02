@@ -1,13 +1,14 @@
 module Main exposing (main)
 
 import Browser
+import Browser.Events exposing (onAnimationFrameDelta)
 import Enemy exposing (Enemy)
-import Html exposing (Html, text)
+import Html exposing (Html, div, text)
 import Tower exposing (Tower)
 
 
 type Msg
-    = Msg
+    = Tick Float
 
 
 type GameState
@@ -23,6 +24,7 @@ type alias Model =
     , money : Int
     , enemies : List Enemy
     , towers : List Tower
+    , delta : Float
     }
 
 
@@ -37,6 +39,7 @@ init flags =
       , money = 0
       , enemies = []
       , towers = []
+      , delta = 0
       }
     , Cmd.none
     )
@@ -44,19 +47,22 @@ init flags =
 
 view : Model -> Html Msg
 view model =
-    text (Debug.toString model.gameState)
+    div []
+        [ div [] [ text (Debug.toString model.gameState) ]
+        , div [] [ text (String.fromFloat model.delta) ]
+        ]
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Msg ->
-            ( model, Cmd.none )
+        Tick delta ->
+            ( { model | delta = delta }, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Sub.none
+    onAnimationFrameDelta Tick
 
 
 main : Program Flags Model Msg
