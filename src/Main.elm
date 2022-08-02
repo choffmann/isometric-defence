@@ -1,14 +1,30 @@
-module Main exposing (main)
+module Main exposing (Model, main)
 
 import Browser
 import Browser.Events exposing (onAnimationFrameDelta)
+import Canvas exposing (Point, Renderable, rect, shapes)
+import Canvas.Settings exposing (fill)
+import Color
 import Enemy exposing (Enemy)
 import Html exposing (Html, div, text)
+import Html.Attributes exposing (style)
+import Point exposing (Point)
 import Tower exposing (Tower)
 
 
 type Msg
     = Tick Float
+
+
+type alias Area =
+    { width : Int
+    , height : Int
+    }
+
+
+constarea : Area
+constarea =
+    Area 750 750
 
 
 type GameState
@@ -45,11 +61,20 @@ init flags =
     )
 
 
+canvas : Model -> Area -> List Renderable
+canvas model area =
+    [ shapes [ fill Color.white ] [ rect ( 0, 0 ) (toFloat area.width) (toFloat area.width) ]
+    , shapes [ fill (Color.rgba 255 0 0 1) ] [ rect ( 0, 0 ) 100 50 ]
+    ]
+
+
 view : Model -> Html Msg
 view model =
     div []
         [ div [] [ text (Debug.toString model.gameState) ]
         , div [] [ text (String.fromFloat model.delta) ]
+        , div [ style "display" "flex", style "justify-content" "center", style "align-items" "center" ]
+            [ Canvas.toHtml ( constarea.width, constarea.height ) [ style "border" "10px solid black" ] (canvas model constarea) ]
         ]
 
 
