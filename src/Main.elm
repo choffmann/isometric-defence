@@ -2,12 +2,13 @@ module Main exposing (Model, main)
 
 import Browser
 import Browser.Events exposing (onAnimationFrameDelta)
-import Canvas exposing (Point, Renderable, rect, shapes)
+import Canvas exposing (Renderable, Shape, rect, shapes)
 import Canvas.Settings exposing (fill)
 import Color
 import Enemy exposing (Enemy)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (style)
+import Path exposing (Path, PathPoint, testPath)
 import Point exposing (Point)
 import Tower exposing (Tower)
 
@@ -24,7 +25,7 @@ type alias Area =
 
 constarea : Area
 constarea =
-    Area 750 750
+    Area 300 300
 
 
 type GameState
@@ -61,10 +62,25 @@ init flags =
     )
 
 
+pathSize : Int
+pathSize =
+    30
+
+
+pointToCanvas : Point -> Shape
+pointToCanvas point =
+    rect ( toFloat (point.x * pathSize), toFloat (point.y * pathSize) ) (toFloat pathSize) (toFloat pathSize)
+
+
+pathToCanvas : Path -> Renderable
+pathToCanvas path =
+    shapes [ fill (Color.rgba 255 0 0 1) ] (List.map (\pathPoint -> pointToCanvas pathPoint.point) path)
+
+
 canvas : Model -> Area -> List Renderable
 canvas model area =
     [ shapes [ fill Color.white ] [ rect ( 0, 0 ) (toFloat area.width) (toFloat area.width) ]
-    , shapes [ fill (Color.rgba 255 0 0 1) ] [ rect ( 0, 0 ) 100 50 ]
+    , pathToCanvas testPath
     ]
 
 
