@@ -16,3 +16,4 @@ type Msg
     | Click Point
     | Canvas (Maybe Element)
     | FullScreenChange Bool
+    | EnterCanvas

@@ -9,12 +9,14 @@ import Color
 import Enemy exposing (Enemies(..))
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (id)
+import Html.Events exposing (onMouseEnter)
 import Messages exposing (Key(..), Msg(..))
 import Model exposing (Flags, GameState(..), Model)
-import Styling
+import Styles
 import Tower exposing (Towers(..))
 import Update.Canvas as Canvas
 import Update.Click as Click
+import Update.EnterCanvas as EnterCanvas
 import Update.FullScreenChange as FullScreenChange
 import Update.Key as Key
 import Update.Tick as Tick
@@ -39,14 +41,14 @@ canvas model area =
 
 view : Model -> Html Msg
 view model =
-    div []
+    div (id "app" :: Styles.appContainer)
         [ div [] [ text (Debug.toString model) ]
-        , div Styling.canvasContainerStyles
+        , div Styles.canvasContainerStyles
             [ div
-                Styling.canvasStyles
+                (onMouseEnter Messages.EnterCanvas :: id "canvasContainer" :: Styles.canvasStyles)
                 [ Canvas.toHtml
                     ( Area.area.width, Area.area.height )
-                    [ id "canvas" ]
+                    []
                     (canvas model Area.area)
                 ]
             ]
@@ -70,6 +72,9 @@ update msg =
 
         FullScreenChange isFullScreen ->
             FullScreenChange.update isFullScreen
+
+        EnterCanvas ->
+            EnterCanvas.update
 
 
 subscriptions : Model -> Sub Msg

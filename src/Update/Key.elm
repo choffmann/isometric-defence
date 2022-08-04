@@ -25,10 +25,10 @@ update key enterFullScreen closeFullScreen model =
 
         F ->
             if model.fullscreen then
-                ( { model | fullscreen = False }, closeFullScreen )
+                ( model, closeFullScreen )
 
             else
-                ( { model | fullscreen = True }, enterFullScreen )
+                ( model, enterFullScreen )
 
         UnknownKey ->
             ( model, Cmd.none )

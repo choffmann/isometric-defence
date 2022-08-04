@@ -1,8 +1,8 @@
-module Styling exposing (canvasContainerStyles, canvasStyles)
+module Styles exposing (appContainer, borderWidth, canvasContainerStyles, canvasStyles)
 
 import Area exposing (area)
 import Html exposing (Attribute)
-import Html.Attributes exposing (id, style)
+import Html.Attributes exposing (style)
 
 
 borderWidth : Int
@@ -20,8 +20,6 @@ canvasContainerStyles =
     [ style "display" "flex"
     , style "justify-content" "center"
     , style "align-items" "center"
-    , id "elm"
-    , style "background-color" "white"
     ]
 
 
@@ -31,3 +29,8 @@ canvasStyles =
     , style "height" (toPixelString (area.height + 2 * borderWidth))
     , style "border" (toPixelString borderWidth ++ " solid black")
     ]
+
+
+appContainer : List (Attribute msg)
+appContainer =
+    [ style "background-color" "white" ]

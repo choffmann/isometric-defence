@@ -33,14 +33,14 @@
 			});
 
 			app.ports.enterFullScreen.subscribe(() => {
-				var element = document.getElementById("elm");
+				var element = document.getElementById("app");
 				if (element.requestFullscreen) {
 					element.requestFullscreen();
-				} else if (element.webkitRequestFullscreen) {/* Safari */
+				} else if (element.webkitRequestFullscreen) { /* Safari */
 					element.webkitRequestFullscreen();
 				} else if (element.mozRequestFullScreen) {
 					element.mozRequestFullScreen();
-				} else if (element.msRequestFullscreen) {/* IE11 */
+				} else if (element.msRequestFullscreen) { /* IE11 */
 					element.msRequestFullscreen();
 				}
 			})
