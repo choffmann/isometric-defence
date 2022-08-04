@@ -9,7 +9,6 @@ import Color
 import Enemy exposing (Enemies(..))
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (id)
-import Html.Events exposing (on)
 import Messages exposing (Key(..), Msg(..))
 import Model exposing (Flags, GameState(..), Model)
 import Styling
