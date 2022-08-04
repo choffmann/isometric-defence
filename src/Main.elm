@@ -1,4 +1,4 @@
-port module Main exposing (main)
+module Main exposing (main)
 
 import Area exposing (Area)
 import Browser
@@ -9,25 +9,19 @@ import Color
 import Enemy exposing (Enemies(..))
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (id)
+import Html.Events exposing (onMouseEnter)
 import Messages exposing (Key(..), Msg(..))
 import Model exposing (Flags, GameState(..), Model)
-import Styling
+import Styles
 import Tower exposing (Towers(..))
 import Update.Canvas as Canvas
 import Update.Click as Click
-import Update.FullScreenChange as FullScreenChange
+import Update.EnterCanvas as EnterCanvas
+import Update.Event as Event
 import Update.Key as Key
 import Update.Tick as Tick
 import Utils.Decoder as Decoder
-
-
-port enterFullScreen : () -> Cmd msg
-
-
-port closeFullScreen : () -> Cmd msg
-
-
-port fullScreenChangeReceiver : (Bool -> msg) -> Sub msg
+import Utils.Ports as Ports
 
 
 canvas : Model -> Area -> List Renderable
@@ -39,14 +33,17 @@ canvas model area =
 
 view : Model -> Html Msg
 view model =
-    div []
-        [ div [] [ text (Debug.toString model) ]
-        , div Styling.canvasContainerStyles
+    div (id "app" :: Styles.appContainer)
+        [ div []
+            [ div [] [ text (String.fromFloat model.delta) ]
+            , div [] [ text (Debug.toString { model | delta = 0 }) ]
+            ]
+        , div Styles.canvasContainerStyles
             [ div
-                Styling.canvasStyles
+                (onMouseEnter Messages.EnterCanvas :: id "canvasContainer" :: Styles.canvasStyles)
                 [ Canvas.toHtml
                     ( Area.area.width, Area.area.height )
-                    [ id "canvas" ]
+                    []
                     (canvas model Area.area)
                 ]
             ]
@@ -60,7 +57,7 @@ update msg =
             Tick.update delta
 
         Key key ->
-            Key.update key (enterFullScreen ()) (closeFullScreen ())
+            Key.update key
 
         Click point ->
             Click.update point
@@ -68,8 +65,11 @@ update msg =
         Canvas maybe ->
             Canvas.update maybe
 
-        FullScreenChange isFullScreen ->
-            FullScreenChange.update isFullScreen
+        EnterCanvas ->
+            EnterCanvas.update
+
+        Event event ->
+            Event.update event
 
 
 subscriptions : Model -> Sub Msg
@@ -79,7 +79,7 @@ subscriptions model =
             [ onAnimationFrameDelta Tick
             , onKeyDown Decoder.keyDecoder
             , onClick Decoder.clickDecoder
-            , fullScreenChangeReceiver (\isFullScreen -> FullScreenChange isFullScreen)
+            , Ports.onFullScreenChange
             ]
     in
     Sub.batch

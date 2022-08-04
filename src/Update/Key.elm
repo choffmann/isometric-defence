@@ -1,11 +1,13 @@
 module Update.Key exposing (update)
 
-import Messages exposing (Key(..), Msg)
+import FullScreenMode exposing (FullScreenMode(..))
+import Messages exposing (Key(..), Msg, SendingEvents(..))
 import Model exposing (GameState(..), Model)
+import Utils.Ports as Ports
 
 
-update : Messages.Key -> Cmd Msg -> Cmd Msg -> Model -> ( Model, Cmd Msg )
-update key enterFullScreen closeFullScreen model =
+update : Messages.Key -> Model -> ( Model, Cmd Msg )
+update key model =
     case key of
         Space ->
             ( case model.gameState of
@@ -24,11 +26,12 @@ update key enterFullScreen closeFullScreen model =
             )
 
         F ->
-            if model.fullscreen then
-                ( { model | fullscreen = False }, closeFullScreen )
+            case model.fullscreen of
+                Open ->
+                    ( model, Ports.changeFullScreen (ChangeFullScreen Close) )
 
-            else
-                ( { model | fullscreen = True }, enterFullScreen )
+                Close ->
+                    ( model, Ports.changeFullScreen (ChangeFullScreen Open) )
 
         UnknownKey ->
             ( model, Cmd.none )

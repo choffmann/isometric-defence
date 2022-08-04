@@ -32,33 +32,38 @@
 				flags: { "msg": "Hello World!!!" }
 			});
 
-			app.ports.enterFullScreen.subscribe(() => {
-				var element = document.getElementById("elm");
-				if (element.requestFullscreen) {
-					element.requestFullscreen();
-				} else if (element.webkitRequestFullscreen) {/* Safari */
-					element.webkitRequestFullscreen();
-				} else if (element.mozRequestFullScreen) {
-					element.mozRequestFullScreen();
-				} else if (element.msRequestFullscreen) {/* IE11 */
-					element.msRequestFullscreen();
-				}
-			})
-
-			app.ports.closeFullScreen.subscribe(() => {
-				if (document.exitFullscreen) {
-					document.exitFullscreen();
-				} else if (document.webkitExitFullscreen) { /* Safari */
-					document.webkitExitFullscreen();
-				} else if (element.mozRequestFullScreen) {
-					element.mozExitFullscreen();
-				} else if (document.msExitFullscreen) { /* IE11 */
-					document.msExitFullscreen();
+			app.ports.sendEventMessage.subscribe((e) => {
+				if (e.event === "changeFullScreen") {
+					if (e.message === "open") {
+						var element = document.getElementById("app");
+						if (element.requestFullscreen) {
+							element.requestFullscreen();
+						} else if (element.webkitRequestFullscreen) {
+							element.webkitRequestFullscreen();
+						} else if (element.mozRequestFullScreen) {
+							element.mozRequestFullScreen();
+						} else if (element.msRequestFullscreen) {
+							element.msRequestFullscreen();
+						}
+					} else if (e.message === "close") {
+						if (document.exitFullscreen) {
+							document.exitFullscreen();
+						} else if (document.webkitExitFullscreen) {
+							document.webkitExitFullscreen();
+						} else if (element.mozRequestFullScreen) {
+							element.mozExitFullscreen();
+						} else if (document.msExitFullscreen) {
+							document.msExitFullscreen();
+						}
+					}
 				}
 			})
 
 			document.addEventListener("fullscreenchange", (e) => {
-				app.ports.fullScreenChangeReceiver.send(Boolean(document.fullscreenElement))
+				app.ports.eventMessageReceiver.send({
+					event: "fullScreenChanged",
+					message: document.fullscreenElement ? "opened" : "closed"
+				})
 			})
 		}
 		catch (e) {

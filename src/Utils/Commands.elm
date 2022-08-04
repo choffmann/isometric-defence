@@ -1,8 +1,23 @@
 module Utils.Commands exposing (getCanvas)
 
-import Browser.Dom exposing (getElement)
+import Browser.Dom exposing (Element, getElement)
 import Messages exposing (Msg)
+import Styles
 import Task
+
+
+correctToCanvas : Element -> Element
+correctToCanvas e =
+    let
+        correctElement element =
+            { element
+                | x = element.x + toFloat Styles.borderWidth
+                , y = element.y + toFloat Styles.borderWidth
+                , width = element.width - (2 * toFloat Styles.borderWidth)
+                , height = element.height - (2 * toFloat Styles.borderWidth)
+            }
+    in
+    { e | element = correctElement e.element }
 
 
 getCanvas : Cmd Msg
@@ -15,7 +30,7 @@ getCanvas =
                         Nothing
 
                     Ok element ->
-                        Just element
+                        Just (correctToCanvas element)
                 )
         )
-        (getElement "elm")
+        (getElement "canvasContainer")

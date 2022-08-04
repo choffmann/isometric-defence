@@ -2,6 +2,7 @@ module Model exposing (Flags, GameState(..), Model, init)
 
 import Browser.Dom exposing (Element)
 import Enemy exposing (Enemy, toEnemy)
+import FullScreenMode exposing (FullScreenMode)
 import Messages exposing (Msg)
 import Point exposing (Point)
 import Tower exposing (Tower, toTower)
@@ -24,7 +25,7 @@ type alias Model =
     , placingTower : Maybe Tower
     , canvas : Maybe Element
     , clicked : Maybe Point
-    , fullscreen : Bool
+    , fullscreen : FullScreenMode
     }
 
 
@@ -43,7 +44,7 @@ init flags =
       , placingTower = Nothing
       , canvas = Nothing
       , clicked = Nothing
-      , fullscreen = False
+      , fullscreen = FullScreenMode.Close
       }
     , Cmd.none
     )
