@@ -2,7 +2,7 @@ module Styling exposing (canvasContainerStyles, canvasStyles)
 
 import Area exposing (area)
 import Html exposing (Attribute)
-import Html.Attributes exposing ( id, style)
+import Html.Attributes exposing (id, style)
 
 
 borderWidth : Int

@@ -7,4 +7,9 @@ import Model exposing (Model)
 
 update : Maybe Element -> Model -> ( Model, Cmd Msg )
 update element model =
-    ( model, Cmd.none )
+    ( { model
+        | canvas =
+            element
+      }
+    , Cmd.none
+    )

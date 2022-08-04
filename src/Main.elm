@@ -6,35 +6,18 @@ import Browser.Events exposing (onAnimationFrameDelta, onClick, onKeyDown, onMou
 import Canvas exposing (Renderable, rect, shapes)
 import Canvas.Settings exposing (fill)
 import Color
-import Enemy exposing (Enemies(..), toEnemy)
+import Enemy exposing (Enemies(..))
 import Html exposing (Html, div, text)
+import Html.Attributes exposing (id)
 import Messages exposing (Key(..), Msg(..))
-import Model exposing (GameState(..), Model)
+import Model exposing (Flags, GameState(..), Model)
 import Styling
-import Tower exposing (Towers(..), toTower)
+import Tower exposing (Towers(..))
 import Update.Canvas as Canvas
 import Update.Click as Click
 import Update.Key as Key
 import Update.Tick as Tick
-
-
-type alias Flags =
-    { msg : String }
-
-
-init : Flags -> ( Model, Cmd Msg )
-init flags =
-    ( { gameState = Paused
-      , hp = 1000
-      , money = 0
-      , enemies = [ toEnemy Soldat, toEnemy Soldat, toEnemy Soldat, toEnemy Soldat, toEnemy Soldat ]
-      , towers = [ toTower Basic, toTower Basic ]
-      , delta = 0
-      , placingTower = Nothing
-      , canvas = Nothing
-      }
-    , Cmd.none
-    )
+import Utils.Decoder as Decoder
 
 
 canvas : Model -> Area -> List Renderable
@@ -53,7 +36,7 @@ view model =
                 Styling.canvasStyles
                 [ Canvas.toHtml
                     ( Area.area.width, Area.area.height )
-                    []
+                    [ id "canvas" ]
                     (canvas model Area.area)
                 ]
             ]
@@ -81,14 +64,14 @@ subscriptions model =
     let
         alwaysSubscribed =
             [ onAnimationFrameDelta Tick
-            , onKeyDown Messages.keyDecoder
-            , onClick Messages.clickDecoder
+            , onKeyDown Decoder.keyDecoder
+            , onClick Decoder.clickDecoder
             ]
     in
     Sub.batch
         (case model.placingTower of
             Just tower ->
-                onMouseMove Messages.mouseMoveDecoder :: alwaysSubscribed
+                onMouseMove Decoder.mouseMoveDecoder :: alwaysSubscribed
 
             Nothing ->
                 alwaysSubscribed
@@ -98,7 +81,7 @@ subscriptions model =
 main : Program Flags Model Msg
 main =
     Browser.element
-        { init = init
+        { init = Model.init
         , view = view
         , update = update
         , subscriptions = subscriptions
