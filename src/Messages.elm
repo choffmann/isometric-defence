@@ -6,6 +6,7 @@ import Point exposing (Point)
 
 type Key
     = Space
+    | F
     | UnknownKey
 
 
@@ -14,3 +15,4 @@ type Msg
     | Key Key
     | Click Point
     | Canvas (Maybe Element)
+    | FullScreenChange Bool

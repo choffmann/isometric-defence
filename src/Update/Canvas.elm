@@ -1,11 +1,10 @@
 module Update.Canvas exposing (update)
 
 import Browser.Dom exposing (Element)
-import Messages exposing (Msg)
 import Model exposing (Model)
 
 
-update : Maybe Element -> Model -> ( Model, Cmd Msg )
+update : Maybe Element -> Model -> ( Model, Cmd msg )
 update element model =
     ( { model
         | canvas =

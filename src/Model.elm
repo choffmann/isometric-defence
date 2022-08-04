@@ -24,6 +24,7 @@ type alias Model =
     , placingTower : Maybe Tower
     , canvas : Maybe Element
     , clicked : Maybe Point
+    , fullscreen : Bool
     }
 
 
@@ -42,6 +43,7 @@ init flags =
       , placingTower = Nothing
       , canvas = Nothing
       , clicked = Nothing
+      , fullscreen = False
       }
     , Cmd.none
     )

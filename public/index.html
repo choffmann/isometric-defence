@@ -25,12 +25,42 @@
 
 <body>
 	<div id="elm"></div>
+	<button onclick="enterFullScreen()">Fullscreen</button>
 	<script>
 		try {
 			var app = Elm.Main.init({
 				node: document.getElementById("elm"),
 				flags: { "msg": "Hello World!!!" }
 			});
+
+			app.ports.enterFullScreen.subscribe(() => {
+				var element = document.getElementById("elm");
+				if (element.requestFullscreen) {
+					element.requestFullscreen();
+				} else if (element.webkitRequestFullscreen) {/* Safari */
+					element.webkitRequestFullscreen();
+				} else if (element.mozRequestFullScreen) {
+					element.mozRequestFullScreen();
+				} else if (element.msRequestFullscreen) {/* IE11 */
+					element.msRequestFullscreen();
+				}
+			})
+
+			app.ports.closeFullScreen.subscribe(() => {
+				if (document.exitFullscreen) {
+					document.exitFullscreen();
+				} else if (document.webkitExitFullscreen) { /* Safari */
+					document.webkitExitFullscreen();
+				} else if (element.mozRequestFullScreen) {
+					element.mozExitFullscreen();
+				} else if (document.msExitFullscreen) { /* IE11 */
+					document.msExitFullscreen();
+				}
+			})
+
+			document.addEventListener("fullscreenchange", (e) => {
+				app.ports.fullScreenChangeReceiver.send(Boolean(document.fullscreenElement))
+			})
 		}
 		catch (e) {
 			// display initialization errors (e.g. bad flags, infinite recursion)

@@ -1,7 +1,6 @@
 module Update.Tick exposing (update)
 
 import Enemy exposing (Enemy)
-import Messages exposing (Msg)
 import Model exposing (GameState(..), Model)
 import Point exposing (Point)
 import Tower exposing (Tower)
@@ -109,7 +108,7 @@ tick model delta =
                     }
 
 
-update : Float -> Model -> ( Model, Cmd Msg )
+update : Float -> Model -> ( Model, Cmd msg )
 update delta model =
     ( case model.gameState of
         Running ->

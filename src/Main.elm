@@ -1,4 +1,4 @@
-module Main exposing (main)
+port module Main exposing (main)
 
 import Area exposing (Area)
 import Browser
@@ -9,15 +9,26 @@ import Color
 import Enemy exposing (Enemies(..))
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (id)
+import Html.Events exposing (on)
 import Messages exposing (Key(..), Msg(..))
 import Model exposing (Flags, GameState(..), Model)
 import Styling
 import Tower exposing (Towers(..))
 import Update.Canvas as Canvas
 import Update.Click as Click
+import Update.FullScreenChange as FullScreenChange
 import Update.Key as Key
 import Update.Tick as Tick
 import Utils.Decoder as Decoder
+
+
+port enterFullScreen : () -> Cmd msg
+
+
+port closeFullScreen : () -> Cmd msg
+
+
+port fullScreenChangeReceiver : (Bool -> msg) -> Sub msg
 
 
 canvas : Model -> Area -> List Renderable
@@ -50,13 +61,16 @@ update msg =
             Tick.update delta
 
         Key key ->
-            Key.update key
+            Key.update key (enterFullScreen ()) (closeFullScreen ())
 
         Click point ->
             Click.update point
 
         Canvas maybe ->
             Canvas.update maybe
+
+        FullScreenChange isFullScreen ->
+            FullScreenChange.update isFullScreen
 
 
 subscriptions : Model -> Sub Msg
@@ -66,6 +80,7 @@ subscriptions model =
             [ onAnimationFrameDelta Tick
             , onKeyDown Decoder.keyDecoder
             , onClick Decoder.clickDecoder
+            , fullScreenChangeReceiver (\isFullScreen -> FullScreenChange isFullScreen)
             ]
     in
     Sub.batch

@@ -10,7 +10,7 @@ getCanvas =
     Task.attempt
         (\result ->
             Messages.Canvas
-                (case Debug.log "result" result of
+                (case result of
                     Err _ ->
                         Nothing
 

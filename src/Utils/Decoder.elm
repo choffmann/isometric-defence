@@ -18,6 +18,12 @@ keyDecoder =
                 " " ->
                     Space
 
+                "F" ->
+                    F
+
+                "f" ->
+                    F
+
                 _ ->
                     UnknownKey
     in
