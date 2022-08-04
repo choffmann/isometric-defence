@@ -79,7 +79,7 @@ subscriptions model =
             [ onAnimationFrameDelta Tick
             , onKeyDown Decoder.keyDecoder
             , onClick Decoder.clickDecoder
-            , Ports.onFullScreenChange
+            , Ports.onEventMessage
             ]
     in
     Sub.batch

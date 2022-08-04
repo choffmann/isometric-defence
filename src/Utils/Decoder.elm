@@ -1,7 +1,8 @@
-module Utils.Decoder exposing (clickDecoder, keyDecoder, mouseMoveDecoder)
+module Utils.Decoder exposing (clickDecoder, keyDecoder, mouseMoveDecoder, receiveEventDecoder)
 
+import FullScreenMode exposing (FullScreenMode(..))
 import Json.Decode as Decode exposing (Decoder)
-import Messages exposing (Key(..), Msg)
+import Messages exposing (Key(..), Msg, ReceivingEvents(..))
 import Point exposing (Point)
 
 
@@ -46,3 +47,34 @@ mouseMoveDecoder =
         |> apply (Decode.field "movementX" Decode.int)
         |> apply (Decode.field "movementY" Decode.int)
         |> Decode.map Messages.Click
+
+
+type alias EventMsg =
+    { event : String
+    , message : String
+    }
+
+
+receiveEventDecoder : Decoder ReceivingEvents
+receiveEventDecoder =
+    let
+        toEvent msg =
+            case msg.event of
+                "fullScreenChanged" ->
+                    case msg.message of
+                        "opened" ->
+                            FullScreenChanged Open
+
+                        "closed" ->
+                            FullScreenChanged Close
+
+                        _ ->
+                            UnknownEvent
+
+                _ ->
+                    UnknownEvent
+    in
+    Decode.succeed EventMsg
+        |> apply (Decode.field "event" Decode.string)
+        |> apply (Decode.field "message" Decode.string)
+        |> Decode.map toEvent

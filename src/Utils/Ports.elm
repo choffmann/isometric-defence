@@ -1,14 +1,10 @@
-port module Utils.Ports exposing (changeFullScreen, onFullScreenChange)
+port module Utils.Ports exposing (changeFullScreen, onEventMessage)
 
 import FullScreenMode exposing (FullScreenMode(..))
+import Json.Decode as Decode
 import Json.Encode as Encode
 import Messages exposing (Msg(..), ReceivingEvents(..), SendingEvents(..))
-
-
-type alias EventMsg =
-    { message : String
-    , event : String
-    }
+import Utils.Decoder exposing (receiveEventDecoder)
 
 
 port sendEventMessage : Encode.Value -> Cmd msg
@@ -38,25 +34,17 @@ changeFullScreen msg =
     sendEventMessage (sendEventMessageEncoder msg)
 
 
-port eventMessageReceiver : (EventMsg -> msg) -> Sub msg
+port eventMessageReceiver : (Decode.Value -> msg) -> Sub msg
 
 
-onFullScreenChange : Sub Msg
-onFullScreenChange =
+onEventMessage : Sub Msg
+onEventMessage =
     eventMessageReceiver
-        (\msg ->
-            case msg.event of
-                "fullScreenChanged" ->
-                    case msg.message of
-                        "opened" ->
-                            Event (FullScreenChanged Open)
-
-                        "closed" ->
-                            Event (FullScreenChanged Close)
-
-                        _ ->
-                            Event UnknownEvent
-
-                _ ->
+        (\event ->
+            case Decode.decodeValue receiveEventDecoder event of
+                Err _ ->
                     Event UnknownEvent
+
+                Ok parsedEvent ->
+                    Event parsedEvent
         )
