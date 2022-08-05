@@ -1,31 +1,29 @@
 module Main exposing (Model, main)
 
+import Area exposing (Area)
 import Browser
 import Browser.Events exposing (onAnimationFrameDelta)
 import Canvas exposing (Renderable, Shape, rect, shapes)
 import Canvas.Settings exposing (fill)
 import Color
 import Enemy exposing (Enemy)
-import Html exposing (Html, div, text)
+import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (style)
-import Path exposing (Path, PathPoint, testPath)
+import Html.Events exposing (onClick)
+import Path exposing (Path, PathPoint, pathSize, startPointGenerator, testPath)
 import Point exposing (Point)
+import Random
 import Tower exposing (Tower)
 
 
 type Msg
     = Tick Float
-
-
-type alias Area =
-    { width : Int
-    , height : Int
-    }
+    | BuildPath
 
 
 constarea : Area
 constarea =
-    Area 300 300
+    Area 10 10
 
 
 type GameState
@@ -62,11 +60,6 @@ init flags =
     )
 
 
-pathSize : Int
-pathSize =
-    30
-
-
 pointToCanvas : Point -> Shape
 pointToCanvas point =
     rect ( toFloat (point.x * pathSize), toFloat (point.y * pathSize) ) (toFloat pathSize) (toFloat pathSize)
@@ -79,7 +72,7 @@ pathToCanvas path =
 
 canvas : Model -> Area -> List Renderable
 canvas model area =
-    [ shapes [ fill Color.white ] [ rect ( 0, 0 ) (toFloat area.width) (toFloat area.width) ]
+    [ shapes [ fill Color.white ] [ rect ( 0, 0 ) (toFloat area.width) (toFloat area.height) ]
     , pathToCanvas testPath
     ]
 
@@ -89,8 +82,9 @@ view model =
     div []
         [ div [] [ text (Debug.toString model.gameState) ]
         , div [] [ text (String.fromFloat model.delta) ]
+        , div [] [ button [ onClick BuildPath ] [ text "Build Path" ] ]
         , div [ style "display" "flex", style "justify-content" "center", style "align-items" "center" ]
-            [ Canvas.toHtml ( constarea.width, constarea.height ) [ style "border" "10px solid black" ] (canvas model constarea) ]
+            [ Canvas.toHtml ( constarea.width * pathSize, constarea.height * pathSize ) [ style "border" "10px solid black" ] (canvas model constarea) ]
         ]
 
 
@@ -99,6 +93,9 @@ update msg model =
     case msg of
         Tick delta ->
             ( { model | delta = delta }, Cmd.none )
+
+        BuildPath ->
+            Debug.todo "Build Path"
 
 
 subscriptions : Model -> Sub Msg
