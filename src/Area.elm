@@ -1,4 +1,4 @@
-module Area exposing (Area, area, fieldSize)
+module Area exposing (Area, Field(..), area, fieldSize, pixelToField)
 
 import Pixel exposing (Pixel(..))
 import Point exposing (Point)
