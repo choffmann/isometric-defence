@@ -64,7 +64,7 @@ moveEnemies path =
         (\enemy ->
             { enemy
                 | distance = enemy.distance + enemy.speed
-                , position = distanceToPathPoint path (enemy.distance + enemy.speed)
+                , position = Debug.log "Position" (distanceToPathPoint path (enemy.distance + enemy.speed))
             }
         )
 
