@@ -1,4 +1,9 @@
-module Area exposing (Area, area)
+module Area exposing (Area, area, fieldSize)
+
+
+fieldSize : Int
+fieldSize =
+    30
 
 
 type alias Area =
@@ -9,4 +14,4 @@ type alias Area =
 
 area : Area
 area =
-    Area 750 750
+    Area (25 * fieldSize) (25 * fieldSize)

@@ -1,11 +1,7 @@
 module Path exposing (..)
 
+import Area exposing (fieldSize)
 import Point exposing (Point)
-
-
-pathSize : Int
-pathSize =
-    30
 
 
 type alias PathPoint =

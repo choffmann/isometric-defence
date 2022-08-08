@@ -1,6 +1,6 @@
 module Main exposing (main)
 
-import Area exposing (Area)
+import Area exposing (Area, fieldSize)
 import Browser
 import Browser.Events exposing (onAnimationFrameDelta, onClick, onKeyDown, onMouseMove)
 import Canvas exposing (Renderable, Shape, rect, shapes)
@@ -11,7 +11,7 @@ import Html.Attributes exposing (id)
 import Html.Events exposing (onMouseEnter)
 import Messages exposing (Key(..), Msg(..))
 import Model exposing (Flags, GameState(..), Model)
-import Path exposing (Path, pathSize, testPath)
+import Path exposing (Path, testPath)
 import Point exposing (Point)
 import Styles
 import Update.Canvas as Canvas
@@ -26,7 +26,7 @@ import Utils.Ports as Ports
 
 pointToCanvas : Point -> Shape
 pointToCanvas point =
-    rect ( toFloat (point.x * pathSize), toFloat (point.y * pathSize) ) (toFloat pathSize) (toFloat pathSize)
+    rect ( toFloat (point.x * fieldSize), toFloat (point.y * fieldSize) ) (toFloat fieldSize) (toFloat fieldSize)
 
 
 pathToCanvas : Path -> Renderable
