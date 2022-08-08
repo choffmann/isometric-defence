@@ -115,5 +115,8 @@ update delta model =
 
         Lost ->
             { model | delta = delta }
+
+        GeneratePath ->
+            { model | delta = delta }
     , Cmd.none
     )

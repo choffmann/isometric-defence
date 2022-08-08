@@ -1,6 +1,7 @@
 module Path exposing (..)
 
 import Area exposing (Field(..), area, fieldSize)
+import Messages exposing (Msg)
 import Point exposing (Point)
 import Random
 
@@ -19,27 +20,16 @@ type PathDirection
     | Right
 
 
-pointGenerator : Random.Generator Point
+pointGenerator : Random.Generator PathPoint
 pointGenerator =
-    Random.map (Point 0) (Random.int 0 area.height)
+    Random.map (\n -> PathPoint (Point 0 n)) (Random.int 0 area.height)
 
 
-directionGenerator : Random.Generator PathDirection
-directionGenerator =
-    Random.uniform Up [ Down, Right ]
-
-
-setPathPoint : Point -> PathDirection -> Path
-setPathPoint point direction =
-    case direction of
-        Up ->
-            [ PathPoint point, PathPoint (Point point.x (point.y + 1)) ]
-
-        Down ->
-            [ PathPoint point, PathPoint (Point point.x (point.y - 1)) ]
-
-        Right ->
-            [ PathPoint point, PathPoint (Point (point.x + 1) point.y) ]
+directionGenerator : List PathDirection -> Random.Generator PathDirection
+directionGenerator list =
+    case list of
+        x :: xs ->
+            Random.uniform x xs
 
 
 testPath : Path

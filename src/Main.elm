@@ -11,13 +11,14 @@ import Html.Attributes exposing (id)
 import Html.Events exposing (onMouseEnter)
 import Messages exposing (Key(..), Msg(..))
 import Model exposing (Flags, GameState(..), Model)
-import Path exposing (Path, testPath)
+import Path exposing (Path, PathPoint, testPath)
 import Point exposing (Point)
 import Styles
 import Update.Canvas as Canvas
 import Update.Click as Click
 import Update.EnterCanvas as EnterCanvas
 import Update.Event as Event
+import Update.GeneratePath as GeneratePath
 import Update.Key as Key
 import Update.Tick as Tick
 import Utils.Decoder as Decoder
@@ -80,6 +81,15 @@ update msg =
 
         Event event ->
             Event.update event
+
+        GeneratePath ->
+            GeneratePath.update
+
+        PathDirectionGenerate direction ->
+            Debug.todo ""
+
+        PathPointGenerate point ->
+            Debug.todo ""
 
 
 subscriptions : Model -> Sub Msg

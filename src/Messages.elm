@@ -2,6 +2,7 @@ module Messages exposing (Key(..), Msg(..), ReceivingEvents(..), SendingEvents(.
 
 import Browser.Dom exposing (Element)
 import FullScreenMode exposing (FullScreenMode)
+import Path exposing (PathDirection, PathPoint)
 import Point exposing (Point)
 
 
@@ -27,3 +28,6 @@ type Msg
     | Canvas (Maybe Element)
     | EnterCanvas
     | Event ReceivingEvents
+    | GeneratePath
+    | PathDirectionGenerate PathDirection
+    | PathPointGenerate PathPoint

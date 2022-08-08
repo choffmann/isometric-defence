@@ -14,6 +14,7 @@ type GameState
     | Paused
     | Won
     | Lost
+    | GeneratePath
 
 
 type alias Model =
