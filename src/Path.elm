@@ -1,6 +1,6 @@
 module Path exposing (..)
 
-import Area exposing (area, fieldSize)
+import Area exposing (Field(..), area, fieldSize)
 import Point exposing (Point)
 import Random
 
@@ -63,3 +63,18 @@ testPath =
     , PathPoint (Point 8 9)
     , PathPoint (Point 9 9)
     ]
+
+
+pathLength : Path -> Int
+pathLength path =
+    List.length path * fieldSize
+
+
+distanceToPathPoint : Path -> Int -> Field
+distanceToPathPoint path distance =
+    case List.drop (distance // pathLength path) path |> List.head of
+        Nothing ->
+            Field { x = 0, y = 0 }
+
+        Just { point } ->
+            Field point

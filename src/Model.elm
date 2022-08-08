@@ -4,6 +4,7 @@ import Browser.Dom exposing (Element)
 import Enemy exposing (Enemy, toEnemy)
 import FullScreenMode exposing (FullScreenMode)
 import Messages exposing (Msg)
+import Path exposing (Path, testPath)
 import Point exposing (Point)
 import Tower exposing (Tower, toTower)
 
@@ -26,6 +27,8 @@ type alias Model =
     , canvas : Maybe Element
     , clicked : Maybe Point
     , fullscreen : FullScreenMode
+    , speedMulti : Float
+    , path : Path
     }
 
 
@@ -45,6 +48,8 @@ init flags =
       , canvas = Nothing
       , clicked = Nothing
       , fullscreen = FullScreenMode.Close
+      , speedMulti = 1.0
+      , path = testPath
       }
     , Cmd.none
     )
