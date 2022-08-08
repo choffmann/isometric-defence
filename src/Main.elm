@@ -1,6 +1,6 @@
 module Main exposing (main)
 
-import Area exposing (Area, fieldSize)
+import Area exposing (Area, area, fieldSize)
 import Browser
 import Browser.Events exposing (onAnimationFrameDelta, onClick, onKeyDown, onMouseMove)
 import Canvas exposing (Renderable, Shape, rect, shapes)
@@ -10,18 +10,20 @@ import Enemy exposing (Enemy)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (id)
 import Html.Events exposing (onMouseEnter)
+import List.Nonempty exposing (cons, last, length, map, singleton, toList)
 import Messages exposing (Key(..), Msg(..))
 import Model exposing (Flags, GameState(..), Model)
-import Path exposing (Path, PathPoint, distanceToPixel, testPath)
+import Path exposing (Path, PathDirection(..), PathPoint, directionGenerator, distanceToPixel, testPath)
 import Pixel exposing (Pixel(..))
 import Point exposing (Point)
+import Random
 import Styles
 import Time
 import Update.Canvas as Canvas
 import Update.Click as Click
 import Update.EnterCanvas as EnterCanvas
 import Update.Event as Event
-import Update.GeneratePath as GeneratePath
+import Update.GeneratePath as GeneratePath exposing (checkDirection, createFirstRandomPoint, createPoint)
 import Update.Key as Key
 import Update.Tick as Tick
 import Utils.Decoder as Decoder
@@ -33,21 +35,32 @@ pointToCanvas point =
     rect ( toFloat (point.x * fieldSize), toFloat (point.y * fieldSize) ) (toFloat fieldSize) (toFloat fieldSize)
 
 
-pathToCanvas : Path -> Renderable
+pathToCanvas : Maybe Path -> Renderable
 pathToCanvas path =
-    shapes [ fill (Color.rgb255 255 50 50) ] (List.map (\pathPoint -> pointToCanvas pathPoint.point) path)
+    case path of
+        Nothing ->
+            shapes [] []
+
+        Just justPath ->
+            shapes [ fill (Color.rgb255 255 50 50) ] (List.map (\pathPoint -> pointToCanvas pathPoint.point) (toList justPath))
 
 
-enemiesToCanvas : List Enemy -> Path -> Renderable
+enemiesToCanvas : List Enemy -> Maybe Path -> Renderable
 enemiesToCanvas enemies path =
-    enemies
-        |> List.map
-            (\enemy ->
-                case Debug.log "Pixel" (distanceToPixel path enemy.distance) of
-                    Pixel point ->
-                        rect ( toFloat point.x - 10, toFloat point.y - 10 ) 20 20
-            )
-        |> shapes [ fill (Color.rgb255 50 255 50) ]
+    case path of
+        Nothing ->
+            shapes [] []
+
+        Just justPath ->
+            enemies
+                |> List.map
+                    (\enemy ->
+                        --case Debug.log "Pixel" (distanceToPixel justPath enemy.distance) of
+                        case distanceToPixel justPath enemy.distance of
+                            Pixel point ->
+                                rect ( toFloat point.x - 10, toFloat point.y - 10 ) 20 20
+                    )
+                |> shapes [ fill (Color.rgb255 50 255 50) ]
 
 
 canvas : Model -> Area -> List Renderable
@@ -78,34 +91,53 @@ view model =
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update msg =
+update msg model =
     case msg of
         Tick delta ->
-            Tick.update delta
+            Tick.update delta model
 
         Key key ->
-            Key.update key
+            Key.update key model
 
         Click point ->
-            Click.update point
+            Click.update point model
 
         Canvas maybe ->
-            Canvas.update maybe
+            Canvas.update maybe model
 
         EnterCanvas ->
-            EnterCanvas.update
+            EnterCanvas.update model
 
         Event event ->
-            Event.update event
+            Event.update event model
 
         Messages.GeneratePath ->
-            GeneratePath.update
+            GeneratePath.update model
 
         PathDirectionGenerate direction ->
-            Debug.todo ""
+            case model.gameState of
+                Model.GeneratePath ->
+                    case model.path of
+                        Nothing ->
+                            ( model, Cmd.none )
+
+                        Just path ->
+                            let
+                                checkIsEnd : Bool
+                                checkIsEnd =
+                                    (last path).point.x + 1 > ((area.width // fieldSize) - 1)
+                            in
+                            if checkIsEnd then
+                                ( { model | gameState = Paused }, Cmd.none )
+
+                            else
+                                ( { model | path = Just (createPoint model.path (last path) direction) }, Random.generate PathDirectionGenerate (directionGenerator (checkDirection model.path)) )
+
+                _ ->
+                    ( model, Cmd.none )
 
         PathPointGenerate point ->
-            Debug.todo ""
+            ( { model | path = Just (createFirstRandomPoint (PathPoint point Right)) }, Random.generate PathDirectionGenerate (directionGenerator (checkDirection model.path)) )
 
 
 

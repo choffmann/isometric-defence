@@ -91,14 +91,19 @@ tick model delta =
     in
     case damage model.towers model.enemies of
         ( towers, enemies ) ->
-            case enemies |> moveEnemies model.path of
-                newEnemies ->
-                    { model
-                        | towers = cooldownTowers delta towers
-                        , enemies = killEnemies newEnemies
-                        , money = model.money + moneyfromKilledEnemies newEnemies
-                        , delta = delta
-                    }
+            case model.path of
+                Nothing ->
+                    Debug.todo ""
+
+                Just path ->
+                    case enemies |> moveEnemies path of
+                        newEnemies ->
+                            { model
+                                | towers = cooldownTowers delta towers
+                                , enemies = killEnemies newEnemies
+                                , money = model.money + moneyfromKilledEnemies newEnemies
+                                , delta = delta
+                            }
 
 
 update : Float -> Model -> ( Model, Cmd msg )

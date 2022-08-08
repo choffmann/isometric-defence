@@ -3,9 +3,10 @@ module Model exposing (Flags, GameState(..), Model, init)
 import Browser.Dom exposing (Element)
 import Enemy exposing (Enemy, toEnemy)
 import FullScreenMode exposing (FullScreenMode)
-import Messages exposing (Msg)
-import Path exposing (Path, testPath)
+import Messages exposing (Msg(..))
+import Path exposing (Path, pointGenerator, testPath)
 import Point exposing (Point)
+import Random
 import Tower exposing (Tower, toTower)
 
 
@@ -29,7 +30,7 @@ type alias Model =
     , clicked : Maybe Point
     , fullscreen : FullScreenMode
     , speedMulti : Float
-    , path : Path
+    , path : Maybe Path
     }
 
 
@@ -39,7 +40,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( { gameState = Paused
+    ( { gameState = GeneratePath
       , hp = 1000
       , money = 0
       , enemies = [ toEnemy Enemy.Soldat, toEnemy Enemy.Soldat, toEnemy Enemy.Soldat, toEnemy Enemy.Soldat, toEnemy Enemy.Soldat ]
@@ -50,7 +51,7 @@ init flags =
       , clicked = Nothing
       , fullscreen = FullScreenMode.Close
       , speedMulti = 1.0
-      , path = testPath
+      , path = Nothing
       }
-    , Cmd.none
+    , Random.generate PathPointGenerate pointGenerator
     )
