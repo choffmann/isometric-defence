@@ -1,10 +1,10 @@
-module Tower exposing (Tower)
+module Tower exposing (Tower, Towers(..), toTower)
 
 import Point exposing (Point)
 
 
-
--- attackSpeed in Angriffe pro Sekunde
+type Towers
+    = Basic
 
 
 type alias Tower =
@@ -13,4 +13,12 @@ type alias Tower =
     , damage : Int
     , attackRadius : Int
     , attackSpeed : Float
+    , lastShot : Float
     }
+
+
+toTower : Towers -> Tower
+toTower towers =
+    case towers of
+        Basic ->
+            Tower (Point 0 0) 100 10 20 10000 100
