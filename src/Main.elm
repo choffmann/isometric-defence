@@ -6,14 +6,17 @@ import Browser.Events exposing (onAnimationFrameDelta, onClick, onKeyDown, onMou
 import Canvas exposing (Renderable, Shape, rect, shapes)
 import Canvas.Settings exposing (fill)
 import Color
+import Enemy exposing (Enemy)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (id)
 import Html.Events exposing (onMouseEnter)
 import Messages exposing (Key(..), Msg(..))
 import Model exposing (Flags, GameState(..), Model)
-import Path exposing (Path, PathPoint, testPath)
+import Path exposing (Path, PathPoint, distanceToPixel, testPath)
+import Pixel exposing (Pixel(..))
 import Point exposing (Point)
 import Styles
+import Time
 import Update.Canvas as Canvas
 import Update.Click as Click
 import Update.EnterCanvas as EnterCanvas
@@ -35,10 +38,23 @@ pathToCanvas path =
     shapes [ fill (Color.rgb255 255 50 50) ] (List.map (\pathPoint -> pointToCanvas pathPoint.point) path)
 
 
+enemiesToCanvas : List Enemy -> Path -> Renderable
+enemiesToCanvas enemies path =
+    enemies
+        |> List.map
+            (\enemy ->
+                case Debug.log "Pixel" (distanceToPixel path enemy.distance) of
+                    Pixel point ->
+                        rect ( toFloat point.x - 10, toFloat point.y - 10 ) 20 20
+            )
+        |> shapes [ fill (Color.rgb255 50 255 50) ]
+
+
 canvas : Model -> Area -> List Renderable
 canvas model area =
     [ shapes [ fill Color.white ] [ rect ( 0, 0 ) (toFloat area.width) (toFloat area.height) ]
     , pathToCanvas model.path
+    , enemiesToCanvas model.enemies model.path
     ]
 
 
@@ -92,11 +108,16 @@ update msg =
             Debug.todo ""
 
 
+
+-- Time.every speed (\_ -> Tick)
+-- onAnimationFrameDelta Tick
+
+
 subscriptions : Model -> Sub Msg
 subscriptions model =
     let
         alwaysSubscribed =
-            [ onAnimationFrameDelta Tick
+            [ Time.every 100 (\_ -> Tick 100)
             , onKeyDown Decoder.keyDecoder
             , onClick (Decoder.clickDecoder model)
             , Ports.onEventMessage
