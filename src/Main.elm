@@ -10,9 +10,8 @@ import Enemy exposing (Enemy)
 import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (style)
 import Html.Events exposing (onClick)
-import Path exposing (Path, PathPoint, pathSize, startPointGenerator, testPath)
+import Path exposing (Path, PathPoint, pathSize, testPath)
 import Point exposing (Point)
-import Random
 import Tower exposing (Tower)
 
 
@@ -67,7 +66,7 @@ pointToCanvas point =
 
 pathToCanvas : Path -> Renderable
 pathToCanvas path =
-    shapes [ fill (Color.rgba 255 0 0 1) ] (List.map (\pathPoint -> pointToCanvas pathPoint.point) path)
+    shapes [ fill (Color.rgb255 255 50 50) ] (List.map (\pathPoint -> pointToCanvas pathPoint.point) path)
 
 
 canvas : Model -> Area -> List Renderable
