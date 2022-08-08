@@ -1,64 +1,27 @@
-module Main exposing (Model, main)
+module Main exposing (main)
 
+import Area exposing (Area)
 import Browser
-import Browser.Events exposing (onAnimationFrameDelta)
-import Canvas exposing (Point, Renderable, rect, shapes)
+import Browser.Events exposing (onAnimationFrameDelta, onClick, onKeyDown, onMouseMove)
+import Canvas exposing (Renderable, rect, shapes)
 import Canvas.Settings exposing (fill)
 import Color
-import Enemy exposing (Enemy)
+import Enemy exposing (Enemies(..))
 import Html exposing (Html, div, text)
-import Html.Attributes exposing (style)
-import Point exposing (Point)
-import Tower exposing (Tower)
-
-
-type Msg
-    = Tick Float
-
-
-type alias Area =
-    { width : Int
-    , height : Int
-    }
-
-
-constarea : Area
-constarea =
-    Area 750 750
-
-
-type GameState
-    = Running
-    | Paused
-    | Won
-    | Lost
-
-
-type alias Model =
-    { gameState : GameState
-    , hp : Int
-    , money : Int
-    , enemies : List Enemy
-    , towers : List Tower
-    , delta : Float
-    }
-
-
-type alias Flags =
-    { msg : String }
-
-
-init : Flags -> ( Model, Cmd Msg )
-init flags =
-    ( { gameState = Paused
-      , hp = 1000
-      , money = 0
-      , enemies = []
-      , towers = []
-      , delta = 0
-      }
-    , Cmd.none
-    )
+import Html.Attributes exposing (id)
+import Html.Events exposing (onMouseEnter)
+import Messages exposing (Key(..), Msg(..))
+import Model exposing (Flags, GameState(..), Model)
+import Styles
+import Tower exposing (Towers(..))
+import Update.Canvas as Canvas
+import Update.Click as Click
+import Update.EnterCanvas as EnterCanvas
+import Update.Event as Event
+import Update.Key as Key
+import Update.Tick as Tick
+import Utils.Decoder as Decoder
+import Utils.Ports as Ports
 
 
 canvas : Model -> Area -> List Renderable
@@ -70,30 +33,69 @@ canvas model area =
 
 view : Model -> Html Msg
 view model =
-    div []
-        [ div [] [ text (Debug.toString model.gameState) ]
-        , div [] [ text (String.fromFloat model.delta) ]
-        , div [ style "display" "flex", style "justify-content" "center", style "align-items" "center" ]
-            [ Canvas.toHtml ( constarea.width, constarea.height ) [ style "border" "10px solid black" ] (canvas model constarea) ]
+    div (id "app" :: Styles.appContainer)
+        [ div []
+            [ div [] [ text (String.fromFloat model.delta) ]
+            , div [] [ text (Debug.toString { model | delta = 0 }) ]
+            ]
+        , div Styles.canvasContainerStyles
+            [ div
+                (onMouseEnter Messages.EnterCanvas :: id "canvasContainer" :: Styles.canvasStyles)
+                [ Canvas.toHtml
+                    ( Area.area.width, Area.area.height )
+                    []
+                    (canvas model Area.area)
+                ]
+            ]
         ]
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
+update msg =
     case msg of
         Tick delta ->
-            ( { model | delta = delta }, Cmd.none )
+            Tick.update delta
+
+        Key key ->
+            Key.update key
+
+        Click point ->
+            Click.update point
+
+        Canvas maybe ->
+            Canvas.update maybe
+
+        EnterCanvas ->
+            EnterCanvas.update
+
+        Event event ->
+            Event.update event
 
 
 subscriptions : Model -> Sub Msg
-subscriptions _ =
-    onAnimationFrameDelta Tick
+subscriptions model =
+    let
+        alwaysSubscribed =
+            [ onAnimationFrameDelta Tick
+            , onKeyDown Decoder.keyDecoder
+            , onClick Decoder.clickDecoder
+            , Ports.onEventMessage
+            ]
+    in
+    Sub.batch
+        (case model.placingTower of
+            Just tower ->
+                onMouseMove Decoder.mouseMoveDecoder :: alwaysSubscribed
+
+            Nothing ->
+                alwaysSubscribed
+        )
 
 
 main : Program Flags Model Msg
 main =
     Browser.element
-        { init = init
+        { init = Model.init
         , view = view
         , update = update
         , subscriptions = subscriptions

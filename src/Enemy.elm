@@ -9,6 +9,7 @@ type alias Enemy =
     , speed : Int
     , worth : Int
     , damage : Int
+    , distance : Int
     }
 
 
@@ -20,4 +21,4 @@ toEnemy : Enemies -> Enemy
 toEnemy enemies =
     case enemies of
         Soldat ->
-            Enemy (Point 1 2) 2 3 4 5
+            Enemy (Point 1 2) 2 3 4 5 0

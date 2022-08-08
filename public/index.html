@@ -5,6 +5,10 @@
 	<meta charset="UTF-8">
 	<title>Main</title>
 	<style>
+		* {
+			box-sizing: border-box;
+		}
+
 		body {
 			padding: 0;
 			margin: 0;
@@ -12,7 +16,6 @@
 			min-width: 100vw;
 			display: flex;
 			flex-direction: column;
-			justify-content: center;
 			align-items: center;
 		}
 	</style>
@@ -28,6 +31,40 @@
 				node: document.getElementById("elm"),
 				flags: { "msg": "Hello World!!!" }
 			});
+
+			app.ports.sendEventMessage.subscribe((e) => {
+				if (e.event === "changeFullScreen") {
+					if (e.message === "open") {
+						var element = document.getElementById("app");
+						if (element.requestFullscreen) {
+							element.requestFullscreen();
+						} else if (element.webkitRequestFullscreen) {
+							element.webkitRequestFullscreen();
+						} else if (element.mozRequestFullScreen) {
+							element.mozRequestFullScreen();
+						} else if (element.msRequestFullscreen) {
+							element.msRequestFullscreen();
+						}
+					} else if (e.message === "close") {
+						if (document.exitFullscreen) {
+							document.exitFullscreen();
+						} else if (document.webkitExitFullscreen) {
+							document.webkitExitFullscreen();
+						} else if (element.mozRequestFullScreen) {
+							element.mozExitFullscreen();
+						} else if (document.msExitFullscreen) {
+							document.msExitFullscreen();
+						}
+					}
+				}
+			})
+
+			document.addEventListener("fullscreenchange", (e) => {
+				app.ports.eventMessageReceiver.send({
+					event: "fullScreenChanged",
+					message: document.fullscreenElement ? "opened" : "closed"
+				})
+			})
 		}
 		catch (e) {
 			// display initialization errors (e.g. bad flags, infinite recursion)
