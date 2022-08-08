@@ -37,7 +37,7 @@ pathToCanvas path =
 canvas : Model -> Area -> List Renderable
 canvas model area =
     [ shapes [ fill Color.white ] [ rect ( 0, 0 ) (toFloat area.width) (toFloat area.height) ]
-    , pathToCanvas testPath
+    , pathToCanvas model.path
     ]
 
 

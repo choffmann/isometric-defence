@@ -1,7 +1,9 @@
 module Update.Tick exposing (update)
 
+import Area exposing (Field)
 import Enemy exposing (Enemy)
 import Model exposing (GameState(..), Model)
+import Path exposing (Path, distanceToPathPoint)
 import Point exposing (Point)
 import Tower exposing (Tower)
 
@@ -51,18 +53,9 @@ killEnemies =
     List.filter (\enemy -> enemy.hp > 0)
 
 
-inRange : Point -> Int -> Point -> Bool
+inRange : Point -> Int -> Field -> Bool
 inRange poin1 radius point2 =
     True
-
-
-type alias Path =
-    List Point
-
-
-getPosition : Path -> Int -> Point
-getPosition path distance =
-    Point 0 0
 
 
 moveEnemies : Path -> List Enemy -> List Enemy
@@ -71,7 +64,7 @@ moveEnemies path =
         (\enemy ->
             { enemy
                 | distance = enemy.distance + enemy.speed
-                , position = getPosition path (enemy.distance + enemy.speed)
+                , position = distanceToPathPoint path (enemy.distance + enemy.speed)
             }
         )
 
@@ -98,7 +91,7 @@ tick model delta =
     in
     case damage model.towers model.enemies of
         ( towers, enemies ) ->
-            case enemies |> moveEnemies [ Point 0 0 ] of
+            case enemies |> moveEnemies model.path of
                 newEnemies ->
                     { model
                         | towers = cooldownTowers delta towers

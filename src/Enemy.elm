@@ -1,10 +1,11 @@
 module Enemy exposing (Enemies(..), Enemy, toEnemy)
 
+import Area exposing (Field(..))
 import Point exposing (Point)
 
 
 type alias Enemy =
-    { position : Point
+    { position : Field
     , hp : Int
     , speed : Int
     , worth : Int
@@ -21,4 +22,4 @@ toEnemy : Enemies -> Enemy
 toEnemy enemies =
     case enemies of
         Soldat ->
-            Enemy (Point 1 2) 2 3 4 5 0
+            Enemy (Field (Point 1 2)) 2 3 4 5 0
