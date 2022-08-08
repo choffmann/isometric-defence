@@ -6,14 +6,14 @@ import Browser.Events exposing (onAnimationFrameDelta, onClick, onKeyDown, onMou
 import Canvas exposing (Renderable, Shape, rect, shapes)
 import Canvas.Settings exposing (fill)
 import Color
-import Enemy exposing (Enemies(..))
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (id)
 import Html.Events exposing (onMouseEnter)
 import Messages exposing (Key(..), Msg(..))
 import Model exposing (Flags, GameState(..), Model)
+import Path exposing (Path, pathSize, testPath)
+import Point exposing (Point)
 import Styles
-import Tower exposing (Towers(..))
 import Update.Canvas as Canvas
 import Update.Click as Click
 import Update.EnterCanvas as EnterCanvas
