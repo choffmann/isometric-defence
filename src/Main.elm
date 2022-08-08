@@ -98,7 +98,7 @@ update msg =
         Event event ->
             Event.update event
 
-        GeneratePath ->
+        Messages.GeneratePath ->
             GeneratePath.update
 
         PathDirectionGenerate direction ->

@@ -11,13 +11,13 @@ createNeighbourPoint : Point -> PathDirection -> Path
 createNeighbourPoint point direction =
     case direction of
         Up ->
-            [ PathPoint point, PathPoint (Point point.x (point.y + 1)) ]
+            [ PathPoint point direction, PathPoint (Point point.x (point.y + 1)) direction ]
 
         Down ->
-            [ PathPoint point, PathPoint (Point point.x (point.y - 1)) ]
+            [ PathPoint point direction, PathPoint (Point point.x (point.y - 1)) direction ]
 
         Right ->
-            [ PathPoint point, PathPoint (Point (point.x + 1) point.y) ]
+            [ PathPoint point direction, PathPoint (Point (point.x + 1) point.y) direction ]
 
 
 setPoint : PathPoint -> Path

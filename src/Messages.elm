@@ -30,4 +30,4 @@ type Msg
     | Event ReceivingEvents
     | GeneratePath
     | PathDirectionGenerate PathDirection
-    | PathPointGenerate PathPoint
+    | PathPointGenerate Point

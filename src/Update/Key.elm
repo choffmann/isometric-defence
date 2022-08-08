@@ -22,6 +22,9 @@ update key model =
 
                 Lost ->
                     model
+
+                GeneratePath ->
+                    model
             , Cmd.none
             )
 

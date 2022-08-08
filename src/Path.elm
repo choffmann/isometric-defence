@@ -1,6 +1,6 @@
 module Path exposing (..)
 
-import Area exposing (Field(..), fieldSize)
+import Area exposing (Field(..), area, fieldSize)
 import Pixel exposing (Pixel(..))
 import Point exposing (Point)
 import Random
@@ -20,14 +20,17 @@ type PathDirection
     | Right
 
 
-pointGenerator : Random.Generator PathPoint
+pointGenerator : Random.Generator Point
 pointGenerator =
-    Random.map (\n -> PathPoint (Point 0 n)) (Random.int 0 area.height)
+    Random.map (Point 0) (Random.int 0 area.height)
 
 
 directionGenerator : List PathDirection -> Random.Generator PathDirection
 directionGenerator list =
     case list of
+        [] ->
+            Debug.todo "Handle empty List"
+
         x :: xs ->
             Random.uniform x xs
 
