@@ -1,7 +1,8 @@
 module Path exposing (..)
 
-import Area exposing (fieldSize)
+import Area exposing (area, fieldSize)
 import Point exposing (Point)
+import Random
 
 
 type alias PathPoint =
@@ -12,26 +13,33 @@ type alias Path =
     List PathPoint
 
 
+type PathDirection
+    = Up
+    | Down
+    | Right
 
-{- Test Pfad generierung
 
-   type PathDirection
-         = Up
-         | Down
-         | Right
+pointGenerator : Random.Generator Point
+pointGenerator =
+    Random.map (Point 0) (Random.int 0 area.height)
 
-      setPathPoint : Point -> PathDirection -> Path
-        setPathPoint point direction =
-            case direction of
-                Up ->
-                    [ PathPoint point, PathPoint (Point point.x (point.y + 1)) ]
 
-                Down ->
-                    [ PathPoint point, PathPoint (Point point.x (point.y - 1)) ]
+directionGenerator : Random.Generator PathDirection
+directionGenerator =
+    Random.uniform Up [ Down, Right ]
 
-                Right ->
-                    [ PathPoint point, PathPoint (Point (point.x + 1) point.y) ]
--}
+
+setPathPoint : Point -> PathDirection -> Path
+setPathPoint point direction =
+    case direction of
+        Up ->
+            [ PathPoint point, PathPoint (Point point.x (point.y + 1)) ]
+
+        Down ->
+            [ PathPoint point, PathPoint (Point point.x (point.y - 1)) ]
+
+        Right ->
+            [ PathPoint point, PathPoint (Point (point.x + 1) point.y) ]
 
 
 testPath : Path
