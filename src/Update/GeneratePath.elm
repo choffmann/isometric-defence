@@ -79,60 +79,67 @@ checkDirection path =
             let
                 checkDirectionUp : Point -> Bool
                 checkDirectionUp newPoint =
-                    any
-                        (\e ->
-                            e.point.y
-                                == newPoint.y
-                                - 1
-                                || newPoint.y
-                                - 1
-                                < 0
-                        )
-                        justPath
+                    any (\e -> e.point.y == newPoint.y - 1) justPath
 
                 checkDirectionDown : Point -> Bool
                 checkDirectionDown newPoint =
-                    any
-                        (\e ->
-                            e.point.y
-                                == newPoint.y
-                                + 1
-                                || newPoint.y
-                                + 1
-                                >= (area.height // fieldSize)
-                                - 1
-                        )
-                        justPath
+                    any (\e -> e.point.y == newPoint.y + 1) justPath
 
                 checkDirectionRight : Point -> Bool
                 checkDirectionRight newPoint =
-                    any
-                        (\e ->
-                            e.point.y == newPoint.y + 1
-                        )
-                        justPath
+                    any (\e -> e.point.y == newPoint.y + 1) justPath
+
+                checkOutOfBoundsUp : Point -> Bool
+                checkOutOfBoundsUp newPoint =
+                    newPoint.y - 4 <= 0
+
+                checkOutOfBoundsDown : Point -> Bool
+                checkOutOfBoundsDown newPoint =
+                    newPoint.y + 4 >= ((area.height // fieldSize) - 1)
             in
             -- TODO: Optimieren
-            if checkDirectionUp (last justPath).point && checkDirectionDown (last justPath).point && checkDirectionRight (last justPath).point then
+            if
+                (checkDirectionUp (last justPath).point || checkOutOfBoundsUp (last justPath).point)
+                    && (checkDirectionDown (last justPath).point || checkOutOfBoundsDown (last justPath).point)
+                    && not (checkDirectionRight (last justPath).point)
+            then
                 singleton Right
-                -- Wird hoffentlich niemals passieren... Note: Tut es aber...
 
-            else if checkDirectionUp (last justPath).point && checkDirectionDown (last justPath).point then
-                singleton Right
-
-            else if checkDirectionDown (last justPath).point && checkDirectionRight (last justPath).point then
-                singleton Up
-
-            else if checkDirectionUp (last justPath).point && checkDirectionRight (last justPath).point then
+            else if
+                (checkDirectionUp (last justPath).point || checkOutOfBoundsUp (last justPath).point)
+                    && checkDirectionRight (last justPath).point
+                    && not (checkOutOfBoundsDown (last justPath).point)
+                    && not (checkDirectionDown (last justPath).point)
+            then
                 singleton Down
 
-            else if checkDirectionRight (last justPath).point then
+            else if
+                (checkDirectionDown (last justPath).point || checkOutOfBoundsDown (last justPath).point)
+                    && checkDirectionRight (last justPath).point
+                    && not (checkOutOfBoundsUp (last justPath).point)
+                    && not (checkDirectionUp (last justPath).point)
+            then
+                singleton Up
+
+            else if
+                checkDirectionRight (last justPath).point
+                    && not (checkOutOfBoundsDown (last justPath).point)
+                    && not (checkOutOfBoundsUp (last justPath).point)
+                    && not (checkDirectionDown (last justPath).point)
+                    && not (checkDirectionUp (last justPath).point)
+            then
                 cons Up (singleton Down)
 
-            else if checkDirectionUp (last justPath).point then
+            else if
+                (checkDirectionUp (last justPath).point || checkOutOfBoundsUp (last justPath).point)
+                    && not (checkOutOfBoundsDown (last justPath).point)
+            then
                 cons Right (singleton Down)
 
-            else if checkDirectionDown (last justPath).point then
+            else if
+                (checkDirectionDown (last justPath).point || checkOutOfBoundsDown (last justPath).point)
+                    && not (checkOutOfBoundsUp (last justPath).point)
+            then
                 cons Up (singleton Right)
 
             else
@@ -176,7 +183,3 @@ update model =
 
                     else
                         ( model, Cmd.none )
-
-
-
---( model, Random.generate PathDirectionGenerate (directionGenerator (checkDirection model.path)) )
