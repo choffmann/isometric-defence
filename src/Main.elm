@@ -3,17 +3,17 @@ module Main exposing (main)
 import Area exposing (Area)
 import Browser
 import Browser.Events exposing (onAnimationFrameDelta, onClick, onKeyDown, onMouseMove)
-import Canvas exposing (Renderable, rect, shapes)
+import Canvas exposing (Renderable, Shape, rect, shapes)
 import Canvas.Settings exposing (fill)
 import Color
-import Enemy exposing (Enemies(..))
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (id)
 import Html.Events exposing (onMouseEnter)
 import Messages exposing (Key(..), Msg(..))
 import Model exposing (Flags, GameState(..), Model)
+import Path exposing (Path, pathSize, testPath)
+import Point exposing (Point)
 import Styles
-import Tower exposing (Towers(..))
 import Update.Canvas as Canvas
 import Update.Click as Click
 import Update.EnterCanvas as EnterCanvas
@@ -24,10 +24,20 @@ import Utils.Decoder as Decoder
 import Utils.Ports as Ports
 
 
+pointToCanvas : Point -> Shape
+pointToCanvas point =
+    rect ( toFloat (point.x * pathSize), toFloat (point.y * pathSize) ) (toFloat pathSize) (toFloat pathSize)
+
+
+pathToCanvas : Path -> Renderable
+pathToCanvas path =
+    shapes [ fill (Color.rgb255 255 50 50) ] (List.map (\pathPoint -> pointToCanvas pathPoint.point) path)
+
+
 canvas : Model -> Area -> List Renderable
 canvas model area =
-    [ shapes [ fill Color.white ] [ rect ( 0, 0 ) (toFloat area.width) (toFloat area.width) ]
-    , shapes [ fill (Color.rgba 255 0 0 1) ] [ rect ( 0, 0 ) 100 50 ]
+    [ shapes [ fill Color.white ] [ rect ( 0, 0 ) (toFloat area.width) (toFloat area.height) ]
+    , pathToCanvas testPath
     ]
 
 
