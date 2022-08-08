@@ -1,5 +1,8 @@
 module Area exposing (Area, area, fieldSize)
 
+import Pixel exposing (Pixel(..))
+import Point exposing (Point)
+
 
 fieldSize : Int
 fieldSize =
@@ -15,3 +18,12 @@ type alias Area =
 area : Area
 area =
     Area (25 * fieldSize) (25 * fieldSize)
+
+
+type Field
+    = Field Point
+
+
+pixelToField : Pixel -> Field
+pixelToField (Pixel { x, y }) =
+    Field { x = x // fieldSize, y = y // fieldSize }

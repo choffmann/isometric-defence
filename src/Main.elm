@@ -88,7 +88,7 @@ subscriptions model =
         alwaysSubscribed =
             [ onAnimationFrameDelta Tick
             , onKeyDown Decoder.keyDecoder
-            , onClick Decoder.clickDecoder
+            , onClick (Decoder.clickDecoder model)
             , Ports.onEventMessage
             ]
     in
