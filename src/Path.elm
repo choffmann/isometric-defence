@@ -44,12 +44,12 @@ type alias Path =
 testPath : Path
 testPath =
     [ PathPoint (Point 0 1) Right
-    , PathPoint (Point 1 1) Down
+    , PathPoint (Point 1 1) Right
     , PathPoint (Point 1 2) Down
     , PathPoint (Point 1 3) Down
     , PathPoint (Point 1 4) Down
     , PathPoint (Point 1 5) Down
-    , PathPoint (Point 1 6) Right
+    , PathPoint (Point 1 6) Down
     , PathPoint (Point 2 6) Right
     , PathPoint (Point 3 6) Right
     , PathPoint (Point 4 6) Right
@@ -58,7 +58,7 @@ testPath =
     , PathPoint (Point 7 6) Down
     , PathPoint (Point 7 7) Down
     , PathPoint (Point 7 8) Down
-    , PathPoint (Point 7 9) Right
+    , PathPoint (Point 7 9) Down
     , PathPoint (Point 8 9) Right
     , PathPoint (Point 9 9) Right
     ]
