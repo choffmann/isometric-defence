@@ -27,6 +27,18 @@ keyDecoder =
                 "f" ->
                     F
 
+                "r" ->
+                    R
+
+                "R" ->
+                    R
+
+                "ArrowUp" ->
+                    ArrowUp
+
+                "ArrowDown" ->
+                    ArrowDown
+
                 _ ->
                     UnknownKey
     in
@@ -39,18 +51,17 @@ clickDecoder : Model -> Decoder Msg
 clickDecoder model =
     let
         clearToCanvas point =
-            case model.canvas of
-                Nothing ->
-                    Nothing
+            model.canvas
+                |> Maybe.andThen
+                    (\canvas ->
+                        case ( point.x - round canvas.element.x, point.y - round canvas.element.y ) of
+                            ( newX, newY ) ->
+                                if newX > area.width || newX < 0 || newY > area.height || newY < 0 then
+                                    Nothing
 
-                Just canvas ->
-                    case ( point.x - round canvas.element.x, point.y - round canvas.element.y ) of
-                        ( newX, newY ) ->
-                            if newX > area.width || newX < 0 || newY > area.height || newY < 0 then
-                                Nothing
-
-                            else
-                                Just { x = newX, y = newY }
+                                else
+                                    Just { x = newX, y = newY }
+                    )
     in
     Decode.succeed Point
         |> apply (Decode.field "pageX" Decode.int)

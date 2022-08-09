@@ -1,6 +1,6 @@
 module Update.Tick exposing (update)
 
-import Area exposing (Field)
+import Area exposing (Field(..))
 import Enemy exposing (Enemy)
 import Model exposing (GameState(..), Model)
 import Path exposing (Path, distanceToPathPoint)
@@ -53,25 +53,36 @@ killEnemies =
     List.filter (\enemy -> enemy.hp > 0)
 
 
-inRange : Point -> Int -> Field -> Bool
-inRange poin1 radius point2 =
-    True
+inRange : Point -> Float -> Field -> Bool
+inRange point1 radius (Field point2) =
+    let
+        pointToQuadrat first second =
+            abs (first - second)
+                ^ 2
+                |> toFloat
+    in
+    sqrt (pointToQuadrat point1.x point2.x + pointToQuadrat point1.y point2.y)
+        |> (>) radius
 
 
-moveEnemies : Path -> List Enemy -> List Enemy
-moveEnemies path =
+moveEnemies : Float -> Float -> Path -> List Enemy -> List Enemy
+moveEnemies globalSpeedMulti delta path =
+    let
+        moveAmount distance speed =
+            distance + (speed * 0.025 * delta * globalSpeedMulti)
+    in
     List.map
         (\enemy ->
             { enemy
-                | distance = enemy.distance + enemy.speed
-                , position = Debug.log "Position" (distanceToPathPoint path (enemy.distance + enemy.speed))
+                | distance = moveAmount enemy.distance enemy.speed
+                , position = moveAmount enemy.distance enemy.speed |> distanceToPathPoint path
             }
         )
 
 
-cooldownTowers : Float -> List Tower -> List Tower
-cooldownTowers delta =
-    List.map (\tower -> { tower | lastShot = tower.lastShot + delta })
+cooldownTowers : Float -> Float -> List Tower -> List Tower
+cooldownTowers globalSpeedMulti delta =
+    List.map (\tower -> { tower | lastShot = tower.lastShot + delta * globalSpeedMulti * 0.5 })
 
 
 tick : Model -> Float -> Model
@@ -91,10 +102,10 @@ tick model delta =
     in
     case damage model.towers model.enemies of
         ( towers, enemies ) ->
-            case enemies |> moveEnemies model.path of
+            case enemies |> moveEnemies model.speedMulti delta model.path of
                 newEnemies ->
                     { model
-                        | towers = cooldownTowers delta towers
+                        | towers = cooldownTowers model.speedMulti delta towers
                         , enemies = killEnemies newEnemies
                         , money = model.money + moneyfromKilledEnemies newEnemies
                         , delta = delta

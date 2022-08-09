@@ -8,6 +8,9 @@ import Point exposing (Point)
 type Key
     = Space
     | F
+    | R
+    | ArrowDown
+    | ArrowUp
     | UnknownKey
 
 
