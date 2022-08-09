@@ -27,6 +27,18 @@ keyDecoder =
                 "f" ->
                     F
 
+                "r" ->
+                    R
+
+                "R" ->
+                    R
+
+                "ArrowUp" ->
+                    ArrowUp
+
+                "ArrowDown" ->
+                    ArrowDown
+
                 _ ->
                     UnknownKey
     in

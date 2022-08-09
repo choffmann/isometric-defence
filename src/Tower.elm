@@ -11,9 +11,9 @@ type alias Tower =
     { position : Point
     , price : Int
     , damage : Int
-    , attackRadius : Int
-    , attackSpeed : Float
-    , lastShot : Float
+    , attackRadius : Float
+    , attackSpeed : Int
+    , lastShot : Int
     }
 
 
@@ -21,4 +21,4 @@ toTower : Towers -> Tower
 toTower towers =
     case towers of
         Basic ->
-            Tower (Point 0 0) 100 10 20 10000 100
+            Tower (Point 2 3) 100 10 3 100 100

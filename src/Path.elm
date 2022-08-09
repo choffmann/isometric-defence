@@ -44,12 +44,12 @@ type alias Path =
 testPath : Path
 testPath =
     [ PathPoint (Point 0 1) Right
-    , PathPoint (Point 1 1) Right
+    , PathPoint (Point 1 1) Down
     , PathPoint (Point 1 2) Down
     , PathPoint (Point 1 3) Down
     , PathPoint (Point 1 4) Down
     , PathPoint (Point 1 5) Down
-    , PathPoint (Point 1 6) Down
+    , PathPoint (Point 1 6) Right
     , PathPoint (Point 2 6) Right
     , PathPoint (Point 3 6) Right
     , PathPoint (Point 4 6) Right
@@ -58,7 +58,7 @@ testPath =
     , PathPoint (Point 7 6) Down
     , PathPoint (Point 7 7) Down
     , PathPoint (Point 7 8) Down
-    , PathPoint (Point 7 9) Down
+    , PathPoint (Point 7 9) Right
     , PathPoint (Point 8 9) Right
     , PathPoint (Point 9 9) Right
     ]
@@ -69,33 +69,55 @@ pathLength path =
     List.length path * fieldSize
 
 
-distanceToPathPoint : Path -> Int -> Field
+distanceToPathPoint : Path -> Float -> Field
 distanceToPathPoint path distance =
-    case List.drop (distance // fieldSize) path |> List.head of
-        Nothing ->
-            Field { x = 0, y = 0 }
+    if distance < 0 then
+        Field { x = -9999, y = -9999 }
 
-        Just { point } ->
-            Field point
+    else
+        case List.drop (round (distance / toFloat fieldSize)) path |> List.head of
+            Nothing ->
+                Field { x = 9999, y = 9999 }
+
+            Just { point } ->
+                Field point
 
 
-distanceToPixel : Path -> Int -> Pixel
+distanceToPixel : Path -> Float -> Maybe Pixel
 distanceToPixel path distance =
     let
         getListPoint indexRatio =
-            case List.drop (ceiling indexRatio) path |> List.head of
+            case List.drop (floor indexRatio) path |> List.head of
                 Nothing ->
-                    Pixel { x = 0, y = 0 }
+                    Nothing
 
                 Just { point, direction } ->
-                    case direction of
-                        Right ->
-                            Pixel { x = point.x * fieldSize + ceiling ((indexRatio - toFloat (ceiling indexRatio)) * toFloat fieldSize), y = point.y * fieldSize + ceiling (toFloat fieldSize * 0.5) }
+                    let
+                        generateValue main second op =
+                            ( floor (toFloat fieldSize * 0.5) + floor ((indexRatio - toFloat (floor indexRatio)) * toFloat fieldSize) |> op (main * fieldSize)
+                            , second * fieldSize + floor (toFloat fieldSize * 0.5)
+                            )
+                    in
+                    Just
+                        (case direction of
+                            Right ->
+                                case generateValue point.x point.y (+) of
+                                    ( newX, newY ) ->
+                                        Pixel { x = newX, y = newY }
 
-                        Down ->
-                            Pixel { x = point.x * fieldSize + ceiling (toFloat fieldSize * 0.5), y = point.y * fieldSize + ceiling ((indexRatio - toFloat (ceiling indexRatio)) * toFloat fieldSize) }
+                            Down ->
+                                case generateValue point.y point.x (+) of
+                                    ( newY, newX ) ->
+                                        Pixel { x = newX, y = newY }
 
-                        Up ->
-                            Pixel { x = point.x * fieldSize + ceiling (toFloat fieldSize * 0.5), y = point.y * fieldSize - ceiling ((indexRatio - toFloat (ceiling indexRatio)) * toFloat fieldSize) }
+                            Up ->
+                                case generateValue point.y point.x (-) of
+                                    ( newY, newX ) ->
+                                        Pixel { x = newX, y = newY }
+                        )
     in
-    getListPoint (toFloat distance / toFloat fieldSize)
+    if distance < 0 then
+        Nothing
+
+    else
+        getListPoint (distance / toFloat fieldSize)
