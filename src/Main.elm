@@ -44,13 +44,11 @@ enemiesToCanvas enemies path =
     enemies
         |> List.map
             (\enemy ->
-                case distanceToPixel path enemy.distance of
-                    Nothing ->
-                        Nothing
-
-                    Just (Pixel point) ->
-                        rect ( toFloat point.x - 10, toFloat point.y - 10 ) 20 20
-                            |> Just
+                distanceToPixel path enemy.distance
+                    |> Maybe.map
+                        (\(Pixel point) ->
+                            rect ( toFloat point.x - 10, toFloat point.y - 10 ) 20 20
+                        )
             )
         |> List.removeNothing
         |> shapes [ fill (Color.rgb255 50 255 50) ]

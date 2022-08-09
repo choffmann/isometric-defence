@@ -87,34 +87,32 @@ distanceToPixel : Path -> Float -> Maybe Pixel
 distanceToPixel path distance =
     let
         getListPoint indexRatio =
-            case List.drop (floor indexRatio) path |> List.head of
-                Nothing ->
-                    Nothing
-
-                Just { point, direction } ->
-                    let
-                        generateValue main second op =
-                            ( floor (toFloat fieldSize * 0.5) + floor ((indexRatio - toFloat (floor indexRatio)) * toFloat fieldSize) |> op (main * fieldSize)
-                            , second * fieldSize + floor (toFloat fieldSize * 0.5)
-                            )
-                    in
-                    Just
-                        (case direction of
+            List.drop (floor indexRatio) path
+                |> List.head
+                |> Maybe.map
+                    (\pathpoint ->
+                        let
+                            generateValue main second op =
+                                ( floor (toFloat fieldSize * 0.5) + floor ((indexRatio - toFloat (floor indexRatio)) * toFloat fieldSize) |> op (main * fieldSize)
+                                , second * fieldSize + floor (toFloat fieldSize * 0.5)
+                                )
+                        in
+                        case pathpoint.direction of
                             Right ->
-                                case generateValue point.x point.y (+) of
+                                case generateValue pathpoint.point.x pathpoint.point.y (+) of
                                     ( newX, newY ) ->
                                         Pixel { x = newX, y = newY }
 
                             Down ->
-                                case generateValue point.y point.x (+) of
+                                case generateValue pathpoint.point.y pathpoint.point.x (+) of
                                     ( newY, newX ) ->
                                         Pixel { x = newX, y = newY }
 
                             Up ->
-                                case generateValue point.y point.x (-) of
+                                case generateValue pathpoint.point.y pathpoint.point.x (-) of
                                     ( newY, newX ) ->
                                         Pixel { x = newX, y = newY }
-                        )
+                    )
     in
     if distance < 0 then
         Nothing
