@@ -12,8 +12,8 @@ type alias Tower =
     , price : Int
     , damage : Int
     , attackRadius : Float
-    , attackSpeed : Int
-    , lastShot : Int
+    , attackSpeed : Float
+    , lastShot : Float
     }
 
 

@@ -82,7 +82,7 @@ moveEnemies globalSpeedMulti delta path =
 
 cooldownTowers : Float -> Float -> List Tower -> List Tower
 cooldownTowers globalSpeedMulti delta =
-    List.map (\tower -> { tower | lastShot = floor (toFloat tower.lastShot + delta * globalSpeedMulti * 0.5) })
+    List.map (\tower -> { tower | lastShot = tower.lastShot + delta * globalSpeedMulti * 0.5 })
 
 
 tick : Model -> Float -> Model
