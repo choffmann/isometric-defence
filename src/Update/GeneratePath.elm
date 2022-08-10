@@ -91,59 +91,63 @@ checkDirection path =
 
                 checkOutOfBoundsUp : Point -> Bool
                 checkOutOfBoundsUp newPoint =
-                    newPoint.y - 4 <= 0
+                    newPoint.y - 2 <= 0
 
                 checkOutOfBoundsDown : Point -> Bool
                 checkOutOfBoundsDown newPoint =
-                    newPoint.y + 4 >= ((area.height // fieldSize) - 1)
+                    newPoint.y + 2 >= ((area.height // fieldSize) - 1)
             in
             -- TODO: Optimieren
             if
-                (checkDirectionUp (last justPath).point || checkOutOfBoundsUp (last justPath).point)
-                    && (checkDirectionDown (last justPath).point || checkOutOfBoundsDown (last justPath).point)
+                not (checkDirectionUp (last justPath).point)
+                    && not (checkOutOfBoundsUp (last justPath).point)
+                    && not (checkDirectionDown (last justPath).point)
+                    && not (checkOutOfBoundsDown (last justPath).point)
                     && not (checkDirectionRight (last justPath).point)
             then
-                singleton Right
+                cons Down (cons Up (singleton Right))
 
             else if
                 (checkDirectionUp (last justPath).point || checkOutOfBoundsUp (last justPath).point)
-                    && checkDirectionRight (last justPath).point
-                    && not (checkOutOfBoundsDown (last justPath).point)
                     && not (checkDirectionDown (last justPath).point)
+                    && not (checkOutOfBoundsDown (last justPath).point)
+                    && not (checkDirectionRight (last justPath).point)
             then
-                singleton Down
+                cons Down (singleton Right)
 
             else if
                 (checkDirectionDown (last justPath).point || checkOutOfBoundsDown (last justPath).point)
-                    && checkDirectionRight (last justPath).point
-                    && not (checkOutOfBoundsUp (last justPath).point)
                     && not (checkDirectionUp (last justPath).point)
-            then
-                singleton Up
-
-            else if
-                checkDirectionRight (last justPath).point
-                    && not (checkOutOfBoundsDown (last justPath).point)
                     && not (checkOutOfBoundsUp (last justPath).point)
-                    && not (checkDirectionDown (last justPath).point)
-                    && not (checkDirectionUp (last justPath).point)
-            then
-                cons Up (singleton Down)
-
-            else if
-                (checkDirectionUp (last justPath).point || checkOutOfBoundsUp (last justPath).point)
-                    && not (checkOutOfBoundsDown (last justPath).point)
-            then
-                cons Right (singleton Down)
-
-            else if
-                (checkDirectionDown (last justPath).point || checkOutOfBoundsDown (last justPath).point)
-                    && not (checkOutOfBoundsUp (last justPath).point)
+                    && not (checkDirectionRight (last justPath).point)
             then
                 cons Up (singleton Right)
+                {- else if
+                       (checkDirectionDown (last justPath).point || checkOutOfBoundsDown (last justPath).point)
+                           && (checkDirectionUp (last justPath).point || checkOutOfBoundsUp (last justPath).point)
+                           && not (checkDirectionRight (last justPath).point)
+                   then
+                       singleton Right
+
+                   else if
+                       (checkDirectionUp (last justPath).point || checkOutOfBoundsUp (last justPath).point)
+                           && checkDirectionRight (last justPath).point
+                           && not (checkOutOfBoundsDown (last justPath).point)
+                           && not (checkDirectionDown (last justPath).point)
+                   then
+                       singleton Down
+
+                   else if
+                       (checkDirectionDown (last justPath).point || checkOutOfBoundsDown (last justPath).point)
+                           && checkDirectionRight (last justPath).point
+                           && not (checkOutOfBoundsUp (last justPath).point)
+                           && not (checkDirectionUp (last justPath).point)
+                   then
+                       singleton Up
+                -}
 
             else
-                cons Down (cons Up (singleton Right))
+                singleton Right
 
 
 checkIsLastPoint : Maybe Path -> Bool
