@@ -1,6 +1,6 @@
 module Path exposing (Path, PathDirection(..), PathPoint, directionGenerator, distanceToPathPoint, distanceToPixel, pointGenerator)
 
-import Area exposing (Field(..), area, fieldSize)
+import Area exposing (Field(..))
 import List.Nonempty as Nonempty exposing (Nonempty)
 import Pixel exposing (Pixel(..))
 import Point exposing (Point)
@@ -23,7 +23,7 @@ type PathDirection
 
 pointGenerator : Random.Generator Point
 pointGenerator =
-    Random.map (Point 0) (Random.int 0 ((area.height // fieldSize) - 1))
+    Random.map (Point 0) (Random.int 0 ((Area.area.height // Area.fieldSize) - 1))
 
 
 directionGenerator : Nonempty PathDirection -> Random.Generator PathDirection
@@ -37,7 +37,7 @@ distanceToPathPoint path distance =
         Field { x = -9999, y = -9999 }
 
     else
-        case List.drop (round (distance / toFloat fieldSize)) (Nonempty.toList path) |> List.head of
+        case List.drop (round (distance / toFloat Area.fieldSize)) (Nonempty.toList path) |> List.head of
             Nothing ->
                 Field { x = 9999, y = 9999 }
 
@@ -55,8 +55,8 @@ distanceToPixel path distance =
                     (\pathPoint ->
                         let
                             generateValue main second op =
-                                ( floor (toFloat fieldSize * 0.5) + floor ((indexRatio - toFloat (floor indexRatio)) * toFloat fieldSize) |> op (main * fieldSize)
-                                , second * fieldSize + floor (toFloat fieldSize * 0.5)
+                                ( floor (toFloat Area.fieldSize * 0.5) + floor ((indexRatio - toFloat (floor indexRatio)) * toFloat Area.fieldSize) |> op (main * Area.fieldSize)
+                                , second * Area.fieldSize + floor (toFloat Area.fieldSize * 0.5)
                                 )
                         in
                         case pathPoint.direction of
@@ -80,4 +80,4 @@ distanceToPixel path distance =
         Nothing
 
     else
-        getListPoint (distance / toFloat fieldSize)
+        getListPoint (distance / toFloat Area.fieldSize)

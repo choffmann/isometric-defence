@@ -1,8 +1,8 @@
-module Update.GeneratePath exposing (checkDirection, checkIsLastPoint, createFirstRandomPoint, createNeighbor, createPoint, update)
+module Update.GeneratePath exposing (checkDirection, checkIsLastPoint, createFirstRandomPoint, createPoint, update)
 
 import Area
 import List.Nonempty as Nonempty exposing (Nonempty)
-import Messages exposing (Msg(..))
+import Messages
 import Model exposing (GameState(..), Model)
 import Path exposing (Path, PathDirection(..), PathPoint)
 import Point exposing (Point)
@@ -132,7 +132,7 @@ checkIsLastPoint path =
     (Nonempty.last path).point.x + 1 > ((Area.area.width // Area.fieldSize) - 1)
 
 
-update : Model -> ( Model, Cmd Msg )
+update : Model -> ( Model, Cmd Messages.Msg )
 update model =
     case model.gameState of
         Running ->

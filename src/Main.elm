@@ -1,6 +1,6 @@
 module Main exposing (main)
 
-import Area exposing (Area)
+import Area
 import Browser
 import Browser.Events
 import Canvas exposing (Renderable, Shape)
