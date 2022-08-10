@@ -10,6 +10,7 @@ import Enemy exposing (Enemy)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (id)
 import Html.Events exposing (onMouseEnter)
+import List.Extra as List
 import List.Nonempty exposing (cons, last, length, map, singleton, toList)
 import Messages exposing (Key(..), Msg(..))
 import Model exposing (Flags, GameState(..), Model)
@@ -19,6 +20,7 @@ import Point exposing (Point)
 import Random
 import Styles
 import Time
+import Tower exposing (Tower)
 import Update.Canvas as Canvas
 import Update.Click as Click
 import Update.EnterCanvas as EnterCanvas
@@ -30,9 +32,9 @@ import Utils.Decoder as Decoder
 import Utils.Ports as Ports
 
 
-pointToCanvas : Point -> Shape
-pointToCanvas point =
-    rect ( toFloat (point.x * fieldSize), toFloat (point.y * fieldSize) ) (toFloat fieldSize) (toFloat fieldSize)
+pointToCanvas : Point -> Float -> Float -> Shape
+pointToCanvas point width height =
+    rect ( toFloat (point.x * fieldSize), toFloat (point.y * fieldSize) ) width height
 
 
 pathToCanvas : Maybe Path -> Renderable
@@ -42,7 +44,7 @@ pathToCanvas path =
             shapes [] []
 
         Just justPath ->
-            shapes [ fill (Color.rgb255 255 50 50) ] (List.map (\pathPoint -> pointToCanvas pathPoint.point) (toList justPath))
+            shapes [ fill (Color.rgb255 255 50 50) ] (List.map (\pathPoint -> pointToCanvas pathPoint.point (toFloat fieldSize) (toFloat fieldSize)) (toList justPath))
 
 
 enemiesToCanvas : List Enemy -> Maybe Path -> Renderable
@@ -55,12 +57,24 @@ enemiesToCanvas enemies path =
             enemies
                 |> List.map
                     (\enemy ->
-                        --case Debug.log "Pixel" (distanceToPixel justPath enemy.distance) of
-                        case distanceToPixel justPath enemy.distance of
-                            Pixel point ->
-                                rect ( toFloat point.x - 10, toFloat point.y - 10 ) 20 20
+                        distanceToPixel justPath enemy.distance
+                            |> Maybe.map
+                                (\(Pixel point) ->
+                                    rect ( toFloat point.x - 10, toFloat point.y - 10 ) 20 20
+                                )
                     )
+                |> List.removeNothing
                 |> shapes [ fill (Color.rgb255 50 255 50) ]
+
+
+towersToCanvas : List Tower -> Renderable
+towersToCanvas towers =
+    towers
+        |> List.map
+            (\tower ->
+                pointToCanvas tower.position 20 20
+            )
+        |> shapes [ fill (Color.rgb255 50 50 255) ]
 
 
 canvas : Model -> Area -> List Renderable
@@ -68,6 +82,7 @@ canvas model area =
     [ shapes [ fill Color.white ] [ rect ( 0, 0 ) (toFloat area.width) (toFloat area.height) ]
     , pathToCanvas model.path
     , enemiesToCanvas model.enemies model.path
+    , towersToCanvas model.towers
     ]
 
 
@@ -140,16 +155,11 @@ update msg model =
             ( { model | path = Just (createFirstRandomPoint (PathPoint point Right)) }, Random.generate PathDirectionGenerate (directionGenerator (checkDirection model.path)) )
 
 
-
--- Time.every speed (\_ -> Tick)
--- onAnimationFrameDelta Tick
-
-
 subscriptions : Model -> Sub Msg
 subscriptions model =
     let
         alwaysSubscribed =
-            [ Time.every 100 (\_ -> Tick 100)
+            [ onAnimationFrameDelta Tick
             , onKeyDown Decoder.keyDecoder
             , onClick (Decoder.clickDecoder model)
             , Ports.onEventMessage

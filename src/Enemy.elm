@@ -7,10 +7,10 @@ import Point exposing (Point)
 type alias Enemy =
     { position : Field
     , hp : Int
-    , speed : Int
+    , speed : Float
     , worth : Int
     , damage : Int
-    , distance : Int
+    , distance : Float
     }
 
 
@@ -22,4 +22,4 @@ toEnemy : Enemies -> Enemy
 toEnemy enemies =
     case enemies of
         Soldat ->
-            Enemy (Field (Point 1 2)) 2 3 4 5 0
+            Enemy (Field (Point 1 2)) 100 3 4 5 -100
