@@ -1,7 +1,7 @@
-module Path exposing (..)
+module Path exposing (Path, PathDirection(..), PathPoint, directionGenerator, distanceToPathPoint, distanceToPixel, pointGenerator)
 
 import Area exposing (Field(..), area, fieldSize)
-import List.Nonempty exposing (Nonempty, fromList, head, tail, toList)
+import List.Nonempty as Nonempty exposing (Nonempty)
 import Pixel exposing (Pixel(..))
 import Point exposing (Point)
 import Random
@@ -28,36 +28,7 @@ pointGenerator =
 
 directionGenerator : Nonempty PathDirection -> Random.Generator PathDirection
 directionGenerator list =
-    Random.uniform (head list) (tail list)
-
-
-testPath : Maybe Path
-testPath =
-    fromList
-        [ PathPoint (Point 0 1) Right
-        , PathPoint (Point 1 1) Down
-        , PathPoint (Point 1 2) Down
-        , PathPoint (Point 1 3) Down
-        , PathPoint (Point 1 4) Down
-        , PathPoint (Point 1 5) Down
-        , PathPoint (Point 1 6) Right
-        , PathPoint (Point 2 6) Right
-        , PathPoint (Point 3 6) Right
-        , PathPoint (Point 4 6) Right
-        , PathPoint (Point 5 6) Right
-        , PathPoint (Point 6 6) Right
-        , PathPoint (Point 7 6) Down
-        , PathPoint (Point 7 7) Down
-        , PathPoint (Point 7 8) Down
-        , PathPoint (Point 7 9) Right
-        , PathPoint (Point 8 9) Right
-        , PathPoint (Point 9 9) Right
-        ]
-
-
-pathLength : Path -> Int
-pathLength path =
-    List.length (toList path) * fieldSize
+    Random.uniform (Nonempty.head list) (Nonempty.tail list)
 
 
 distanceToPathPoint : Path -> Float -> Field
@@ -66,7 +37,7 @@ distanceToPathPoint path distance =
         Field { x = -9999, y = -9999 }
 
     else
-        case List.drop (round (distance / toFloat fieldSize)) (toList path) |> List.head of
+        case List.drop (round (distance / toFloat fieldSize)) (Nonempty.toList path) |> List.head of
             Nothing ->
                 Field { x = 9999, y = 9999 }
 
@@ -78,29 +49,29 @@ distanceToPixel : Path -> Float -> Maybe Pixel
 distanceToPixel path distance =
     let
         getListPoint indexRatio =
-            List.drop (floor indexRatio) (toList path)
+            List.drop (floor indexRatio) (Nonempty.toList path)
                 |> List.head
                 |> Maybe.map
-                    (\pathpoint ->
+                    (\pathPoint ->
                         let
                             generateValue main second op =
                                 ( floor (toFloat fieldSize * 0.5) + floor ((indexRatio - toFloat (floor indexRatio)) * toFloat fieldSize) |> op (main * fieldSize)
                                 , second * fieldSize + floor (toFloat fieldSize * 0.5)
                                 )
                         in
-                        case pathpoint.direction of
+                        case pathPoint.direction of
                             Right ->
-                                case generateValue pathpoint.point.x pathpoint.point.y (+) of
+                                case generateValue pathPoint.point.x pathPoint.point.y (+) of
                                     ( newX, newY ) ->
                                         Pixel { x = newX, y = newY }
 
                             Down ->
-                                case generateValue pathpoint.point.y pathpoint.point.x (+) of
+                                case generateValue pathPoint.point.y pathPoint.point.x (+) of
                                     ( newY, newX ) ->
                                         Pixel { x = newX, y = newY }
 
                             Up ->
-                                case generateValue pathpoint.point.y pathpoint.point.x (-) of
+                                case generateValue pathPoint.point.y pathPoint.point.x (-) of
                                     ( newY, newX ) ->
                                         Pixel { x = newX, y = newY }
                     )

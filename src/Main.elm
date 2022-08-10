@@ -1,31 +1,30 @@
 module Main exposing (main)
 
-import Area exposing (Area, area, fieldSize)
+import Area exposing (Area)
 import Browser
-import Browser.Events exposing (onAnimationFrameDelta, onClick, onKeyDown, onMouseMove)
-import Canvas exposing (Renderable, Shape, rect, shapes)
-import Canvas.Settings exposing (fill)
+import Browser.Events
+import Canvas exposing (Renderable, Shape)
+import Canvas.Settings
 import Color
 import Enemy exposing (Enemy)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (id)
 import Html.Events exposing (onMouseEnter)
 import List.Extra as List
-import List.Nonempty exposing (cons, last, length, map, singleton, toList)
-import Messages exposing (Key(..), Msg(..))
+import List.Nonempty as Nonempty
+import Messages exposing (Msg(..))
 import Model exposing (Flags, GameState(..), Model)
-import Path exposing (Path, PathDirection(..), PathPoint, directionGenerator, distanceToPixel, testPath)
+import Path exposing (Path, PathDirection(..), PathPoint)
 import Pixel exposing (Pixel(..))
 import Point exposing (Point)
 import Random
 import Styles
-import Time
 import Tower exposing (Tower)
 import Update.Canvas as Canvas
 import Update.Click as Click
 import Update.EnterCanvas as EnterCanvas
 import Update.Event as Event
-import Update.GeneratePath as GeneratePath exposing (checkDirection, createFirstRandomPoint, createPoint)
+import Update.GeneratePath as GeneratePath
 import Update.Key as Key
 import Update.Tick as Tick
 import Utils.Decoder as Decoder
@@ -34,37 +33,37 @@ import Utils.Ports as Ports
 
 pointToCanvas : Point -> Float -> Float -> Shape
 pointToCanvas point width height =
-    rect ( toFloat (point.x * fieldSize), toFloat (point.y * fieldSize) ) width height
+    Canvas.rect ( toFloat (point.x * Area.fieldSize), toFloat (point.y * Area.fieldSize) ) width height
 
 
 pathToCanvas : Maybe Path -> Renderable
 pathToCanvas path =
     case path of
         Nothing ->
-            shapes [] []
+            Canvas.shapes [] []
 
         Just justPath ->
-            shapes [ fill (Color.rgb255 255 50 50) ] (List.map (\pathPoint -> pointToCanvas pathPoint.point (toFloat fieldSize) (toFloat fieldSize)) (toList justPath))
+            Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 255 50 50) ] (List.map (\pathPoint -> pointToCanvas pathPoint.point (toFloat Area.fieldSize) (toFloat Area.fieldSize)) (Nonempty.toList justPath))
 
 
 enemiesToCanvas : List Enemy -> Maybe Path -> Renderable
 enemiesToCanvas enemies path =
     case path of
         Nothing ->
-            shapes [] []
+            Canvas.shapes [] []
 
         Just justPath ->
             enemies
                 |> List.map
                     (\enemy ->
-                        distanceToPixel justPath enemy.distance
+                        Path.distanceToPixel justPath enemy.distance
                             |> Maybe.map
                                 (\(Pixel point) ->
-                                    rect ( toFloat point.x - 10, toFloat point.y - 10 ) 20 20
+                                    Canvas.rect ( toFloat point.x - 10, toFloat point.y - 10 ) 20 20
                                 )
                     )
                 |> List.removeNothing
-                |> shapes [ fill (Color.rgb255 50 255 50) ]
+                |> Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 50 255 50) ]
 
 
 towersToCanvas : List Tower -> Renderable
@@ -74,12 +73,12 @@ towersToCanvas towers =
             (\tower ->
                 pointToCanvas tower.position 20 20
             )
-        |> shapes [ fill (Color.rgb255 50 50 255) ]
+        |> Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 50 50 255) ]
 
 
-canvas : Model -> Area -> List Renderable
-canvas model area =
-    [ shapes [ fill Color.white ] [ rect ( 0, 0 ) (toFloat area.width) (toFloat area.height) ]
+canvas : Model -> List Renderable
+canvas model =
+    [ Canvas.shapes [ Canvas.Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
     , pathToCanvas model.path
     , enemiesToCanvas model.enemies model.path
     , towersToCanvas model.towers
@@ -91,6 +90,8 @@ view model =
     div (id "app" :: Styles.appContainer)
         [ div []
             [ div [] [ text (String.fromFloat model.delta) ]
+
+            -- TODO: Remove Debug.toString
             , div [] [ text (Debug.toString { model | delta = 0 }) ]
             ]
         , div Styles.canvasContainerStyles
@@ -99,7 +100,7 @@ view model =
                 [ Canvas.toHtml
                     ( Area.area.width, Area.area.height )
                     []
-                    (canvas model Area.area)
+                    (canvas model)
                 ]
             ]
         ]
@@ -137,38 +138,33 @@ update msg model =
                             ( model, Cmd.none )
 
                         Just path ->
-                            let
-                                checkIsEnd : Bool
-                                checkIsEnd =
-                                    (last path).point.x + 1 > ((area.width // fieldSize) - 1)
-                            in
-                            if checkIsEnd then
+                            if GeneratePath.checkIsLastPoint path then
                                 ( { model | gameState = Paused }, Cmd.none )
 
                             else
-                                ( { model | path = Just (createPoint model.path (last path) direction) }, Random.generate PathDirectionGenerate (directionGenerator (checkDirection model.path)) )
+                                ( { model | path = Just (GeneratePath.createPoint model.path (Nonempty.last path) direction) }, Random.generate PathDirectionGenerate (Path.directionGenerator (GeneratePath.checkDirection model.path)) )
 
                 _ ->
                     ( model, Cmd.none )
 
         PathPointGenerate point ->
-            ( { model | path = Just (createFirstRandomPoint (PathPoint point Right)) }, Random.generate PathDirectionGenerate (directionGenerator (checkDirection model.path)) )
+            ( { model | path = Just (GeneratePath.createFirstRandomPoint (PathPoint point Right)) }, Random.generate PathDirectionGenerate (Path.directionGenerator (GeneratePath.checkDirection model.path)) )
 
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
     let
         alwaysSubscribed =
-            [ onAnimationFrameDelta Tick
-            , onKeyDown Decoder.keyDecoder
-            , onClick (Decoder.clickDecoder model)
+            [ Browser.Events.onAnimationFrameDelta Tick
+            , Browser.Events.onKeyDown Decoder.keyDecoder
+            , Browser.Events.onClick (Decoder.clickDecoder model)
             , Ports.onEventMessage
             ]
     in
     Sub.batch
         (case model.placingTower of
-            Just tower ->
-                onMouseMove Decoder.mouseMoveDecoder :: alwaysSubscribed
+            Just _ ->
+                Browser.Events.onMouseMove Decoder.mouseMoveDecoder :: alwaysSubscribed
 
             Nothing ->
                 alwaysSubscribed

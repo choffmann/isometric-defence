@@ -1,25 +1,24 @@
-module Update.GeneratePath exposing (..)
+module Update.GeneratePath exposing (checkDirection, checkIsLastPoint, createFirstRandomPoint, createNeighbor, createPoint, update)
 
-import Area exposing (area, fieldSize)
-import List.Nonempty exposing (Nonempty, any, append, cons, fromList, last, length, reverse, singleton)
+import Area
+import List.Nonempty as Nonempty exposing (Nonempty)
 import Messages exposing (Msg(..))
 import Model exposing (GameState(..), Model)
-import Path exposing (Path, PathDirection(..), PathPoint, directionGenerator, pointGenerator)
+import Path exposing (Path, PathDirection(..), PathPoint)
 import Point exposing (Point)
-import Random
 
 
 createNeighbor : PathPoint -> Path
 createNeighbor point =
     case point.direction of
         Up ->
-            singleton (PathPoint (Point point.point.x (point.point.y - 1)) point.direction)
+            Nonempty.singleton (PathPoint (Point point.point.x (point.point.y - 1)) point.direction)
 
         Down ->
-            singleton (PathPoint (Point point.point.x (point.point.y + 1)) point.direction)
+            Nonempty.singleton (PathPoint (Point point.point.x (point.point.y + 1)) point.direction)
 
         Right ->
-            singleton (PathPoint (Point (point.point.x + 1) point.point.y) point.direction)
+            Nonempty.singleton (PathPoint (Point (point.point.x + 1) point.point.y) point.direction)
 
 
 createPoint : Maybe Path -> PathPoint -> PathDirection -> Path
@@ -36,10 +35,10 @@ createPoint path prevPoint direction =
                         newPoint =
                             Point prevPoint.point.x (prevPoint.point.y - 1)
                     in
-                    singleton (PathPoint newPoint direction)
-                        |> append (createNeighbor (PathPoint newPoint direction))
-                        |> reverse
-                        |> append justPath
+                    Nonempty.singleton (PathPoint newPoint direction)
+                        |> Nonempty.append (createNeighbor (PathPoint newPoint direction))
+                        |> Nonempty.reverse
+                        |> Nonempty.append justPath
 
                 Down ->
                     let
@@ -47,10 +46,10 @@ createPoint path prevPoint direction =
                         newPoint =
                             Point prevPoint.point.x (prevPoint.point.y + 1)
                     in
-                    singleton (PathPoint newPoint direction)
-                        |> append (createNeighbor (PathPoint newPoint direction))
-                        |> reverse
-                        |> append justPath
+                    Nonempty.singleton (PathPoint newPoint direction)
+                        |> Nonempty.append (createNeighbor (PathPoint newPoint direction))
+                        |> Nonempty.reverse
+                        |> Nonempty.append justPath
 
                 Right ->
                     let
@@ -58,36 +57,36 @@ createPoint path prevPoint direction =
                         newPoint =
                             Point (prevPoint.point.x + 1) prevPoint.point.y
                     in
-                    singleton (PathPoint newPoint direction)
-                        |> append (createNeighbor (PathPoint newPoint direction))
-                        |> reverse
-                        |> append justPath
+                    Nonempty.singleton (PathPoint newPoint direction)
+                        |> Nonempty.append (createNeighbor (PathPoint newPoint direction))
+                        |> Nonempty.reverse
+                        |> Nonempty.append justPath
 
 
 createFirstRandomPoint : PathPoint -> Path
 createFirstRandomPoint point =
-    cons point (createNeighbor point)
+    Nonempty.cons point (createNeighbor point)
 
 
 checkDirection : Maybe Path -> Nonempty PathDirection
 checkDirection path =
     case path of
         Nothing ->
-            cons Down (cons Up (singleton Right))
+            Nonempty.cons Down (Nonempty.cons Up (Nonempty.singleton Right))
 
         Just justPath ->
             let
                 checkDirectionUp : Point -> Bool
                 checkDirectionUp newPoint =
-                    any (\e -> e.point.y == newPoint.y - 1) justPath
+                    Nonempty.any (\e -> e.point.y == newPoint.y - 1) justPath
 
                 checkDirectionDown : Point -> Bool
                 checkDirectionDown newPoint =
-                    any (\e -> e.point.y == newPoint.y + 1) justPath
+                    Nonempty.any (\e -> e.point.y == newPoint.y + 1) justPath
 
                 checkDirectionRight : Point -> Bool
                 checkDirectionRight newPoint =
-                    any (\e -> e.point.y == newPoint.y + 1) justPath
+                    Nonempty.any (\e -> e.point.y == newPoint.y + 1) justPath
 
                 checkOutOfBoundsUp : Point -> Bool
                 checkOutOfBoundsUp newPoint =
@@ -95,70 +94,42 @@ checkDirection path =
 
                 checkOutOfBoundsDown : Point -> Bool
                 checkOutOfBoundsDown newPoint =
-                    newPoint.y + 2 >= ((area.height // fieldSize) - 1)
+                    newPoint.y + 2 >= ((Area.area.height // Area.fieldSize) - 1)
             in
             -- TODO: Optimieren
             if
-                not (checkDirectionUp (last justPath).point)
-                    && not (checkOutOfBoundsUp (last justPath).point)
-                    && not (checkDirectionDown (last justPath).point)
-                    && not (checkOutOfBoundsDown (last justPath).point)
-                    && not (checkDirectionRight (last justPath).point)
+                not (checkDirectionUp (Nonempty.last justPath).point)
+                    && not (checkOutOfBoundsUp (Nonempty.last justPath).point)
+                    && not (checkDirectionDown (Nonempty.last justPath).point)
+                    && not (checkOutOfBoundsDown (Nonempty.last justPath).point)
+                    && not (checkDirectionRight (Nonempty.last justPath).point)
             then
-                cons Down (cons Up (singleton Right))
+                Nonempty.cons Down (Nonempty.cons Up (Nonempty.singleton Right))
 
             else if
-                (checkDirectionUp (last justPath).point || checkOutOfBoundsUp (last justPath).point)
-                    && not (checkDirectionDown (last justPath).point)
-                    && not (checkOutOfBoundsDown (last justPath).point)
-                    && not (checkDirectionRight (last justPath).point)
+                (checkDirectionUp (Nonempty.last justPath).point || checkOutOfBoundsUp (Nonempty.last justPath).point)
+                    && not (checkDirectionDown (Nonempty.last justPath).point)
+                    && not (checkOutOfBoundsDown (Nonempty.last justPath).point)
+                    && not (checkDirectionRight (Nonempty.last justPath).point)
             then
-                cons Down (singleton Right)
+                Nonempty.cons Down (Nonempty.singleton Right)
 
             else if
-                (checkDirectionDown (last justPath).point || checkOutOfBoundsDown (last justPath).point)
-                    && not (checkDirectionUp (last justPath).point)
-                    && not (checkOutOfBoundsUp (last justPath).point)
-                    && not (checkDirectionRight (last justPath).point)
+                (checkDirectionDown (Nonempty.last justPath).point || checkOutOfBoundsDown (Nonempty.last justPath).point)
+                    && not (checkDirectionUp (Nonempty.last justPath).point)
+                    && not (checkOutOfBoundsUp (Nonempty.last justPath).point)
+                    && not (checkDirectionRight (Nonempty.last justPath).point)
             then
-                cons Up (singleton Right)
-                {- else if
-                       (checkDirectionDown (last justPath).point || checkOutOfBoundsDown (last justPath).point)
-                           && (checkDirectionUp (last justPath).point || checkOutOfBoundsUp (last justPath).point)
-                           && not (checkDirectionRight (last justPath).point)
-                   then
-                       singleton Right
-
-                   else if
-                       (checkDirectionUp (last justPath).point || checkOutOfBoundsUp (last justPath).point)
-                           && checkDirectionRight (last justPath).point
-                           && not (checkOutOfBoundsDown (last justPath).point)
-                           && not (checkDirectionDown (last justPath).point)
-                   then
-                       singleton Down
-
-                   else if
-                       (checkDirectionDown (last justPath).point || checkOutOfBoundsDown (last justPath).point)
-                           && checkDirectionRight (last justPath).point
-                           && not (checkOutOfBoundsUp (last justPath).point)
-                           && not (checkDirectionUp (last justPath).point)
-                   then
-                       singleton Up
-                -}
+                Nonempty.cons Up (Nonempty.singleton Right)
 
             else
-                singleton Right
+                Nonempty.singleton Right
 
 
-checkIsLastPoint : Maybe Path -> Bool
+checkIsLastPoint : Path -> Bool
 checkIsLastPoint path =
-    case path of
-        Nothing ->
-            Debug.todo ""
-
-        Just justPath ->
-            -- TODO: area.width maybe without multiply by fieldSize????
-            (last justPath).point.x <= (area.width // fieldSize)
+    -- TODO: area.width maybe without multiply by fieldSize????
+    (Nonempty.last path).point.x + 1 > ((Area.area.width // Area.fieldSize) - 1)
 
 
 update : Model -> ( Model, Cmd Msg )
@@ -182,7 +153,7 @@ update model =
                     ( model, Cmd.none )
 
                 Just path ->
-                    if length path > 10 then
+                    if Nonempty.length path > 10 then
                         ( { model | gameState = Paused }, Cmd.none )
 
                     else
