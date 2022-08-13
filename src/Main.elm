@@ -3,8 +3,9 @@ module Main exposing (main)
 import Area
 import Browser
 import Browser.Events
-import Canvas exposing (Renderable, Shape)
+import Canvas exposing (PathSegment, Renderable, Shape)
 import Canvas.Settings
+import Canvas.Settings.Line
 import Color
 import Enemy exposing (Enemy)
 import Html exposing (Html, div, text)
@@ -29,6 +30,38 @@ import Update.Key as Key
 import Update.Tick as Tick
 import Utils.Decoder as Decoder
 import Utils.Ports as Ports
+
+
+drawCanvasGrid : Renderable
+drawCanvasGrid =
+    let
+        drawLine : Float -> Float -> Float -> Float -> List PathSegment
+        drawLine fromX fromY toX toY =
+            [ Canvas.moveTo ( fromX, fromY ), Canvas.lineTo ( toX, toY ) ]
+
+        drawWidth : List PathSegment -> Int -> List PathSegment
+        drawWidth list index =
+            if index == Area.area.height then
+                list
+
+            else
+                drawLine (toFloat (index * Area.fieldSize)) 0 (toFloat (index * Area.fieldSize)) (toFloat Area.area.height)
+                    |> List.append (drawWidth list (index + 1))
+
+        drawHeight : List PathSegment -> Int -> List PathSegment
+        drawHeight list index =
+            if index == Area.area.width then
+                drawWidth list 0
+
+            else
+                drawLine 0 (toFloat (index * Area.fieldSize)) (toFloat Area.area.width) (toFloat (index * Area.fieldSize))
+                    |> List.append (drawHeight list (index + 1))
+
+        draw : List PathSegment
+        draw =
+            drawHeight [] 0
+    in
+    Canvas.shapes [ Canvas.Settings.Line.lineWidth 1, Canvas.Settings.Line.lineDash [ 4 ] ] [ Canvas.path ( 0, 0 ) draw ]
 
 
 pointToCanvas : Point -> Float -> Float -> Shape
@@ -79,6 +112,7 @@ towersToCanvas towers =
 canvas : Model -> List Renderable
 canvas model =
     [ Canvas.shapes [ Canvas.Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
+    , drawCanvasGrid
     , pathToCanvas model.path
     , enemiesToCanvas model.enemies model.path
     , towersToCanvas model.towers
