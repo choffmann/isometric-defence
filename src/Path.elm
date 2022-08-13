@@ -26,9 +26,15 @@ pointGenerator =
     Random.map (Point 0) (Random.int 0 ((Area.area.height // Area.fieldSize) - 1))
 
 
-directionGenerator : Nonempty PathDirection -> Random.Generator PathDirection
+directionGenerator : List PathDirection -> Random.Generator PathDirection
 directionGenerator list =
-    Random.uniform (Nonempty.head list) (Nonempty.tail list)
+    case list of
+        [] ->
+            -- TODO: Was wenn Liste leer? - Kann aber eigentlich nie sein
+            Random.uniform Right [ Up, Down ]
+
+        x :: xs ->
+            Random.uniform x xs
 
 
 distanceToPathPoint : Path -> Float -> Field

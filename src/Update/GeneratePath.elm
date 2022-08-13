@@ -2,10 +2,11 @@ module Update.GeneratePath exposing (checkDirection, checkIsLastPoint, createFir
 
 import Area
 import List.Nonempty as Nonempty exposing (Nonempty)
-import Messages
+import Messages exposing (Msg(..))
 import Model exposing (GameState(..), Model)
 import Path exposing (Path, PathDirection(..), PathPoint)
 import Point exposing (Point)
+import Random
 
 
 createNeighbor : PathPoint -> Path
@@ -68,62 +69,58 @@ createFirstRandomPoint point =
     Nonempty.cons point (createNeighbor point)
 
 
-checkDirection : Maybe Path -> Nonempty PathDirection
+checkDirection : Maybe Path -> List PathDirection
 checkDirection path =
     case path of
         Nothing ->
-            Nonempty.cons Down (Nonempty.cons Up (Nonempty.singleton Right))
+            [ Right, Up, Down ]
 
         Just justPath ->
             let
-                checkDirectionUp : Point -> Bool
-                checkDirectionUp newPoint =
-                    Nonempty.any (\e -> e.point.y == newPoint.y - 1) justPath
+                checkIsOnPathUp : Bool
+                checkIsOnPathUp =
+                    Nonempty.any (\e -> e.point.y /= (Nonempty.last justPath).point.y - 1) justPath
 
-                checkDirectionDown : Point -> Bool
-                checkDirectionDown newPoint =
-                    Nonempty.any (\e -> e.point.y == newPoint.y + 1) justPath
+                checkIsOnPathDown : Bool
+                checkIsOnPathDown =
+                    Nonempty.any (\e -> e.point.y /= (Nonempty.last justPath).point.y + 1) justPath
 
-                checkDirectionRight : Point -> Bool
-                checkDirectionRight newPoint =
-                    Nonempty.any (\e -> e.point.y == newPoint.y + 1) justPath
+                checkOutOfBoundsUp : Bool
+                checkOutOfBoundsUp =
+                    (Nonempty.last justPath).point.y - 3 >= 0
 
-                checkOutOfBoundsUp : Point -> Bool
-                checkOutOfBoundsUp newPoint =
-                    newPoint.y - 2 <= 0
-
-                checkOutOfBoundsDown : Point -> Bool
-                checkOutOfBoundsDown newPoint =
-                    newPoint.y + 2 >= ((Area.area.height // Area.fieldSize) - 1)
+                checkOutOfBoundsDown : Bool
+                checkOutOfBoundsDown =
+                    (Nonempty.last justPath).point.y + 3 <= ((Area.area.height // Area.fieldSize) - 1)
             in
-            -- TODO: Optimieren
             if
-                not (checkDirectionUp (Nonempty.last justPath).point)
-                    && not (checkOutOfBoundsUp (Nonempty.last justPath).point)
-                    && not (checkDirectionDown (Nonempty.last justPath).point)
-                    && not (checkOutOfBoundsDown (Nonempty.last justPath).point)
-                    && not (checkDirectionRight (Nonempty.last justPath).point)
+                -- Wenn alle abfragen erfolgreich, kann jede Richtung gewählt werden
+                checkIsOnPathUp
+                    && checkOutOfBoundsUp
+                    && checkIsOnPathDown
+                    && checkOutOfBoundsDown
             then
-                Nonempty.cons Down (Nonempty.cons Up (Nonempty.singleton Right))
+                [ Down, Up, Right ]
 
             else if
-                (checkDirectionUp (Nonempty.last justPath).point || checkOutOfBoundsUp (Nonempty.last justPath).point)
-                    && not (checkDirectionDown (Nonempty.last justPath).point)
-                    && not (checkOutOfBoundsDown (Nonempty.last justPath).point)
-                    && not (checkDirectionRight (Nonempty.last justPath).point)
+                -- Wenn nur nach oben nicht möglich, kann nur rechts und unten gewählt werden
+                not (checkIsOnPathUp || checkOutOfBoundsUp)
+                    && checkIsOnPathDown
+                    && checkOutOfBoundsDown
             then
-                Nonempty.cons Down (Nonempty.singleton Right)
+                [ Down, Right ]
 
             else if
-                (checkDirectionDown (Nonempty.last justPath).point || checkOutOfBoundsDown (Nonempty.last justPath).point)
-                    && not (checkDirectionUp (Nonempty.last justPath).point)
-                    && not (checkOutOfBoundsUp (Nonempty.last justPath).point)
-                    && not (checkDirectionRight (Nonempty.last justPath).point)
+                -- Wenn nur nach unten nicht möglich, kann nur nach oben oder rechts gewählt werden
+                not (checkIsOnPathDown || checkOutOfBoundsDown)
+                    && checkIsOnPathUp
+                    && checkOutOfBoundsUp
             then
-                Nonempty.cons Up (Nonempty.singleton Right)
+                [ Up, Right ]
 
             else
-                Nonempty.singleton Right
+                -- Wenn nach oben und unten nicht möglich, kann nur nach rechts gewählt werden
+                [ Right ]
 
 
 checkIsLastPoint : Path -> Bool
@@ -132,8 +129,8 @@ checkIsLastPoint path =
     (Nonempty.last path).point.x + 1 > ((Area.area.width // Area.fieldSize) - 1)
 
 
-update : Model -> ( Model, Cmd Messages.Msg )
-update model =
+update : Msg -> Model -> ( Model, Cmd Messages.Msg )
+update msg model =
     case model.gameState of
         Running ->
             ( model, Cmd.none )
@@ -148,13 +145,21 @@ update model =
             ( model, Cmd.none )
 
         Model.GeneratePath ->
-            case model.path of
-                Nothing ->
+            case msg of
+                PathDirectionGenerate direction ->
+                    case model.path of
+                        Nothing ->
+                            ( model, Cmd.none )
+
+                        Just path ->
+                            if checkIsLastPoint path then
+                                ( { model | gameState = Paused }, Cmd.none )
+
+                            else
+                                ( { model | path = Just (createPoint model.path (Nonempty.last path) direction) }, Random.generate PathDirectionGenerate (Path.directionGenerator (checkDirection model.path)) )
+
+                PathPointGenerate point ->
+                    ( { model | path = Just (createFirstRandomPoint (PathPoint point Right)) }, Random.generate PathDirectionGenerate (Path.directionGenerator (checkDirection model.path)) )
+
+                _ ->
                     ( model, Cmd.none )
-
-                Just path ->
-                    if Nonempty.length path > 10 then
-                        ( { model | gameState = Paused }, Cmd.none )
-
-                    else
-                        ( model, Cmd.none )

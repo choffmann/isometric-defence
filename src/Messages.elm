@@ -31,6 +31,5 @@ type Msg
     | Canvas (Maybe Element)
     | EnterCanvas
     | Event ReceivingEvents
-    | GeneratePath
     | PathDirectionGenerate PathDirection
     | PathPointGenerate Point

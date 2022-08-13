@@ -126,7 +126,7 @@ view model =
             [ div [] [ text (String.fromFloat model.delta) ]
 
             -- TODO: Remove Debug.toString
-            , div [] [ text (Debug.toString { model | delta = 0 }) ]
+            -- , div [] [ text (Debug.toString { model | delta = 0 }) ]
             ]
         , div Styles.canvasContainerStyles
             [ div
@@ -141,48 +141,31 @@ view model =
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
+update msg =
     case msg of
         Tick delta ->
-            Tick.update delta model
+            Tick.update delta
 
         Key key ->
-            Key.update key model
+            Key.update key
 
         Click point ->
-            Click.update point model
+            Click.update point
 
         Canvas maybe ->
-            Canvas.update maybe model
+            Canvas.update maybe
 
         EnterCanvas ->
-            EnterCanvas.update model
+            EnterCanvas.update
 
         Event event ->
-            Event.update event model
-
-        Messages.GeneratePath ->
-            GeneratePath.update model
+            Event.update event
 
         PathDirectionGenerate direction ->
-            case model.gameState of
-                Model.GeneratePath ->
-                    case model.path of
-                        Nothing ->
-                            ( model, Cmd.none )
-
-                        Just path ->
-                            if GeneratePath.checkIsLastPoint path then
-                                ( { model | gameState = Paused }, Cmd.none )
-
-                            else
-                                ( { model | path = Just (GeneratePath.createPoint model.path (Nonempty.last path) direction) }, Random.generate PathDirectionGenerate (Path.directionGenerator (GeneratePath.checkDirection model.path)) )
-
-                _ ->
-                    ( model, Cmd.none )
+            GeneratePath.update (PathDirectionGenerate direction)
 
         PathPointGenerate point ->
-            ( { model | path = Just (GeneratePath.createFirstRandomPoint (PathPoint point Right)) }, Random.generate PathDirectionGenerate (Path.directionGenerator (GeneratePath.checkDirection model.path)) )
+            GeneratePath.update (PathPointGenerate point)
 
 
 subscriptions : Model -> Sub Msg

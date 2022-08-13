@@ -17,7 +17,7 @@ type alias Area =
 
 area : Area
 area =
-    Area (25 * fieldSize) (25 * fieldSize)
+    Area (20 * fieldSize) (15 * fieldSize)
 
 
 type Field
