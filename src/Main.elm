@@ -31,6 +31,7 @@ canvas : Model -> List Renderable
 canvas model =
     [ Canvas.shapes [ Canvas.Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
     , DrawUtils.drawCanvasGrid
+    , Ui.Tower.availableTowerPlace model.path
     , Ui.Path.pathToCanvas model.path
     , Ui.Enemy.enemiesToCanvas model.enemies model.path
     , Ui.Tower.towersToCanvas model.towers
