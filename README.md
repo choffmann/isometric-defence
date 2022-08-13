@@ -3,7 +3,7 @@
 Bitte an dieser Stelle eine kurze Beschreibung hinzufügen, wie die Anwendung gestartet bzw. ggf. übersetzt wird.
 
 ```bash
-elm make /src/Main.elm --output=public/elm.js
+elm make src/Main.elm --output=public/elm.js
 ```
 
 Im Anschluss muss die index.html im Browser geöffnet werden.
