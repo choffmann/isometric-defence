@@ -3,7 +3,7 @@ module Update.Tick exposing (update)
 import Area exposing (Field(..))
 import Enemy exposing (Enemy)
 import Model exposing (GameState(..), Model)
-import Path exposing (Path, distanceToPathPoint)
+import Path exposing (Path)
 import Point exposing (Point)
 import Tower exposing (Tower)
 
@@ -75,7 +75,7 @@ moveEnemies globalSpeedMulti delta path =
         (\enemy ->
             { enemy
                 | distance = moveAmount enemy.distance enemy.speed
-                , position = moveAmount enemy.distance enemy.speed |> distanceToPathPoint path
+                , position = moveAmount enemy.distance enemy.speed |> Path.distanceToPathPoint path
             }
         )
 
@@ -88,7 +88,7 @@ cooldownTowers globalSpeedMulti delta =
 tick : Model -> Float -> Model
 tick model delta =
     let
-        moneyfromKilledEnemies enemies =
+        moneyFromKilledEnemies enemies =
             List.foldl
                 (\enemy money ->
                     if enemy.hp <= 0 then
@@ -102,14 +102,19 @@ tick model delta =
     in
     case damage model.towers model.enemies of
         ( towers, enemies ) ->
-            case enemies |> moveEnemies model.speedMulti delta model.path of
-                newEnemies ->
-                    { model
-                        | towers = cooldownTowers model.speedMulti delta towers
-                        , enemies = killEnemies newEnemies
-                        , money = model.money + moneyfromKilledEnemies newEnemies
-                        , delta = delta
-                    }
+            case model.path of
+                Nothing ->
+                    Debug.todo "Path is not greatet yet"
+
+                Just path ->
+                    case enemies |> moveEnemies model.speedMulti delta path of
+                        newEnemies ->
+                            { model
+                                | towers = cooldownTowers model.speedMulti delta towers
+                                , enemies = killEnemies newEnemies
+                                , money = model.money + moneyFromKilledEnemies newEnemies
+                                , delta = delta
+                            }
 
 
 update : Float -> Model -> ( Model, Cmd msg )
@@ -125,6 +130,9 @@ update delta model =
             { model | delta = delta }
 
         Lost ->
+            { model | delta = delta }
+
+        GeneratePath ->
             { model | delta = delta }
     , Cmd.none
     )

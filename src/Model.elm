@@ -1,12 +1,13 @@
 module Model exposing (Flags, GameState(..), Model, init)
 
 import Browser.Dom exposing (Element)
-import Enemy exposing (Enemy, toEnemy)
+import Enemy exposing (Enemy)
 import FullScreenMode exposing (FullScreenMode)
-import Messages exposing (Msg)
-import Path exposing (Path, testPath)
+import Messages exposing (Msg(..))
+import Path exposing (Path)
 import Point exposing (Point)
-import Tower exposing (Tower, toTower)
+import Random
+import Tower exposing (Tower)
 
 
 type GameState
@@ -14,6 +15,7 @@ type GameState
     | Paused
     | Won
     | Lost
+    | GeneratePath
 
 
 type alias Model =
@@ -28,7 +30,7 @@ type alias Model =
     , clicked : Maybe Point
     , fullscreen : FullScreenMode
     , speedMulti : Float
-    , path : Path
+    , path : Maybe Path
     }
 
 
@@ -37,19 +39,19 @@ type alias Flags =
 
 
 init : Flags -> ( Model, Cmd Msg )
-init flags =
-    ( { gameState = Paused
+init _ =
+    ( { gameState = GeneratePath
       , hp = 1000
       , money = 0
-      , enemies = [ toEnemy Enemy.Soldat ] --, toEnemy Enemy.Soldat, toEnemy Enemy.Soldat, toEnemy Enemy.Soldat, toEnemy Enemy.Soldat ]
-      , towers = [ toTower Tower.Basic ] --, toTower Tower.Basic ]
+      , enemies = [ Enemy.toEnemy Enemy.Soldat ] --, toEnemy Enemy.Soldat, toEnemy Enemy.Soldat, toEnemy Enemy.Soldat, toEnemy Enemy.Soldat ]
+      , towers = [ Tower.toTower Tower.Basic ] --, toTower Tower.Basic ]
       , delta = 0
       , placingTower = Nothing
       , canvas = Nothing
       , clicked = Nothing
       , fullscreen = FullScreenMode.Close
       , speedMulti = 1.0
-      , path = testPath
+      , path = Nothing
       }
-    , Cmd.none
+    , Random.generate PathPointGenerate Path.pointGenerator
     )

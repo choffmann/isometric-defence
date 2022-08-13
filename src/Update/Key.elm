@@ -2,7 +2,7 @@ module Update.Key exposing (update)
 
 import FullScreenMode exposing (FullScreenMode(..))
 import Messages exposing (Key(..), Msg, SendingEvents(..))
-import Model exposing (GameState(..), Model, init)
+import Model exposing (GameState(..), Model)
 import Utils.Ports as Ports
 
 
@@ -22,6 +22,9 @@ update key model =
 
                 Lost ->
                     model
+
+                GeneratePath ->
+                    model
             , Cmd.none
             )
 
@@ -34,7 +37,7 @@ update key model =
                     ( model, Ports.changeFullScreen (ChangeFullScreen Open) )
 
         R ->
-            init { msg = "" }
+            Model.init { msg = "" }
 
         ArrowDown ->
             ( { model | speedMulti = model.speedMulti - 0.2 }, Cmd.none )
