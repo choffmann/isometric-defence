@@ -1,7 +1,7 @@
-module Update.GeneratePath exposing (checkDirection, checkIsLastPoint, createFirstRandomPoint, createPoint, update)
+module Update.GeneratePath exposing (update)
 
 import Area
-import List.Nonempty as Nonempty exposing (Nonempty)
+import List.Nonempty as Nonempty
 import Messages exposing (Msg(..))
 import Model exposing (GameState(..), Model)
 import Path exposing (Path, PathDirection(..), PathPoint)
@@ -104,7 +104,7 @@ checkDirection path =
 
             else if
                 -- Wenn nur nach oben nicht möglich, kann nur rechts und unten gewählt werden
-                not (checkIsOnPathUp || checkOutOfBoundsUp)
+                (not checkIsOnPathUp || not checkOutOfBoundsUp)
                     && checkIsOnPathDown
                     && checkOutOfBoundsDown
             then
@@ -112,7 +112,7 @@ checkDirection path =
 
             else if
                 -- Wenn nur nach unten nicht möglich, kann nur nach oben oder rechts gewählt werden
-                not (checkIsOnPathDown || checkOutOfBoundsDown)
+                (not checkIsOnPathDown || not checkOutOfBoundsDown)
                     && checkIsOnPathUp
                     && checkOutOfBoundsUp
             then
@@ -161,5 +161,20 @@ update msg model =
                 PathPointGenerate point ->
                     ( { model | path = Just (createFirstRandomPoint (PathPoint point Right)) }, Random.generate PathDirectionGenerate (Path.directionGenerator (checkDirection model.path)) )
 
-                _ ->
+                Tick _ ->
+                    ( model, Cmd.none )
+
+                Key _ ->
+                    ( model, Cmd.none )
+
+                Click _ ->
+                    ( model, Cmd.none )
+
+                Canvas _ ->
+                    ( model, Cmd.none )
+
+                EnterCanvas ->
+                    ( model, Cmd.none )
+
+                Event _ ->
                     ( model, Cmd.none )

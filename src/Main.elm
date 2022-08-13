@@ -14,11 +14,10 @@ import Html.Events exposing (onMouseEnter)
 import List.Extra as List
 import List.Nonempty as Nonempty
 import Messages exposing (Msg(..))
-import Model exposing (Flags, GameState(..), Model)
-import Path exposing (Path, PathDirection(..), PathPoint)
+import Model exposing (Flags, Model)
+import Path exposing (Path)
 import Pixel exposing (Pixel(..))
 import Point exposing (Point)
-import Random
 import Styles
 import Tower exposing (Tower)
 import Update.Canvas as Canvas
