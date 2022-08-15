@@ -35,6 +35,7 @@ canvas model =
     , Ui.Path.pathToCanvas model.path
     , Ui.Enemy.enemiesToCanvas model.enemies model.path
     , Ui.Tower.towersToCanvas model.towers
+    , Ui.Tower.towerRadius model.towers
     ]
 
 

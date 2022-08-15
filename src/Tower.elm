@@ -21,4 +21,4 @@ toTower : Towers -> Tower
 toTower towers =
     case towers of
         Basic ->
-            Tower (Point 2 3) 100 10 3 100 100
+            Tower (Point 3 3) 100 10 50 100 100
