@@ -79,14 +79,14 @@ availableTowers =
     ]
 
 
-towerFieldSizeMulti : Int
-towerFieldSizeMulti =
+towerFieldSizeFactor : Int
+towerFieldSizeFactor =
     2
 
 
 towerFieldSize : Int
 towerFieldSize =
-    Area.fieldSize * towerFieldSizeMulti
+    Area.fieldSize * towerFieldSizeFactor
 
 
 
@@ -99,7 +99,7 @@ towerArea =
     let
         maxWidth : Int
         maxWidth =
-            (Area.area.width // Area.fieldSize) // towerFieldSizeMulti
+            (Area.area.width // Area.fieldSize) // towerFieldSizeFactor
 
         calcAreaHeight : List Tower -> Int
         calcAreaHeight towers =
