@@ -1,4 +1,4 @@
-module Update.Click exposing (update)
+module Update.LeftClick exposing (update)
 
 import Model exposing (Model)
 import Point exposing (Point)

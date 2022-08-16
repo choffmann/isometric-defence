@@ -1,9 +1,9 @@
-module Utils.Decoder exposing (clickDecoder, keyDecoder, mouseMoveDecoder, receiveEventDecoder)
+module Utils.Decoder exposing (keyDecoder, leftClickDecoder, mouseMoveDecoder, onContextMenuDecoder, receiveEventDecoder)
 
 import Area exposing (Field(..), area, fieldSize)
 import FullScreenMode exposing (FullScreenMode(..))
 import Json.Decode as Decode exposing (Decoder)
-import Messages exposing (Key(..), Msg, ReceivingEvents(..))
+import Messages exposing (Key(..), MouseButton(..), MouseClick, Msg, ReceivingEvents(..))
 import Model exposing (Model)
 import Pixel exposing (Pixel(..))
 import Point exposing (Point)
@@ -70,23 +70,24 @@ maybePixelToPoint pixel =
         |> Maybe.map (\(Field point) -> point)
 
 
-clickDecoder : Model -> Decoder Msg
-clickDecoder model =
+coordinateDecoder : Model -> Decoder (Maybe Point)
+coordinateDecoder model =
     Decode.succeed Point
         |> apply (Decode.field "pageX" Decode.int)
         |> apply (Decode.field "pageY" Decode.int)
         |> Decode.map (clearToCanvas model)
         |> Decode.map maybePixelToPoint
-        |> Decode.map Messages.Click
+
+
+leftClickDecoder : Model -> Decoder Msg
+leftClickDecoder model =
+    coordinateDecoder model
+        |> Decode.map Messages.LeftClick
 
 
 mouseMoveDecoder : Model -> Decoder Msg
 mouseMoveDecoder model =
-    Decode.succeed Point
-        |> apply (Decode.field "pageX" Decode.int)
-        |> apply (Decode.field "pageY" Decode.int)
-        |> Decode.map (clearToCanvas model)
-        |> Decode.map maybePixelToPoint
+    coordinateDecoder model
         |> Decode.map Messages.MovePosition
 
 
@@ -119,3 +120,18 @@ receiveEventDecoder =
         |> apply (Decode.field "event" Decode.string)
         |> apply (Decode.field "message" Decode.string)
         |> Decode.map toEvent
+
+
+type alias CustomEventDecoder =
+    { message : Msg
+    , stopPropagation : Bool
+    , preventDefault : Bool
+    }
+
+
+onContextMenuDecoder : Decoder CustomEventDecoder
+onContextMenuDecoder =
+    Decode.succeed CustomEventDecoder
+        |> apply (Decode.succeed Messages.RightClick)
+        |> apply (Decode.succeed True)
+        |> apply (Decode.succeed True)

@@ -10,7 +10,7 @@ import Color
 import Enemy exposing (Enemy)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (id)
-import Html.Events exposing (onMouseEnter)
+import Html.Events
 import List.Extra as List
 import List.Nonempty as Nonempty
 import Messages exposing (Msg(..))
@@ -21,12 +21,13 @@ import Point exposing (Point)
 import Styles
 import Tower exposing (Tower)
 import Update.Canvas as Canvas
-import Update.Click as Click
 import Update.EnterCanvas as EnterCanvas
 import Update.Event as Event
 import Update.GeneratePath as GeneratePath
 import Update.Key as Key
+import Update.LeftClick as LeftClick
 import Update.MovePosition as MovePosition
+import Update.RightClick as RightClick
 import Update.Tick as Tick
 import Utils.Decoder as Decoder
 import Utils.Ports as Ports
@@ -161,13 +162,18 @@ debugModel model =
         ]
 
 
+onContextMenuEvent : Html.Attribute Msg
+onContextMenuEvent =
+    Html.Events.custom "contextmenu" Decoder.onContextMenuDecoder
+
+
 view : Model -> Html Msg
 view model =
-    div (id "app" :: Styles.appContainer)
+    div (id "app" :: onContextMenuEvent :: Styles.appContainer)
         [ debugModel model
         , div Styles.canvasContainerStyles
             [ div
-                (onMouseEnter Messages.EnterCanvas :: id "canvasContainer" :: Styles.canvasStyles)
+                (Html.Events.onMouseEnter Messages.EnterCanvas :: id "canvasContainer" :: Styles.canvasStyles)
                 [ Canvas.toHtml
                     ( Area.area.width, Area.area.height )
                     []
@@ -186,8 +192,11 @@ update msg =
         Key key ->
             Key.update key
 
-        Click point ->
-            Click.update point
+        LeftClick point ->
+            LeftClick.update point
+
+        RightClick ->
+            RightClick.update
 
         MovePosition point ->
             MovePosition.update point
@@ -214,7 +223,7 @@ subscriptions model =
         alwaysSubscribed =
             [ Browser.Events.onAnimationFrameDelta Tick
             , Browser.Events.onKeyDown Decoder.keyDecoder
-            , Browser.Events.onClick (Decoder.clickDecoder model)
+            , Browser.Events.onClick (Decoder.leftClickDecoder model)
             , Ports.onEventMessage
             ]
     in

@@ -3,7 +3,7 @@ module Model exposing (Flags, GameState(..), Model, PlacingTower, init, restart)
 import Browser.Dom exposing (Element)
 import Enemy exposing (Enemy)
 import FullScreenMode exposing (FullScreenMode)
-import Messages exposing (Msg(..))
+import Messages exposing (MouseButton(..), MouseClick, Msg(..))
 import Path exposing (Path)
 import Point exposing (Point)
 import Random
@@ -58,7 +58,7 @@ init : Flags -> ( Model, Cmd Msg )
 init _ =
     ( { gameState = GeneratePath
       , hp = 1000
-      , money = 0
+      , money = 1000
       , enemies = [ Enemy.toEnemy Enemy.Soldat ] --, toEnemy Enemy.Soldat, toEnemy Enemy.Soldat, toEnemy Enemy.Soldat, toEnemy Enemy.Soldat ]
       , towers = [ Tower.toTower Tower.Basic ] --, toTower Tower.Basic ]
       , delta = 0
