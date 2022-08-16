@@ -14,7 +14,7 @@ import Html.Events
 import List.Extra as List
 import List.Nonempty as Nonempty
 import Messages exposing (Msg(..))
-import Model exposing (Flags, Model, PlacingTower)
+import Model exposing (Flags, GameState(..), Model, PlacingTower)
 import Path exposing (Path)
 import Pixel exposing (Pixel(..))
 import Point exposing (Point)
@@ -220,20 +220,57 @@ update msg =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     let
-        alwaysSubscribed =
-            [ Browser.Events.onAnimationFrameDelta Tick
-            , Browser.Events.onKeyDown Decoder.keyDecoder
-            , Browser.Events.onClick (Decoder.leftClickDecoder model)
-            , Ports.onEventMessage
-            ]
+        always =
+            [ Ports.onEventMessage ]
+
+        generatePath =
+            always
+
+        won =
+            always ++ [ Browser.Events.onKeyDown Decoder.keyDecoder ]
+
+        lost =
+            always ++ [ Browser.Events.onKeyDown Decoder.keyDecoder ]
+
+        running =
+            always
+                ++ [ Browser.Events.onKeyDown Decoder.keyDecoder
+                   , Browser.Events.onClick (Decoder.leftClickDecoder model)
+                   , Browser.Events.onAnimationFrameDelta Tick
+                   ]
+
+        paused =
+            always
+                ++ [ Browser.Events.onKeyDown Decoder.keyDecoder
+                   , Browser.Events.onClick (Decoder.leftClickDecoder model)
+                   ]
     in
     Sub.batch
-        (case model.placingTower of
-            Just _ ->
-                Browser.Events.onMouseMove (Decoder.mouseMoveDecoder model) :: alwaysSubscribed
+        (case model.gameState of
+            Running ->
+                case model.placingTower of
+                    Just _ ->
+                        Browser.Events.onMouseMove (Decoder.mouseMoveDecoder model) :: running
 
-            Nothing ->
-                alwaysSubscribed
+                    Nothing ->
+                        running
+
+            Paused ->
+                case model.placingTower of
+                    Just _ ->
+                        Browser.Events.onMouseMove (Decoder.mouseMoveDecoder model) :: paused
+
+                    Nothing ->
+                        paused
+
+            Won ->
+                won
+
+            Lost ->
+                lost
+
+            GeneratePath ->
+                generatePath
         )
 
 
