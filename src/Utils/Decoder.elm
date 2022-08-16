@@ -1,6 +1,6 @@
 module Utils.Decoder exposing (keyDecoder, leftClickDecoder, mouseMoveDecoder, onContextMenuDecoder, receiveEventDecoder)
 
-import Area exposing (Field(..), area, fieldSize)
+import Area exposing (Field(..))
 import FullScreenMode exposing (FullScreenMode(..))
 import Json.Decode as Decode exposing (Decoder)
 import Messages exposing (Key(..), Msg, ReceivingEvents(..))
@@ -50,16 +50,18 @@ keyDecoder =
 
 clearToCanvas : Model -> Point -> Maybe Pixel
 clearToCanvas model point =
+    let
+        newCoordsToCanvas x y =
+            if x > (Area.area.width + Area.fieldSize) || x < 0 || y > Area.area.height || y < 0 then
+                Nothing
+
+            else
+                Just (Pixel { x = x, y = y })
+    in
     model.canvas
         |> Maybe.andThen
             (\canvas ->
-                case ( point.x - round canvas.element.x, point.y - round canvas.element.y ) of
-                    ( newX, newY ) ->
-                        if newX > (area.width + fieldSize) || newX < 0 || newY > area.height || newY < 0 then
-                            Nothing
-
-                        else
-                            Just (Pixel { x = newX, y = newY })
+                newCoordsToCanvas (point.x - round canvas.element.x) (point.y - round canvas.element.y)
             )
 
 

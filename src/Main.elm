@@ -67,7 +67,7 @@ drawCanvasGrid =
 
 pointToCanvas : Point -> Float -> Float -> Shape
 pointToCanvas point width height =
-    Canvas.rect ( toFloat (point.x * Area.fieldSize), toFloat (point.y * Area.fieldSize) ) width height
+    Canvas.rect ( toFloat (point.x * Area.fieldSize) - (width - toFloat Area.fieldSize) / 2, toFloat (point.y * Area.fieldSize) - (height - toFloat Area.fieldSize) / 2 ) width height
 
 
 pathToCanvas : Maybe Path -> Renderable

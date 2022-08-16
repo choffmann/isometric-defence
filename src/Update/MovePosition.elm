@@ -23,11 +23,8 @@ canTowerBePlaced towerPoint price model =
     else if List.any (\tower -> tower.position == towerPoint) model.towers then
         False
 
-    else if checkOnPath model.path then
-        False
-
     else
-        True
+        not (checkOnPath model.path)
 
 
 update : Maybe Point -> Model -> ( Model, Cmd Msg )
