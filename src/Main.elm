@@ -10,22 +10,24 @@ import Color
 import Enemy exposing (Enemy)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (id)
-import Html.Events exposing (onMouseEnter)
+import Html.Events
 import List.Extra as List
 import List.Nonempty as Nonempty
 import Messages exposing (Msg(..))
-import Model exposing (Flags, Model)
+import Model exposing (Flags, GameState(..), Model, PlacingTower)
 import Path exposing (Path)
 import Pixel exposing (Pixel(..))
 import Point exposing (Point)
 import Styles
 import Tower exposing (Tower)
 import Update.Canvas as Canvas
-import Update.Click as Click
 import Update.EnterCanvas as EnterCanvas
 import Update.Event as Event
 import Update.GeneratePath as GeneratePath
 import Update.Key as Key
+import Update.LeftClick as LeftClick
+import Update.MovePosition as MovePosition
+import Update.RightClick as RightClick
 import Update.Tick as Tick
 import Utils.Decoder as Decoder
 import Utils.Ports as Ports
@@ -108,6 +110,22 @@ towersToCanvas towers =
         |> Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 50 50 255) ]
 
 
+placingTowerToCanvas : PlacingTower -> List Renderable
+placingTowerToCanvas placingTower =
+    [ Canvas.shapes
+        [ Canvas.Settings.fill
+            (if placingTower.canBePlaced then
+                Color.green
+
+             else
+                Color.red
+            )
+        ]
+        [ Canvas.rect ( toFloat (placingTower.tower.position.x * Area.fieldSize + 2), toFloat (placingTower.tower.position.y * Area.fieldSize + 2) ) (toFloat Area.fieldSize - 4) (toFloat Area.fieldSize - 4) ]
+    , Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 50 50 255) ] [ Canvas.rect ( toFloat (placingTower.tower.position.x * Area.fieldSize + 10), toFloat (placingTower.tower.position.y * Area.fieldSize + 10) ) (toFloat Area.fieldSize - 20) (toFloat Area.fieldSize - 20) ]
+    ]
+
+
 canvas : Model -> List Renderable
 canvas model =
     [ Canvas.shapes [ Canvas.Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
@@ -116,20 +134,46 @@ canvas model =
     , enemiesToCanvas model.enemies model.path
     , towersToCanvas model.towers
     ]
+        ++ (case model.placingTower of
+                Nothing ->
+                    []
+
+                Just placingTower ->
+                    placingTowerToCanvas placingTower
+           )
+
+
+debugModel : Model -> Html Msg
+debugModel model =
+    div []
+        [ div [] [ text (String.fromFloat model.delta) ]
+        , div [] [ text "Canvas: ", text (Debug.toString model.canvas) ]
+        , div [] [ text "CLicked: ", text (Debug.toString model.clicked) ]
+        , div [] [ text "Gamestate: ", text (Debug.toString model.gameState) ]
+        , div [] [ text "SpeedMult: ", text (Debug.toString model.speedMulti) ]
+        , div [] [ text "HP: ", text (Debug.toString model.hp) ]
+        , div [] [ text "Money: ", text (Debug.toString model.money) ]
+        , div [] [ text "Fullscreen: ", text (Debug.toString model.fullscreen) ]
+        , div [] [ text "PlacingTower: ", text (Debug.toString model.placingTower) ]
+        , div [] [ text "Enemies: ", text (Debug.toString model.enemies) ]
+        , div [] [ text "Towers: ", text (Debug.toString model.towers) ]
+
+        --, div [] [ text "Path: ", text (Debug.toString model.path) ]
+        ]
+
+
+onContextMenuEvent : Html.Attribute Msg
+onContextMenuEvent =
+    Html.Events.custom "contextmenu" Decoder.onContextMenuDecoder
 
 
 view : Model -> Html Msg
 view model =
-    div (id "app" :: Styles.appContainer)
-        [ div []
-            [ div [] [ text (String.fromFloat model.delta) ]
-
-            -- TODO: Remove Debug.toString
-            -- , div [] [ text (Debug.toString { model | delta = 0 }) ]
-            ]
+    div (id "app" :: onContextMenuEvent :: Styles.appContainer)
+        [ debugModel model
         , div Styles.canvasContainerStyles
             [ div
-                (onMouseEnter Messages.EnterCanvas :: id "canvasContainer" :: Styles.canvasStyles)
+                (Html.Events.onMouseEnter Messages.EnterCanvas :: id "canvasContainer" :: Styles.canvasStyles)
                 [ Canvas.toHtml
                     ( Area.area.width, Area.area.height )
                     []
@@ -148,8 +192,14 @@ update msg =
         Key key ->
             Key.update key
 
-        Click point ->
-            Click.update point
+        LeftClick point ->
+            LeftClick.update point
+
+        RightClick ->
+            RightClick.update
+
+        MovePosition point ->
+            MovePosition.update point
 
         Canvas maybe ->
             Canvas.update maybe
@@ -170,20 +220,57 @@ update msg =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     let
-        alwaysSubscribed =
-            [ Browser.Events.onAnimationFrameDelta Tick
-            , Browser.Events.onKeyDown Decoder.keyDecoder
-            , Browser.Events.onClick (Decoder.clickDecoder model)
-            , Ports.onEventMessage
-            ]
+        always =
+            [ Ports.onEventMessage ]
+
+        generatePath =
+            always
+
+        won =
+            always ++ [ Browser.Events.onKeyDown Decoder.keyDecoder ]
+
+        lost =
+            always ++ [ Browser.Events.onKeyDown Decoder.keyDecoder ]
+
+        running =
+            always
+                ++ [ Browser.Events.onKeyDown Decoder.keyDecoder
+                   , Browser.Events.onClick (Decoder.leftClickDecoder model)
+                   , Browser.Events.onAnimationFrameDelta Tick
+                   ]
+
+        paused =
+            always
+                ++ [ Browser.Events.onKeyDown Decoder.keyDecoder
+                   , Browser.Events.onClick (Decoder.leftClickDecoder model)
+                   ]
     in
     Sub.batch
-        (case model.placingTower of
-            Just _ ->
-                Browser.Events.onMouseMove Decoder.mouseMoveDecoder :: alwaysSubscribed
+        (case model.gameState of
+            Running ->
+                case model.placingTower of
+                    Just _ ->
+                        Browser.Events.onMouseMove (Decoder.mouseMoveDecoder model) :: running
 
-            Nothing ->
-                alwaysSubscribed
+                    Nothing ->
+                        running
+
+            Paused ->
+                case model.placingTower of
+                    Just _ ->
+                        Browser.Events.onMouseMove (Decoder.mouseMoveDecoder model) :: paused
+
+                    Nothing ->
+                        paused
+
+            Won ->
+                won
+
+            Lost ->
+                lost
+
+            GeneratePath ->
+                generatePath
         )
 
 
