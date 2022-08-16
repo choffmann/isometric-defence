@@ -3,7 +3,7 @@ module Model exposing (Flags, GameState(..), Model, PlacingTower, init, restart)
 import Browser.Dom exposing (Element)
 import Enemy exposing (Enemy)
 import FullScreenMode exposing (FullScreenMode)
-import Messages exposing (MouseButton(..), Msg(..))
+import Messages exposing (Msg(..))
 import Path exposing (Path)
 import Point exposing (Point)
 import Random

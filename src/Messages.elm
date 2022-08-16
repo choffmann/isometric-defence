@@ -1,4 +1,4 @@
-module Messages exposing (Key(..), MouseButton(..), MouseClick, Msg(..), ReceivingEvents(..), SendingEvents(..))
+module Messages exposing (Key(..), Msg(..), ReceivingEvents(..), SendingEvents(..))
 
 import Browser.Dom exposing (Element)
 import FullScreenMode exposing (FullScreenMode)
@@ -13,16 +13,6 @@ type Key
     | ArrowDown
     | ArrowUp
     | UnknownKey
-
-
-type MouseButton
-    = Left
-    | Right
-    | UnknownButton
-
-
-type alias MouseClick =
-    { point : Maybe Point, button : MouseButton }
 
 
 type ReceivingEvents
