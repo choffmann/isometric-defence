@@ -37,7 +37,7 @@ update key model =
                     ( model, Ports.changeFullScreen (ChangeFullScreen Open) )
 
         R ->
-            Model.init { msg = "" }
+            Model.restart model { msg = "" }
 
         ArrowDown ->
             ( { model | speedMulti = model.speedMulti - 0.2 }, Cmd.none )

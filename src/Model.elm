@@ -1,4 +1,4 @@
-module Model exposing (Flags, GameState(..), Model, PlacingTower, init)
+module Model exposing (Flags, GameState(..), Model, PlacingTower, init, restart)
 
 import Browser.Dom exposing (Element)
 import Enemy exposing (Enemy)
@@ -42,6 +42,16 @@ type alias Model =
 
 type alias Flags =
     { msg : String }
+
+
+restart : Model -> Flags -> ( Model, Cmd Msg )
+restart model flags =
+    let
+        newModel ( initModel, command ) =
+            ( { initModel | canvas = model.canvas, fullscreen = model.fullscreen, speedMulti = model.speedMulti }, command )
+    in
+    init flags
+        |> newModel
 
 
 init : Flags -> ( Model, Cmd Msg )
