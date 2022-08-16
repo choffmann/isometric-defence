@@ -3,7 +3,7 @@ module Utils.Decoder exposing (keyDecoder, leftClickDecoder, mouseMoveDecoder, o
 import Area exposing (Field(..), area, fieldSize)
 import FullScreenMode exposing (FullScreenMode(..))
 import Json.Decode as Decode exposing (Decoder)
-import Messages exposing (Key(..), MouseButton(..), MouseClick, Msg, ReceivingEvents(..))
+import Messages exposing (Key(..), MouseButton(..), Msg, ReceivingEvents(..))
 import Model exposing (Model)
 import Pixel exposing (Pixel(..))
 import Point exposing (Point)
