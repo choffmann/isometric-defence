@@ -1,6 +1,6 @@
 module Utils.Decoder exposing (clickDecoder, keyDecoder, mouseMoveDecoder, receiveEventDecoder)
 
-import Area exposing (area)
+import Area exposing (area, fieldSize)
 import FullScreenMode exposing (FullScreenMode(..))
 import Json.Decode as Decode exposing (Decoder)
 import Messages exposing (Key(..), Msg, ReceivingEvents(..))
@@ -47,36 +47,37 @@ keyDecoder =
         |> Decode.map Messages.Key
 
 
+clearToCanvas : Model -> Point -> Maybe Point
+clearToCanvas model point =
+    model.canvas
+        |> Maybe.andThen
+            (\canvas ->
+                case ( point.x - round canvas.element.x, point.y - round canvas.element.y ) of
+                    ( newX, newY ) ->
+                        if newX > (area.width + fieldSize) || newX < 0 || newY > area.height || newY < 0 then
+                            Nothing
+
+                        else
+                            Just { x = newX, y = newY }
+            )
+
+
 clickDecoder : Model -> Decoder Msg
 clickDecoder model =
-    let
-        clearToCanvas point =
-            model.canvas
-                |> Maybe.andThen
-                    (\canvas ->
-                        case ( point.x - round canvas.element.x, point.y - round canvas.element.y ) of
-                            ( newX, newY ) ->
-                                if newX > area.width || newX < 0 || newY > area.height || newY < 0 then
-                                    Nothing
-
-                                else
-                                    Just { x = newX, y = newY }
-                    )
-    in
     Decode.succeed Point
         |> apply (Decode.field "pageX" Decode.int)
         |> apply (Decode.field "pageY" Decode.int)
-        |> Decode.map clearToCanvas
+        |> Decode.map (clearToCanvas model)
         |> Decode.map Messages.Click
 
 
-mouseMoveDecoder : Decoder Msg
-mouseMoveDecoder =
+mouseMoveDecoder : Model -> Decoder Msg
+mouseMoveDecoder model =
     Decode.succeed Point
-        |> apply (Decode.field "movementX" Decode.int)
-        |> apply (Decode.field "movementY" Decode.int)
-        |> Decode.map Just
-        |> Decode.map Messages.Click
+        |> apply (Decode.field "pageX" Decode.int)
+        |> apply (Decode.field "pageY" Decode.int)
+        |> Decode.map (clearToCanvas model)
+        |> Decode.map Messages.MovePosition
 
 
 type alias EventMsg =

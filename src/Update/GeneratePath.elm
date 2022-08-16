@@ -170,6 +170,9 @@ update msg model =
                 Click _ ->
                     ( model, Cmd.none )
 
+                MovePosition _ ->
+                    ( model, Cmd.none )
+
                 Canvas _ ->
                     ( model, Cmd.none )
 

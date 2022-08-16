@@ -1,6 +1,6 @@
 module Styles exposing (appContainer, borderWidth, canvasContainerStyles, canvasStyles)
 
-import Area exposing (area)
+import Area exposing (area, fieldSize)
 import Html exposing (Attribute)
 import Html.Attributes exposing (style)
 

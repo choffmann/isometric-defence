@@ -26,6 +26,7 @@ import Update.EnterCanvas as EnterCanvas
 import Update.Event as Event
 import Update.GeneratePath as GeneratePath
 import Update.Key as Key
+import Update.MovePosition as MovePosition
 import Update.Tick as Tick
 import Utils.Decoder as Decoder
 import Utils.Ports as Ports
@@ -118,15 +119,29 @@ canvas model =
     ]
 
 
+debugModel : Model -> Html Msg
+debugModel model =
+    div []
+        [ div [] [ text (String.fromFloat model.delta) ]
+        , div [] [ text "Canvas: ", text (Debug.toString model.canvas) ]
+        , div [] [ text "CLicked: ", text (Debug.toString model.clicked) ]
+        , div [] [ text "Gamestate: ", text (Debug.toString model.gameState) ]
+        , div [] [ text "SpeedMult: ", text (Debug.toString model.speedMulti) ]
+        , div [] [ text "HP: ", text (Debug.toString model.hp) ]
+        , div [] [ text "Money: ", text (Debug.toString model.money) ]
+        , div [] [ text "Fullscreen: ", text (Debug.toString model.fullscreen) ]
+        , div [] [ text "PlacingTower: ", text (Debug.toString model.placingTower) ]
+        , div [] [ text "Enemies: ", text (Debug.toString model.enemies) ]
+        , div [] [ text "Towers: ", text (Debug.toString model.towers) ]
+
+        --, div [] [ text "Path: ", text (Debug.toString model.path) ]
+        ]
+
+
 view : Model -> Html Msg
 view model =
     div (id "app" :: Styles.appContainer)
-        [ div []
-            [ div [] [ text (String.fromFloat model.delta) ]
-
-            -- TODO: Remove Debug.toString
-            -- , div [] [ text (Debug.toString { model | delta = 0 }) ]
-            ]
+        [ debugModel model
         , div Styles.canvasContainerStyles
             [ div
                 (onMouseEnter Messages.EnterCanvas :: id "canvasContainer" :: Styles.canvasStyles)
@@ -150,6 +165,9 @@ update msg =
 
         Click point ->
             Click.update point
+
+        MovePosition point ->
+            MovePosition.update point
 
         Canvas maybe ->
             Canvas.update maybe
@@ -180,7 +198,7 @@ subscriptions model =
     Sub.batch
         (case model.placingTower of
             Just _ ->
-                Browser.Events.onMouseMove Decoder.mouseMoveDecoder :: alwaysSubscribed
+                Browser.Events.onMouseMove (Decoder.mouseMoveDecoder model) :: alwaysSubscribed
 
             Nothing ->
                 alwaysSubscribed
