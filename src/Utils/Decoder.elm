@@ -1,10 +1,11 @@
 module Utils.Decoder exposing (clickDecoder, keyDecoder, mouseMoveDecoder, receiveEventDecoder)
 
-import Area exposing (area, fieldSize)
+import Area exposing (Field(..), area, fieldSize)
 import FullScreenMode exposing (FullScreenMode(..))
 import Json.Decode as Decode exposing (Decoder)
 import Messages exposing (Key(..), Msg, ReceivingEvents(..))
 import Model exposing (Model)
+import Pixel exposing (Pixel(..))
 import Point exposing (Point)
 
 
@@ -47,7 +48,7 @@ keyDecoder =
         |> Decode.map Messages.Key
 
 
-clearToCanvas : Model -> Point -> Maybe Point
+clearToCanvas : Model -> Point -> Maybe Pixel
 clearToCanvas model point =
     model.canvas
         |> Maybe.andThen
@@ -58,8 +59,15 @@ clearToCanvas model point =
                             Nothing
 
                         else
-                            Just { x = newX, y = newY }
+                            Just (Pixel { x = newX, y = newY })
             )
+
+
+maybePixelToPoint : Maybe Pixel -> Maybe Point
+maybePixelToPoint pixel =
+    pixel
+        |> Maybe.map Area.pixelToField
+        |> Maybe.map (\(Field point) -> point)
 
 
 clickDecoder : Model -> Decoder Msg
@@ -68,6 +76,7 @@ clickDecoder model =
         |> apply (Decode.field "pageX" Decode.int)
         |> apply (Decode.field "pageY" Decode.int)
         |> Decode.map (clearToCanvas model)
+        |> Decode.map maybePixelToPoint
         |> Decode.map Messages.Click
 
 
@@ -77,6 +86,7 @@ mouseMoveDecoder model =
         |> apply (Decode.field "pageX" Decode.int)
         |> apply (Decode.field "pageY" Decode.int)
         |> Decode.map (clearToCanvas model)
+        |> Decode.map maybePixelToPoint
         |> Decode.map Messages.MovePosition
 
 
