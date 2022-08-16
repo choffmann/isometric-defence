@@ -7,15 +7,20 @@ import Point exposing (Point)
 
 update : Maybe Point -> Model -> ( Model, Cmd Msg )
 update mPoint model =
-    case mPoint of
+    ( case mPoint of
         Nothing ->
-            ( model, Cmd.none )
+            model
 
         Just point ->
-            ( { model
+            { model
                 | placingTower =
                     model.placingTower
-                        |> Maybe.map (\tower -> { tower | position = point })
-              }
-            , Cmd.none
-            )
+                        |> Maybe.map
+                            (\{ tower } ->
+                                { tower = { tower | position = point }
+                                , canBePlaced = True
+                                }
+                            )
+            }
+    , Cmd.none
+    )

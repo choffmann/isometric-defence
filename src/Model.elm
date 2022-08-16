@@ -1,4 +1,4 @@
-module Model exposing (Flags, GameState(..), Model, init)
+module Model exposing (Flags, GameState(..), Model, PlacingTower, init)
 
 import Browser.Dom exposing (Element)
 import Enemy exposing (Enemy)
@@ -18,6 +18,12 @@ type GameState
     | GeneratePath
 
 
+type alias PlacingTower =
+    { tower : Tower
+    , canBePlaced : Bool
+    }
+
+
 type alias Model =
     { gameState : GameState
     , hp : Int
@@ -25,7 +31,7 @@ type alias Model =
     , enemies : List Enemy
     , towers : List Tower
     , delta : Float
-    , placingTower : Maybe Tower
+    , placingTower : Maybe PlacingTower
     , canvas : Maybe Element
     , clicked : Maybe Point
     , fullscreen : FullScreenMode
@@ -46,7 +52,7 @@ init _ =
       , enemies = [ Enemy.toEnemy Enemy.Soldat ] --, toEnemy Enemy.Soldat, toEnemy Enemy.Soldat, toEnemy Enemy.Soldat, toEnemy Enemy.Soldat ]
       , towers = [ Tower.toTower Tower.Basic ] --, toTower Tower.Basic ]
       , delta = 0
-      , placingTower = Just (Tower.toTower Tower.Basic)
+      , placingTower = Just { tower = Tower.toTower Tower.Basic, canBePlaced = False }
       , canvas = Nothing
       , clicked = Nothing
       , fullscreen = FullScreenMode.Close

@@ -14,7 +14,7 @@ import Html.Events exposing (onMouseEnter)
 import List.Extra as List
 import List.Nonempty as Nonempty
 import Messages exposing (Msg(..))
-import Model exposing (Flags, Model)
+import Model exposing (Flags, Model, PlacingTower)
 import Path exposing (Path)
 import Pixel exposing (Pixel(..))
 import Point exposing (Point)
@@ -109,6 +109,22 @@ towersToCanvas towers =
         |> Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 50 50 255) ]
 
 
+placingTowerToCanvas : PlacingTower -> List Renderable
+placingTowerToCanvas placingTower =
+    [ Canvas.shapes
+        [ Canvas.Settings.fill
+            (if placingTower.canBePlaced then
+                Color.green
+
+             else
+                Color.red
+            )
+        ]
+        [ Canvas.rect ( toFloat (placingTower.tower.position.x * Area.fieldSize + 2), toFloat (placingTower.tower.position.y * Area.fieldSize + 2) ) (toFloat Area.fieldSize - 4) (toFloat Area.fieldSize - 4) ]
+    , Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 50 50 255) ] [ Canvas.rect ( toFloat (placingTower.tower.position.x * Area.fieldSize + 10), toFloat (placingTower.tower.position.y * Area.fieldSize + 10) ) (toFloat Area.fieldSize - 20) (toFloat Area.fieldSize - 20) ]
+    ]
+
+
 canvas : Model -> List Renderable
 canvas model =
     [ Canvas.shapes [ Canvas.Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
@@ -117,6 +133,13 @@ canvas model =
     , enemiesToCanvas model.enemies model.path
     , towersToCanvas model.towers
     ]
+        ++ (case model.placingTower of
+                Nothing ->
+                    []
+
+                Just placingTower ->
+                    placingTowerToCanvas placingTower
+           )
 
 
 debugModel : Model -> Html Msg

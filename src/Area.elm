@@ -15,9 +15,19 @@ type alias Area =
     }
 
 
+widthTiles : Int
+widthTiles =
+    20
+
+
+heightTiles : Int
+heightTiles =
+    15
+
+
 area : Area
 area =
-    Area (20 * fieldSize) (15 * fieldSize)
+    Area (widthTiles * fieldSize) (heightTiles * fieldSize)
 
 
 type Field
@@ -26,4 +36,4 @@ type Field
 
 pixelToField : Pixel -> Field
 pixelToField (Pixel { x, y }) =
-    Field { x = x // fieldSize, y = y // fieldSize }
+    Field { x = min (x // fieldSize) (widthTiles - 1), y = min (y // fieldSize) (heightTiles - 1) }
