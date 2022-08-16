@@ -1,13 +1,13 @@
 module Ui.DrawUtils exposing (drawCanvasGrid, pointToCanvas)
 
-import Area
+import Area exposing (Area)
 import Canvas exposing (PathSegment, Renderable, Shape)
 import Canvas.Settings.Line
 import Point exposing (Point)
 
 
-drawCanvasGrid : Renderable
-drawCanvasGrid =
+drawCanvasGrid : Area -> Int -> Renderable
+drawCanvasGrid area fieldSize =
     let
         drawLine : Float -> Float -> Float -> Float -> List PathSegment
         drawLine fromX fromY toX toY =
@@ -15,20 +15,20 @@ drawCanvasGrid =
 
         drawWidth : List PathSegment -> Int -> List PathSegment
         drawWidth list index =
-            if index == Area.area.height then
+            if index == area.height then
                 list
 
             else
-                drawLine (toFloat (index * Area.fieldSize)) 0 (toFloat (index * Area.fieldSize)) (toFloat Area.area.height)
+                drawLine (toFloat (index * fieldSize)) 0 (toFloat (index * fieldSize)) (toFloat area.height)
                     |> List.append (drawWidth list (index + 1))
 
         drawHeight : List PathSegment -> Int -> List PathSegment
         drawHeight list index =
-            if index == Area.area.width then
+            if index == area.width then
                 drawWidth list 0
 
             else
-                drawLine 0 (toFloat (index * Area.fieldSize)) (toFloat Area.area.width) (toFloat (index * Area.fieldSize))
+                drawLine 0 (toFloat (index * fieldSize)) (toFloat area.width) (toFloat (index * fieldSize))
                     |> List.append (drawHeight list (index + 1))
 
         draw : List PathSegment

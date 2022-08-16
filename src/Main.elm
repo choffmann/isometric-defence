@@ -15,7 +15,7 @@ import Styles
 import Ui.DrawUtils as DrawUtils
 import Ui.Enemy
 import Ui.Path
-import Ui.Tower
+import Ui.Tower exposing (towerCanvas)
 import Update.Canvas as Canvas
 import Update.Click as Click
 import Update.EnterCanvas as EnterCanvas
@@ -30,7 +30,7 @@ import Utils.Ports as Ports
 canvas : Model -> List Renderable
 canvas model =
     [ Canvas.shapes [ Canvas.Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
-    , DrawUtils.drawCanvasGrid
+    , DrawUtils.drawCanvasGrid Area.area Area.fieldSize
     , Ui.Tower.availableTowerPlace model.path
     , Ui.Path.pathToCanvas model.path
     , Ui.Enemy.enemiesToCanvas model.enemies model.path
@@ -50,11 +50,20 @@ view model =
             ]
         , div Styles.canvasContainerStyles
             [ div
-                (onMouseEnter Messages.EnterCanvas :: id "canvasContainer" :: Styles.canvasStyles)
+                (onMouseEnter Messages.EnterCanvas :: id "canvasContainer" :: Styles.canvasStyles Area.area)
                 [ Canvas.toHtml
                     ( Area.area.width, Area.area.height )
                     []
                     (canvas model)
+                ]
+            ]
+        , div Styles.canvasContainerStyles
+            [ div
+                (onMouseEnter Messages.EnterCanvas :: id "canvasContainer" :: Styles.canvasStyles Ui.Tower.towerArea)
+                [ Canvas.toHtml
+                    ( Ui.Tower.towerArea.width, Ui.Tower.towerArea.height )
+                    []
+                    towerCanvas
                 ]
             ]
         ]

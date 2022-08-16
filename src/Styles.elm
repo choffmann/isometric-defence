@@ -1,6 +1,6 @@
 module Styles exposing (appContainer, borderWidth, canvasContainerStyles, canvasStyles)
 
-import Area exposing (area)
+import Area exposing (Area)
 import Html exposing (Attribute)
 import Html.Attributes exposing (style)
 
@@ -23,8 +23,8 @@ canvasContainerStyles =
     ]
 
 
-canvasStyles : List (Attribute msg)
-canvasStyles =
+canvasStyles : Area -> List (Attribute msg)
+canvasStyles area =
     [ style "width" (toPixelString (area.width + 2 * borderWidth))
     , style "height" (toPixelString (area.height + 2 * borderWidth))
     , style "border" (toPixelString borderWidth ++ " solid black")

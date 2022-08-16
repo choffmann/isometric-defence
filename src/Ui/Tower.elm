@@ -1,6 +1,6 @@
-module Ui.Tower exposing (availableTowerPlace, towerRadius, towersToCanvas)
+module Ui.Tower exposing (availableTowerPlace, towerArea, towerCanvas, towerFieldSize, towerRadius, towersToCanvas)
 
-import Area exposing (Field(..))
+import Area exposing (Area, Field(..))
 import Canvas exposing (Renderable, Shape)
 import Canvas.Settings
 import Canvas.Settings.Line
@@ -9,7 +9,7 @@ import List.Nonempty as Nonempty
 import Path exposing (Path, PathDirection(..), PathPoint)
 import Pixel
 import Point exposing (Point)
-import Tower exposing (Tower)
+import Tower exposing (Tower, Towers(..))
 import Ui.DrawUtils as DrawUtils
 
 
@@ -68,3 +68,48 @@ availableTowerPlace path =
 
         Just justPath ->
             Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 100 255 100) ] (draw (Nonempty.toList justPath) [])
+
+
+availableTowers : List Tower
+availableTowers =
+    [ Tower.toTower Basic
+    , Tower.toTower Tower1
+    , Tower.toTower Tower2
+    , Tower.toTower Tower3
+    ]
+
+
+towerFieldSizeMulti : Int
+towerFieldSizeMulti =
+    2
+
+
+towerFieldSize : Int
+towerFieldSize =
+    Area.fieldSize * towerFieldSizeMulti
+
+
+
+-- Area 20 15
+-- fieldSize 30
+
+
+towerArea : Area
+towerArea =
+    let
+        maxWidth : Int
+        maxWidth =
+            (Area.area.width // Area.fieldSize) // towerFieldSizeMulti
+
+        calcAreaHeight : List Tower -> Int
+        calcAreaHeight towers =
+            ceiling (toFloat (List.length towers) / toFloat maxWidth)
+    in
+    Area Area.area.width (towerFieldSize * calcAreaHeight availableTowers)
+
+
+towerCanvas : List Renderable
+towerCanvas =
+    [ Canvas.shapes [ Canvas.Settings.fill Color.grey ] [ Canvas.rect ( 0, 0 ) (toFloat towerArea.width) (toFloat towerArea.height) ]
+    , DrawUtils.drawCanvasGrid towerArea towerFieldSize
+    ]
