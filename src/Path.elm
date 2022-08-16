@@ -60,26 +60,28 @@ distanceToPixel path distance =
                 |> Maybe.map
                     (\pathPoint ->
                         let
+                            tuplePositionToPixel ( newX, newY ) =
+                                Pixel { x = newX, y = newY }
+
                             generateValue main second op =
-                                ( floor (toFloat Area.fieldSize * 0.5) + floor ((indexRatio - toFloat (floor indexRatio)) * toFloat Area.fieldSize) |> op (main * Area.fieldSize)
+                                ( floor (toFloat Area.fieldSize * 0.5)
+                                    + floor ((indexRatio - toFloat (floor indexRatio)) * toFloat Area.fieldSize)
+                                    |> op (main * Area.fieldSize)
                                 , second * Area.fieldSize + floor (toFloat Area.fieldSize * 0.5)
                                 )
                         in
                         case pathPoint.direction of
                             Right ->
-                                case generateValue pathPoint.point.x pathPoint.point.y (+) of
-                                    ( newX, newY ) ->
-                                        Pixel { x = newX, y = newY }
+                                generateValue pathPoint.point.x pathPoint.point.y (+)
+                                    |> tuplePositionToPixel
 
                             Down ->
-                                case generateValue pathPoint.point.y pathPoint.point.x (+) of
-                                    ( newY, newX ) ->
-                                        Pixel { x = newX, y = newY }
+                                generateValue pathPoint.point.y pathPoint.point.x (+)
+                                    |> tuplePositionToPixel
 
                             Up ->
-                                case generateValue pathPoint.point.y pathPoint.point.x (-) of
-                                    ( newY, newX ) ->
-                                        Pixel { x = newX, y = newY }
+                                generateValue pathPoint.point.y pathPoint.point.x (-)
+                                    |> tuplePositionToPixel
                     )
     in
     if distance < 0 then
