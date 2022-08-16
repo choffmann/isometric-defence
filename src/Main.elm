@@ -102,12 +102,14 @@ enemiesToCanvas enemies path =
 
 towersToCanvas : List Tower -> Renderable
 towersToCanvas towers =
-    towers
-        |> List.map
-            (\tower ->
-                pointToCanvas tower.position 20 20
-            )
-        |> Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 50 50 255) ]
+    let
+        towerToShape =
+            List.map
+                (\tower ->
+                    pointToCanvas tower.position 20 20
+                )
+    in
+    Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 50 50 255) ] (towerToShape towers)
 
 
 placingTowerToCanvas : PlacingTower -> List Renderable

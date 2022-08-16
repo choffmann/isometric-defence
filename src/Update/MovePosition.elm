@@ -9,22 +9,17 @@ import Point exposing (Point)
 canTowerBePlaced : Point -> Int -> Model -> Bool
 canTowerBePlaced towerPoint price model =
     let
-        checkOnPath mPath =
+        notOnPath mPath =
             case mPath of
                 Nothing ->
-                    False
+                    True
 
                 Just path ->
-                    List.any (\{ point } -> point == towerPoint) (Nonempty.toList path)
+                    not (List.any (\{ point } -> point == towerPoint) (Nonempty.toList path))
     in
-    if model.money < price then
-        False
-
-    else if List.any (\tower -> tower.position == towerPoint) model.towers then
-        False
-
-    else
-        not (checkOnPath model.path)
+    (model.money > price)
+        && not (List.any (\tower -> tower.position == towerPoint) model.towers)
+        && notOnPath model.path
 
 
 update : Maybe Point -> Model -> ( Model, Cmd Msg )
