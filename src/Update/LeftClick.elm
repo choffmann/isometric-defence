@@ -6,11 +6,14 @@ import Point exposing (Point)
 
 update : Maybe Point -> Model -> ( Model, Cmd msg )
 update point model =
-    ( case model.placingTower of
-        Nothing ->
+    ( case ( point, model.placingTower ) of
+        ( Nothing, _ ) ->
             { model | clicked = point }
 
-        Just placingTower ->
+        ( Just _, Nothing ) ->
+            { model | clicked = point }
+
+        ( Just _, Just placingTower ) ->
             if placingTower.canBePlaced then
                 { model | clicked = point, placingTower = Nothing, towers = placingTower.tower :: model.towers, money = model.money - placingTower.tower.price }
 
