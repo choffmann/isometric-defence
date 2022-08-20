@@ -54,7 +54,7 @@ createPoint (Last prevPoint path) direction =
 
 createFirstRandomPoint : PathPoint -> Path
 createFirstRandomPoint point =
-    Last point []
+    createPoint (Last point []) point.direction
 
 
 checkDirection : Maybe Path -> List PathDirection

@@ -1,4 +1,4 @@
-module Path exposing (Path(..), PathDirection(..), PathPoint, addPathPoint, concatPath, directionGenerator, distanceToPathPoint, distanceToPixel, pointGenerator)
+module Path exposing (Path(..), PathDirection(..), PathPoint, addPathPoint, directionGenerator, distanceToPathPoint, distanceToPixel, pointGenerator)
 
 import Area exposing (Field(..))
 import Pixel exposing (Pixel(..))
@@ -18,11 +18,6 @@ type PathDirection
     = Up
     | Down
     | Right
-
-
-concatPath : Path -> Path -> Path
-concatPath (Last prevPoint1 path1) (Last prevPoint2 path2) =
-    Last prevPoint1 (prevPoint2 :: (path1 ++ path2))
 
 
 addPathPoint : PathPoint -> Path -> Path
