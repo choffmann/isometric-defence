@@ -18,11 +18,16 @@ import Ui.DrawUtils as DrawUtils
 towerRadius : List Tower -> Renderable
 towerRadius towers =
     let
+        centerPoint : Point -> Point
+        centerPoint { x, y } =
+            Point (x + (Area.fieldSize // 2)) (y + (Area.fieldSize // 2))
+
         towerPositionToPixel : Point -> Canvas.Point
         towerPositionToPixel point =
             Field point
                 |> Area.fieldToPixel
                 |> Pixel.pixelToPoint
+                |> centerPoint
                 |> Point.toCanvasPoint
     in
     towers
