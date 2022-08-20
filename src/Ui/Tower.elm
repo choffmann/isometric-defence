@@ -1,8 +1,5 @@
 module Ui.Tower exposing (towerArea, towerCanvas, towerRadius, towersToCanvas)
 
---import List.Nonempty as Nonempty
---import Path exposing (Path, PathPoint)
-
 import Area exposing (Area, Field(..))
 import Canvas exposing (Renderable)
 import Canvas.Settings
@@ -45,68 +42,11 @@ towersToCanvas towers =
         |> Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 50 50 255) ]
 
 
-
-{-
-   availableTowerPlace : Maybe Path -> Renderable
-   availableTowerPlace path =
-       let
-           drawPoint : PathPoint -> List Shape
-           drawPoint point =
-               -- Zeichnet einmal komplett um den Pfad eine Fläche, wo ein Turm platziert werden kann
-               [ DrawUtils.pointToCanvas (Point (point.point.x - 1) point.point.y) (toFloat Area.fieldSize) (toFloat Area.fieldSize)
-               , DrawUtils.pointToCanvas (Point (point.point.x - 1) (point.point.y - 1)) (toFloat Area.fieldSize) (toFloat Area.fieldSize)
-               , DrawUtils.pointToCanvas (Point (point.point.x - 1) (point.point.y + 1)) (toFloat Area.fieldSize) (toFloat Area.fieldSize)
-               , DrawUtils.pointToCanvas (Point point.point.x (point.point.y - 1)) (toFloat Area.fieldSize) (toFloat Area.fieldSize)
-               , DrawUtils.pointToCanvas (Point (point.point.x + 1) (point.point.y - 1)) (toFloat Area.fieldSize) (toFloat Area.fieldSize)
-               , DrawUtils.pointToCanvas (Point (point.point.x + 1) point.point.y) (toFloat Area.fieldSize) (toFloat Area.fieldSize)
-               , DrawUtils.pointToCanvas (Point (point.point.x + 1) (point.point.y + 1)) (toFloat Area.fieldSize) (toFloat Area.fieldSize)
-               , DrawUtils.pointToCanvas (Point point.point.x (point.point.y + 1)) (toFloat Area.fieldSize) (toFloat Area.fieldSize)
-               ]
-
-           draw : List PathPoint -> List Shape -> List Shape
-           draw drawPath list =
-               case drawPath of
-                   [] ->
-                       list
-
-                   x :: xs ->
-                       draw xs (list ++ drawPoint x)
-       in
-       case path of
-           Nothing ->
-               Canvas.shapes [] []
-
-           Just justPath ->
-               Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 100 255 100) ] (draw (Nonempty.toList justPath) [])
--}
-
-
 availableTowers : List Tower
 availableTowers =
     [ Tower.toTower Basic
     , Tower.toTower Tower1
     , Tower.toTower Tower2
-    , Tower.toTower Tower3
-    , Tower.toTower Tower1
-    , Tower.toTower Tower2
-    , Tower.toTower Tower3
-    , Tower.toTower Tower3
-    , Tower.toTower Tower3
-    , Tower.toTower Tower3
-    , Tower.toTower Tower3
-    , Tower.toTower Tower3
-    , Tower.toTower Tower3
-    , Tower.toTower Tower3
-    , Tower.toTower Tower3
-    , Tower.toTower Tower3
-    , Tower.toTower Tower3
-    , Tower.toTower Tower3
-    , Tower.toTower Tower3
-    , Tower.toTower Tower3
-    , Tower.toTower Tower3
-    , Tower.toTower Tower3
-    , Tower.toTower Tower3
-    , Tower.toTower Tower3
     , Tower.toTower Tower3
     ]
 
