@@ -1,4 +1,7 @@
-module Ui.Tower exposing (availableTowerPlace, towerArea, towerCanvas, towerFieldSize, towerRadius, towersToCanvas)
+module Ui.Tower exposing (towerArea, towerCanvas, towerRadius, towersToCanvas)
+
+--import List.Nonempty as Nonempty
+--import Path exposing (Path, PathPoint)
 
 import Area exposing (Area, Field(..))
 import Canvas exposing (Renderable, Shape)
@@ -6,8 +9,6 @@ import Canvas.Settings
 import Canvas.Settings.Line
 import Canvas.Settings.Text
 import Color
-import List.Nonempty as Nonempty
-import Path exposing (Path, PathDirection(..), PathPoint)
 import Pixel
 import Point exposing (Point)
 import Tower exposing (Tower, Towers(..))
@@ -39,37 +40,40 @@ towersToCanvas towers =
         |> Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 50 50 255) ]
 
 
-availableTowerPlace : Maybe Path -> Renderable
-availableTowerPlace path =
-    let
-        drawPoint : PathPoint -> List Shape
-        drawPoint point =
-            -- Zeichnet einmal komplett um den Pfad eine Fläche, wo ein Turm platziert werden kann
-            [ DrawUtils.pointToCanvas (Point (point.point.x - 1) point.point.y) (toFloat Area.fieldSize) (toFloat Area.fieldSize)
-            , DrawUtils.pointToCanvas (Point (point.point.x - 1) (point.point.y - 1)) (toFloat Area.fieldSize) (toFloat Area.fieldSize)
-            , DrawUtils.pointToCanvas (Point (point.point.x - 1) (point.point.y + 1)) (toFloat Area.fieldSize) (toFloat Area.fieldSize)
-            , DrawUtils.pointToCanvas (Point point.point.x (point.point.y - 1)) (toFloat Area.fieldSize) (toFloat Area.fieldSize)
-            , DrawUtils.pointToCanvas (Point (point.point.x + 1) (point.point.y - 1)) (toFloat Area.fieldSize) (toFloat Area.fieldSize)
-            , DrawUtils.pointToCanvas (Point (point.point.x + 1) point.point.y) (toFloat Area.fieldSize) (toFloat Area.fieldSize)
-            , DrawUtils.pointToCanvas (Point (point.point.x + 1) (point.point.y + 1)) (toFloat Area.fieldSize) (toFloat Area.fieldSize)
-            , DrawUtils.pointToCanvas (Point point.point.x (point.point.y + 1)) (toFloat Area.fieldSize) (toFloat Area.fieldSize)
-            ]
 
-        draw : List PathPoint -> List Shape -> List Shape
-        draw drawPath list =
-            case drawPath of
-                [] ->
-                    list
+{-
+   availableTowerPlace : Maybe Path -> Renderable
+   availableTowerPlace path =
+       let
+           drawPoint : PathPoint -> List Shape
+           drawPoint point =
+               -- Zeichnet einmal komplett um den Pfad eine Fläche, wo ein Turm platziert werden kann
+               [ DrawUtils.pointToCanvas (Point (point.point.x - 1) point.point.y) (toFloat Area.fieldSize) (toFloat Area.fieldSize)
+               , DrawUtils.pointToCanvas (Point (point.point.x - 1) (point.point.y - 1)) (toFloat Area.fieldSize) (toFloat Area.fieldSize)
+               , DrawUtils.pointToCanvas (Point (point.point.x - 1) (point.point.y + 1)) (toFloat Area.fieldSize) (toFloat Area.fieldSize)
+               , DrawUtils.pointToCanvas (Point point.point.x (point.point.y - 1)) (toFloat Area.fieldSize) (toFloat Area.fieldSize)
+               , DrawUtils.pointToCanvas (Point (point.point.x + 1) (point.point.y - 1)) (toFloat Area.fieldSize) (toFloat Area.fieldSize)
+               , DrawUtils.pointToCanvas (Point (point.point.x + 1) point.point.y) (toFloat Area.fieldSize) (toFloat Area.fieldSize)
+               , DrawUtils.pointToCanvas (Point (point.point.x + 1) (point.point.y + 1)) (toFloat Area.fieldSize) (toFloat Area.fieldSize)
+               , DrawUtils.pointToCanvas (Point point.point.x (point.point.y + 1)) (toFloat Area.fieldSize) (toFloat Area.fieldSize)
+               ]
 
-                x :: xs ->
-                    draw xs (list ++ drawPoint x)
-    in
-    case path of
-        Nothing ->
-            Canvas.shapes [] []
+           draw : List PathPoint -> List Shape -> List Shape
+           draw drawPath list =
+               case drawPath of
+                   [] ->
+                       list
 
-        Just justPath ->
-            Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 100 255 100) ] (draw (Nonempty.toList justPath) [])
+                   x :: xs ->
+                       draw xs (list ++ drawPoint x)
+       in
+       case path of
+           Nothing ->
+               Canvas.shapes [] []
+
+           Just justPath ->
+               Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 100 255 100) ] (draw (Nonempty.toList justPath) [])
+-}
 
 
 availableTowers : List Tower
@@ -138,7 +142,9 @@ towersToSelectArea towers =
         canvasShape index delta tower =
             Canvas.group []
                 [ Canvas.shapes [ Canvas.Settings.fill Color.green, Canvas.Settings.stroke Color.blue ] [ Canvas.rect ( toFloat (index * towerFieldSize), toFloat (currentHeight delta * towerFieldSize) ) (toFloat towerFieldSize) (toFloat towerFieldSize) ]
-                , Canvas.text [ Canvas.Settings.Text.font { size = 12, family = "arial" } ] ( toFloat (index * towerFieldSize), toFloat ((currentHeight delta * towerFieldSize) + towerFieldSize - 5) ) (String.fromInt tower.price)
+
+                -- Display Tower price with an offset of x: +5 and y: -5
+                , Canvas.text [ Canvas.Settings.Text.font { size = 12, family = "arial" } ] ( toFloat ((index * towerFieldSize) + 5), toFloat ((currentHeight delta * towerFieldSize) + towerFieldSize - 5) ) (String.fromInt tower.price)
                 ]
 
         draw : Int -> Int -> List Tower -> List Renderable -> List Renderable

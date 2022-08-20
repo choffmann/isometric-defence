@@ -1,7 +1,7 @@
-module Ui.Path exposing (..)
+module Ui.Path exposing (pathToCanvas)
 
 import Area
-import Canvas exposing (PathSegment, Renderable, Shape)
+import Canvas exposing (Renderable)
 import Canvas.Settings
 import Color
 import List.Nonempty as Nonempty

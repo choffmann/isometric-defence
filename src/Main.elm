@@ -3,7 +3,7 @@ module Main exposing (main)
 import Area
 import Browser
 import Browser.Events
-import Canvas exposing (PathSegment, Renderable, Shape)
+import Canvas exposing (Renderable)
 import Canvas.Settings
 import Color
 import Html exposing (Html, div, text)
@@ -15,7 +15,7 @@ import Styles
 import Ui.DrawUtils as DrawUtils
 import Ui.Enemy
 import Ui.Path
-import Ui.Tower exposing (towerCanvas)
+import Ui.Tower
 import Update.Canvas as Canvas
 import Update.Click as Click
 import Update.EnterCanvas as EnterCanvas
@@ -31,7 +31,6 @@ canvas : Model -> List Renderable
 canvas model =
     [ Canvas.shapes [ Canvas.Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
     , DrawUtils.drawCanvasGrid Area.area Area.fieldSize
-    , Ui.Tower.availableTowerPlace model.path
     , Ui.Path.pathToCanvas model.path
     , Ui.Enemy.enemiesToCanvas model.enemies model.path
     , Ui.Tower.towersToCanvas model.towers
@@ -63,7 +62,7 @@ view model =
                 [ Canvas.toHtml
                     ( Ui.Tower.towerArea.width, Ui.Tower.towerArea.height )
                     []
-                    towerCanvas
+                    Ui.Tower.towerCanvas
                 ]
             ]
         ]
