@@ -1,8 +1,8 @@
 module Update.MovePosition exposing (update)
 
-import List.Nonempty as Nonempty
 import Messages exposing (Msg)
 import Model exposing (Model)
+import Path exposing (Path(..))
 import Point exposing (Point)
 
 
@@ -14,8 +14,8 @@ canTowerBePlaced towerPoint price model =
                 Nothing ->
                     True
 
-                Just path ->
-                    not (List.any (\{ point } -> point == towerPoint) (Nonempty.toList path))
+                Just (Last _ path) ->
+                    not (List.any (\{ point } -> point == towerPoint) path)
     in
     (model.money > price)
         && not (List.any (\tower -> tower.position == towerPoint) model.towers)

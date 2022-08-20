@@ -77,6 +77,7 @@ debugModel model =
         , div [] [ text "PlacingTower: ", text (Debug.toString model.placingTower) ]
         , div [] [ text "Enemies: ", text (Debug.toString model.enemies) ]
         , div [] [ text "Towers: ", text (Debug.toString model.towers) ]
+        , div [] [ text "Path: ", text (Debug.toString model.path) ]
 
         --, div [] [ text "Path: ", text (Debug.toString model.path) ]
         ]
