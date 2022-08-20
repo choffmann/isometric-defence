@@ -68,7 +68,7 @@ debugModel model =
     div []
         [ div [] [ text (String.fromFloat model.delta) ]
         , div [] [ text "Canvas: ", text (Debug.toString model.canvas) ]
-        , div [] [ text "CLicked: ", text (Debug.toString model.clicked) ]
+        , div [] [ text "Clicked: ", text (Debug.toString model.clicked) ]
         , div [] [ text "Gamestate: ", text (Debug.toString model.gameState) ]
         , div [] [ text "SpeedMult: ", text (Debug.toString model.speedMulti) ]
         , div [] [ text "HP: ", text (Debug.toString model.hp) ]
