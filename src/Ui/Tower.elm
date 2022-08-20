@@ -42,8 +42,8 @@ towersToCanvas towers =
         |> Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 50 50 255) ]
 
 
-availableTowers : List Tower
-availableTowers =
+demoTowers : List Tower
+demoTowers =
     [ Tower.toTower Basic
     , Tower.toTower Tower1
     , Tower.toTower Tower2
@@ -73,7 +73,7 @@ maxTowerAreaHeight towers =
 
 towerArea : Area
 towerArea =
-    Area Area.area.width (towerFieldSize * maxTowerAreaHeight availableTowers)
+    Area Area.area.width (towerFieldSize * maxTowerAreaHeight demoTowers)
 
 
 towersToSelectArea : List Tower -> List Renderable
@@ -113,8 +113,4 @@ towerCanvas =
     [ Canvas.shapes [ Canvas.Settings.fill Color.grey ] [ Canvas.rect ( 0, 0 ) (toFloat towerArea.width) (toFloat towerArea.height) ]
     , DrawUtils.drawCanvasGrid towerArea towerFieldSize
     ]
-        ++ towersToSelectArea availableTowers
-
-
-
--- ++ List.map (\tower -> Canvas.text [ Canvas.Settings.Text.font { size = 10, family = "serif" }, Canvas.Settings.Text.align Canvas.Settings.Text.Center ] (Point.toCanvasPoint tower.position) "Hello world") availableTowers
+        ++ towersToSelectArea demoTowers

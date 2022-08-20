@@ -1,8 +1,9 @@
-module Ui.DrawUtils exposing (drawCanvasGrid, pointToCanvas)
+module Ui.DrawUtils exposing (drawCanvasGrid, pointToCanvas, textOverPoint)
 
 import Area exposing (Area)
 import Canvas exposing (PathSegment, Renderable, Shape)
 import Canvas.Settings.Line
+import Canvas.Settings.Text
 import Point exposing (Point)
 
 
@@ -36,6 +37,11 @@ drawCanvasGrid area fieldSize =
             drawHeight [] 0
     in
     Canvas.shapes [ Canvas.Settings.Line.lineWidth 1, Canvas.Settings.Line.lineDash [ 4 ] ] [ Canvas.path ( 0, 0 ) draw ]
+
+
+textOverPoint : Point -> String -> Renderable
+textOverPoint point text =
+    Canvas.text [ Canvas.Settings.Text.font { size = 12, family = "arial" } ] (Point.toCanvasPoint point) text
 
 
 pointToCanvas : Point -> Float -> Float -> Shape

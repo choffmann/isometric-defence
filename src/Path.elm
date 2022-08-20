@@ -1,6 +1,7 @@
 module Path exposing (Path(..), PathDirection(..), PathPoint, addPathPoint, directionGenerator, distanceToPathPoint, distanceToPixel, pointGenerator)
 
 import Area exposing (Field(..))
+import List.Extra
 import Pixel exposing (Pixel(..))
 import Point exposing (Point)
 import Random
@@ -26,7 +27,7 @@ addPathPoint point (Last prevPoint path) =
         _ =
             Debug.log "Path" (Debug.toString (Last prevPoint path))
     in
-    Last point (prevPoint :: path)
+    Last point (List.Extra.snoc path prevPoint)
 
 
 pointGenerator : Random.Generator Point

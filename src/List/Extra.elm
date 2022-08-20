@@ -1,4 +1,4 @@
-module List.Extra exposing (removeNothing)
+module List.Extra exposing (removeNothing, snoc)
 
 
 removeNothing : List (Maybe a) -> List a
@@ -18,3 +18,13 @@ removeNothing =
                             internal (value :: acc) hs
     in
     internal []
+
+
+snoc : List a -> a -> List a
+snoc list e =
+    case list of
+        [] ->
+            [ e ]
+
+        x :: xs ->
+            x :: snoc xs e
