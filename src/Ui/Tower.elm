@@ -4,7 +4,7 @@ module Ui.Tower exposing (towerArea, towerCanvas, towerRadius, towersToCanvas)
 --import Path exposing (Path, PathPoint)
 
 import Area exposing (Area, Field(..))
-import Canvas exposing (Renderable, Shape)
+import Canvas exposing (Renderable)
 import Canvas.Settings
 import Canvas.Settings.Line
 import Canvas.Settings.Text

@@ -11,9 +11,7 @@ import Html.Attributes exposing (id)
 import Html.Events exposing (onMouseEnter)
 import Messages exposing (Msg(..))
 import Model exposing (Flags, GameState(..), Model, PlacingTower)
-import Point exposing (Point)
 import Styles
-import Tower exposing (Tower)
 import Ui.DrawUtils as DrawUtils
 import Ui.Enemy
 import Ui.Path
