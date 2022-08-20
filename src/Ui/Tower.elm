@@ -45,14 +45,15 @@ availableTowerPlace path =
         drawPoint : PathPoint -> List Shape
         drawPoint point =
             -- Zeichnet einmal komplett um den Pfad eine Fläche, wo ein Turm platziert werden kann
-            DrawUtils.pointToCanvas (Point (point.point.x - 1) point.point.y) (toFloat Area.fieldSize) (toFloat Area.fieldSize)
-                :: [ DrawUtils.pointToCanvas (Point (point.point.x - 1) (point.point.y - 1)) (toFloat Area.fieldSize) (toFloat Area.fieldSize) ]
-                ++ [ DrawUtils.pointToCanvas (Point (point.point.x - 1) (point.point.y + 1)) (toFloat Area.fieldSize) (toFloat Area.fieldSize) ]
-                ++ [ DrawUtils.pointToCanvas (Point point.point.x (point.point.y - 1)) (toFloat Area.fieldSize) (toFloat Area.fieldSize) ]
-                ++ [ DrawUtils.pointToCanvas (Point (point.point.x + 1) (point.point.y - 1)) (toFloat Area.fieldSize) (toFloat Area.fieldSize) ]
-                ++ [ DrawUtils.pointToCanvas (Point (point.point.x + 1) point.point.y) (toFloat Area.fieldSize) (toFloat Area.fieldSize) ]
-                ++ [ DrawUtils.pointToCanvas (Point (point.point.x + 1) (point.point.y + 1)) (toFloat Area.fieldSize) (toFloat Area.fieldSize) ]
-                ++ [ DrawUtils.pointToCanvas (Point point.point.x (point.point.y + 1)) (toFloat Area.fieldSize) (toFloat Area.fieldSize) ]
+            [ DrawUtils.pointToCanvas (Point (point.point.x - 1) point.point.y) (toFloat Area.fieldSize) (toFloat Area.fieldSize)
+            , DrawUtils.pointToCanvas (Point (point.point.x - 1) (point.point.y - 1)) (toFloat Area.fieldSize) (toFloat Area.fieldSize)
+            , DrawUtils.pointToCanvas (Point (point.point.x - 1) (point.point.y + 1)) (toFloat Area.fieldSize) (toFloat Area.fieldSize)
+            , DrawUtils.pointToCanvas (Point point.point.x (point.point.y - 1)) (toFloat Area.fieldSize) (toFloat Area.fieldSize)
+            , DrawUtils.pointToCanvas (Point (point.point.x + 1) (point.point.y - 1)) (toFloat Area.fieldSize) (toFloat Area.fieldSize)
+            , DrawUtils.pointToCanvas (Point (point.point.x + 1) point.point.y) (toFloat Area.fieldSize) (toFloat Area.fieldSize)
+            , DrawUtils.pointToCanvas (Point (point.point.x + 1) (point.point.y + 1)) (toFloat Area.fieldSize) (toFloat Area.fieldSize)
+            , DrawUtils.pointToCanvas (Point point.point.x (point.point.y + 1)) (toFloat Area.fieldSize) (toFloat Area.fieldSize)
+            ]
 
         draw : List PathPoint -> List Shape -> List Shape
         draw drawPath list =
@@ -79,6 +80,9 @@ availableTowers =
     , Tower.toTower Tower3
     , Tower.toTower Tower1
     , Tower.toTower Tower2
+    , Tower.toTower Tower3
+    , Tower.toTower Tower3
+    , Tower.toTower Tower3
     , Tower.toTower Tower3
     , Tower.toTower Tower3
     , Tower.toTower Tower3
@@ -123,26 +127,34 @@ towerArea =
     Area Area.area.width (towerFieldSize * maxTowerAreaHeight availableTowers)
 
 
-towerToSelectArea : List Tower -> List Renderable
-towerToSelectArea towers =
+towersToSelectArea : List Tower -> List Renderable
+towersToSelectArea towers =
     let
         currentHeight : Int -> Int
-        currentHeight index =
-            floor (toFloat index / toFloat maxTowerAreaWidth)
+        currentHeight delta =
+            floor (toFloat delta / toFloat maxTowerAreaWidth)
 
-        currentWidth : Int -> Int
-        currentWidth index =
-            if index >= maxTowerAreaWidth then
-                index - maxTowerAreaWidth
+        canvasShape : Int -> Int -> Tower -> Renderable
+        canvasShape index delta tower =
+            Canvas.group []
+                [ Canvas.shapes [ Canvas.Settings.fill Color.green, Canvas.Settings.stroke Color.blue ] [ Canvas.rect ( toFloat (index * towerFieldSize), toFloat (currentHeight delta * towerFieldSize) ) (toFloat towerFieldSize) (toFloat towerFieldSize) ]
+                , Canvas.text [ Canvas.Settings.Text.font { size = 12, family = "arial" } ] ( toFloat (index * towerFieldSize), toFloat ((currentHeight delta * towerFieldSize) + towerFieldSize - 5) ) (String.fromInt tower.price)
+                ]
 
-            else
-                index
+        draw : Int -> Int -> List Tower -> List Renderable -> List Renderable
+        draw index delta towerList list =
+            case towerList of
+                [] ->
+                    list
+
+                x :: xs ->
+                    if index >= (maxTowerAreaWidth - 1) then
+                        draw 0 (delta + 1) xs (canvasShape index delta x :: list)
+
+                    else
+                        draw (index + 1) (delta + 1) xs (canvasShape index delta x :: list)
     in
-    List.indexedMap
-        (\index _ ->
-            Canvas.shapes [ Canvas.Settings.fill Color.green, Canvas.Settings.stroke Color.blue ] [ Canvas.rect ( toFloat (currentWidth index * towerFieldSize), toFloat (currentHeight index * towerFieldSize) ) (toFloat towerFieldSize) (toFloat towerFieldSize) ]
-        )
-        towers
+    draw 0 0 towers []
 
 
 towerCanvas : List Renderable
@@ -150,7 +162,7 @@ towerCanvas =
     [ Canvas.shapes [ Canvas.Settings.fill Color.grey ] [ Canvas.rect ( 0, 0 ) (toFloat towerArea.width) (toFloat towerArea.height) ]
     , DrawUtils.drawCanvasGrid towerArea towerFieldSize
     ]
-        ++ towerToSelectArea availableTowers
+        ++ towersToSelectArea availableTowers
 
 
 
