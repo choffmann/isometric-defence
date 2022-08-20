@@ -1,6 +1,6 @@
 module Utils.Commands exposing (getCanvas)
 
-import Browser.Dom exposing (Element, getElement)
+import Browser.Dom exposing (Element)
 import Messages exposing (Msg)
 import Styles
 import Task
@@ -33,4 +33,4 @@ getCanvas =
                         Just (correctToCanvas element)
                 )
         )
-        (getElement "canvasContainer")
+        (Browser.Dom.getElement "canvasContainer")

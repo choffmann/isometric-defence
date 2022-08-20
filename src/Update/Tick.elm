@@ -99,22 +99,25 @@ tick model delta =
                 )
                 0
                 enemies
+
+        changeModel towers newEnemies =
+            { model
+                | towers = cooldownTowers model.speedMulti delta towers
+                , enemies = killEnemies newEnemies
+                , money = model.money + moneyFromKilledEnemies newEnemies
+                , delta = delta
+            }
     in
     case damage model.towers model.enemies of
         ( towers, enemies ) ->
             case model.path of
                 Nothing ->
-                    Debug.todo "Path is not greatet yet"
+                    model
 
                 Just path ->
-                    case enemies |> moveEnemies model.speedMulti delta path of
-                        newEnemies ->
-                            { model
-                                | towers = cooldownTowers model.speedMulti delta towers
-                                , enemies = killEnemies newEnemies
-                                , money = model.money + moneyFromKilledEnemies newEnemies
-                                , delta = delta
-                            }
+                    enemies
+                        |> moveEnemies model.speedMulti delta path
+                        |> changeModel towers
 
 
 update : Float -> Model -> ( Model, Cmd msg )

@@ -161,20 +161,5 @@ update msg model =
                 PathPointGenerate point ->
                     ( { model | path = Just (createFirstRandomPoint (PathPoint point Right)) }, Random.generate PathDirectionGenerate (Path.directionGenerator (checkDirection model.path)) )
 
-                Tick _ ->
-                    ( model, Cmd.none )
-
-                Key _ ->
-                    ( model, Cmd.none )
-
-                Click _ ->
-                    ( model, Cmd.none )
-
-                Canvas _ ->
-                    ( model, Cmd.none )
-
-                EnterCanvas ->
-                    ( model, Cmd.none )
-
-                Event _ ->
+                _ ->
                     ( model, Cmd.none )

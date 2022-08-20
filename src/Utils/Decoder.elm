@@ -1,10 +1,11 @@
-module Utils.Decoder exposing (clickDecoder, keyDecoder, mouseMoveDecoder, receiveEventDecoder)
+module Utils.Decoder exposing (keyDecoder, leftClickDecoder, mouseMoveDecoder, onContextMenuDecoder, receiveEventDecoder)
 
-import Area exposing (area)
+import Area exposing (Field(..))
 import FullScreenMode exposing (FullScreenMode(..))
 import Json.Decode as Decode exposing (Decoder)
 import Messages exposing (Key(..), Msg, ReceivingEvents(..))
 import Model exposing (Model)
+import Pixel exposing (Pixel(..))
 import Point exposing (Point)
 
 
@@ -47,36 +48,49 @@ keyDecoder =
         |> Decode.map Messages.Key
 
 
-clickDecoder : Model -> Decoder Msg
-clickDecoder model =
+clearToCanvas : Model -> Point -> Maybe Pixel
+clearToCanvas model point =
     let
-        clearToCanvas point =
-            model.canvas
-                |> Maybe.andThen
-                    (\canvas ->
-                        case ( point.x - round canvas.element.x, point.y - round canvas.element.y ) of
-                            ( newX, newY ) ->
-                                if newX > area.width || newX < 0 || newY > area.height || newY < 0 then
-                                    Nothing
+        newCoordsToCanvas x y =
+            if x > (Area.area.width + Area.fieldSize) || x < 0 || y > Area.area.height || y < 0 then
+                Nothing
 
-                                else
-                                    Just { x = newX, y = newY }
-                    )
+            else
+                Just (Pixel { x = x, y = y })
     in
+    model.canvas
+        |> Maybe.andThen
+            (\canvas ->
+                newCoordsToCanvas (point.x - round canvas.element.x) (point.y - round canvas.element.y)
+            )
+
+
+maybePixelToPoint : Maybe Pixel -> Maybe Point
+maybePixelToPoint pixel =
+    pixel
+        |> Maybe.map Area.pixelToField
+        |> Maybe.map (\(Field point) -> point)
+
+
+coordinateDecoder : Model -> Decoder (Maybe Point)
+coordinateDecoder model =
     Decode.succeed Point
         |> apply (Decode.field "pageX" Decode.int)
         |> apply (Decode.field "pageY" Decode.int)
-        |> Decode.map clearToCanvas
-        |> Decode.map Messages.Click
+        |> Decode.map (clearToCanvas model)
+        |> Decode.map maybePixelToPoint
 
 
-mouseMoveDecoder : Decoder Msg
-mouseMoveDecoder =
-    Decode.succeed Point
-        |> apply (Decode.field "movementX" Decode.int)
-        |> apply (Decode.field "movementY" Decode.int)
-        |> Decode.map Just
-        |> Decode.map Messages.Click
+leftClickDecoder : Model -> Decoder Msg
+leftClickDecoder model =
+    coordinateDecoder model
+        |> Decode.map Messages.LeftClick
+
+
+mouseMoveDecoder : Model -> Decoder Msg
+mouseMoveDecoder model =
+    coordinateDecoder model
+        |> Decode.map Messages.MovePosition
 
 
 type alias EventMsg =
@@ -108,3 +122,18 @@ receiveEventDecoder =
         |> apply (Decode.field "event" Decode.string)
         |> apply (Decode.field "message" Decode.string)
         |> Decode.map toEvent
+
+
+type alias CustomEventDecoder =
+    { message : Msg
+    , stopPropagation : Bool
+    , preventDefault : Bool
+    }
+
+
+onContextMenuDecoder : Decoder CustomEventDecoder
+onContextMenuDecoder =
+    Decode.succeed CustomEventDecoder
+        |> apply (Decode.succeed Messages.RightClick)
+        |> apply (Decode.succeed True)
+        |> apply (Decode.succeed True)

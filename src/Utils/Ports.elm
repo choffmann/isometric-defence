@@ -4,7 +4,7 @@ import FullScreenMode exposing (FullScreenMode(..))
 import Json.Decode as Decode
 import Json.Encode as Encode
 import Messages exposing (Msg(..), ReceivingEvents(..), SendingEvents(..))
-import Utils.Decoder exposing (receiveEventDecoder)
+import Utils.Decoder
 
 
 port sendEventMessage : Encode.Value -> Cmd msg
@@ -41,7 +41,7 @@ onEventMessage : Sub Msg
 onEventMessage =
     eventMessageReceiver
         (\event ->
-            case Decode.decodeValue receiveEventDecoder event of
+            case Decode.decodeValue Utils.Decoder.receiveEventDecoder event of
                 Err _ ->
                     Event UnknownEvent
 

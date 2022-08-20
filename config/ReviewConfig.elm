@@ -83,5 +83,5 @@ config =
     , UseInvertedOperators.rule
     -- , UseNamingConventions.rule
     , UseLogicalOperators.rule
-    , UseEtaReductions.rule UseEtaReductions.ModuleError
+    , UseEtaReductions.rule UseEtaReductions.LocatedError
     ]

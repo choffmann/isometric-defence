@@ -27,7 +27,9 @@ type SendingEvents
 type Msg
     = Tick Float
     | Key Key
-    | Click (Maybe Point)
+    | LeftClick (Maybe Point)
+    | RightClick
+    | MovePosition (Maybe Point)
     | Canvas (Maybe Element)
     | EnterCanvas
     | Event ReceivingEvents
