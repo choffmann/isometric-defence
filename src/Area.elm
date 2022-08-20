@@ -1,4 +1,4 @@
-module Area exposing (Area, Field(..), area, fieldSize, pixelToField)
+module Area exposing (Area, Field(..), area, fieldSize, fieldToPixel, pixelToField)
 
 import Pixel exposing (Pixel(..))
 import Point exposing (Point)
@@ -37,3 +37,8 @@ type Field
 pixelToField : Pixel -> Field
 pixelToField (Pixel { x, y }) =
     Field { x = min (x // fieldSize) (widthTiles - 1), y = min (y // fieldSize) (heightTiles - 1) }
+
+
+fieldToPixel : Field -> Pixel
+fieldToPixel (Field { x, y }) =
+    Pixel { x = x * fieldSize, y = y * fieldSize }
