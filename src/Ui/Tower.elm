@@ -4,6 +4,7 @@ import Area exposing (Area, Field(..))
 import Canvas exposing (Renderable, Shape)
 import Canvas.Settings
 import Canvas.Settings.Line
+import Canvas.Settings.Text
 import Color
 import List.Nonempty as Nonempty
 import Path exposing (Path, PathDirection(..), PathPoint)
@@ -76,6 +77,24 @@ availableTowers =
     , Tower.toTower Tower1
     , Tower.toTower Tower2
     , Tower.toTower Tower3
+    , Tower.toTower Tower1
+    , Tower.toTower Tower2
+    , Tower.toTower Tower3
+    , Tower.toTower Tower3
+    , Tower.toTower Tower3
+    , Tower.toTower Tower3
+    , Tower.toTower Tower3
+    , Tower.toTower Tower3
+    , Tower.toTower Tower3
+    , Tower.toTower Tower3
+    , Tower.toTower Tower3
+    , Tower.toTower Tower3
+    , Tower.toTower Tower3
+    , Tower.toTower Tower3
+    , Tower.toTower Tower3
+    , Tower.toTower Tower3
+    , Tower.toTower Tower3
+    , Tower.toTower Tower3
     ]
 
 
@@ -89,23 +108,41 @@ towerFieldSize =
     Area.fieldSize * towerFieldSizeFactor
 
 
+maxTowerAreaWidth : Int
+maxTowerAreaWidth =
+    (Area.area.width // Area.fieldSize) // towerFieldSizeFactor
 
--- Area 20 15
--- fieldSize 30
+
+maxTowerAreaHeight : List Tower -> Int
+maxTowerAreaHeight towers =
+    ceiling (toFloat (List.length towers) / toFloat maxTowerAreaWidth)
 
 
 towerArea : Area
 towerArea =
-    let
-        maxWidth : Int
-        maxWidth =
-            (Area.area.width // Area.fieldSize) // towerFieldSizeFactor
+    Area Area.area.width (towerFieldSize * maxTowerAreaHeight availableTowers)
 
-        calcAreaHeight : List Tower -> Int
-        calcAreaHeight towers =
-            ceiling (toFloat (List.length towers) / toFloat maxWidth)
+
+towerToSelectArea : List Tower -> List Renderable
+towerToSelectArea towers =
+    let
+        currentHeight : Int -> Int
+        currentHeight index =
+            floor (toFloat index / toFloat maxTowerAreaWidth)
+
+        currentWidth : Int -> Int
+        currentWidth index =
+            if index >= maxTowerAreaWidth then
+                index - maxTowerAreaWidth
+
+            else
+                index
     in
-    Area Area.area.width (towerFieldSize * calcAreaHeight availableTowers)
+    List.indexedMap
+        (\index _ ->
+            Canvas.shapes [ Canvas.Settings.fill Color.green, Canvas.Settings.stroke Color.blue ] [ Canvas.rect ( toFloat (currentWidth index * towerFieldSize), toFloat (currentHeight index * towerFieldSize) ) (toFloat towerFieldSize) (toFloat towerFieldSize) ]
+        )
+        towers
 
 
 towerCanvas : List Renderable
@@ -113,3 +150,8 @@ towerCanvas =
     [ Canvas.shapes [ Canvas.Settings.fill Color.grey ] [ Canvas.rect ( 0, 0 ) (toFloat towerArea.width) (toFloat towerArea.height) ]
     , DrawUtils.drawCanvasGrid towerArea towerFieldSize
     ]
+        ++ towerToSelectArea availableTowers
+
+
+
+-- ++ List.map (\tower -> Canvas.text [ Canvas.Settings.Text.font { size = 10, family = "serif" }, Canvas.Settings.Text.align Canvas.Settings.Text.Center ] (Point.toCanvasPoint tower.position) "Hello world") availableTowers
