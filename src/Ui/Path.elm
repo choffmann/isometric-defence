@@ -4,8 +4,7 @@ import Area
 import Canvas exposing (Renderable)
 import Canvas.Settings
 import Color
-import List.Nonempty as Nonempty
-import Path exposing (Path)
+import Path exposing (Path(..))
 import Ui.DrawUtils as DrawUtils
 
 
@@ -15,5 +14,5 @@ pathToCanvas path =
         Nothing ->
             Canvas.shapes [] []
 
-        Just justPath ->
-            Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 255 50 50) ] (List.map (\pathPoint -> DrawUtils.pointToCanvas pathPoint.point (toFloat Area.fieldSize) (toFloat Area.fieldSize)) (Nonempty.toList justPath))
+        Just (Last _ justPath) ->
+            Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 255 50 50) ] (List.map (\pathPoint -> DrawUtils.pointToCanvas pathPoint.point (toFloat Area.fieldSize) (toFloat Area.fieldSize)) justPath)
