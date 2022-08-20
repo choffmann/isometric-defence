@@ -67,11 +67,11 @@ checkDirection path =
             let
                 checkIsOnPathUp : Bool
                 checkIsOnPathUp =
-                    List.any (\e -> e.point.y /= prevPoint.point.y - 1) justPath
+                    not (List.any (\{ point } -> point.y == prevPoint.point.y - 1) justPath)
 
                 checkIsOnPathDown : Bool
                 checkIsOnPathDown =
-                    List.any (\e -> e.point.y /= prevPoint.point.y + 1) justPath
+                    not (List.any (\{ point } -> point.y == prevPoint.point.y + 1) justPath)
 
                 checkOutOfBoundsUp : Bool
                 checkOutOfBoundsUp =
@@ -91,7 +91,7 @@ checkDirection path =
                 [ Down, Up, Right ]
 
             else if
-                -- Wenn nur nach oben nicht möglich, kann nur rechts und unten gewählt werden
+                -- Wenn nur nach oben nicht möglich, kann nur unten und rechts gewählt werden
                 (not checkIsOnPathUp || not checkOutOfBoundsUp)
                     && checkIsOnPathDown
                     && checkOutOfBoundsDown
