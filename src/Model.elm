@@ -3,6 +3,7 @@ module Model exposing (Flags, GameState(..), Model, PlacingTower, init, restart)
 import Browser.Dom exposing (Element)
 import Enemy exposing (Enemy)
 import FullScreenMode exposing (FullScreenMode)
+import GameView exposing (GameView(..))
 import Messages exposing (Msg(..))
 import Path exposing (Path)
 import Point exposing (Point)
@@ -40,6 +41,7 @@ type alias Model =
     , speedMulti : Float
     , path : Maybe Path
     , sprites : Load Sprites
+    , gameView : GameView
     }
 
 
@@ -72,6 +74,7 @@ init _ =
       , speedMulti = 1.0
       , path = Nothing
       , sprites = Loading
+      , gameView = TopDown
       }
     , Random.generate PathPointGenerate Path.pointGenerator
     )

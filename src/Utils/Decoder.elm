@@ -34,6 +34,12 @@ keyDecoder =
                 "R" ->
                     R
 
+                "i" ->
+                    I
+
+                "I" ->
+                    I
+
                 "ArrowUp" ->
                     ArrowUp
 

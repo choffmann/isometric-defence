@@ -11,6 +11,7 @@ type Key
     = Space
     | F
     | R
+    | I
     | ArrowDown
     | ArrowUp
     | UnknownKey

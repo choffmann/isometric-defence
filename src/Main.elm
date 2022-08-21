@@ -7,6 +7,7 @@ import Canvas exposing (Renderable)
 import Canvas.Settings
 import Canvas.Texture as Texture
 import Color
+import GameView exposing (GameView(..))
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (id)
 import Html.Events exposing (onMouseEnter)
@@ -40,45 +41,49 @@ textures =
 
 canvas : Model -> List Renderable
 canvas model =
-    [ Canvas.shapes [ Canvas.Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
-    ]
-        ++ (case model.sprites of
-                Loading ->
-                    [ Canvas.shapes [] [] ]
+    case model.gameView of
+        Isometric ->
+            [ Canvas.shapes [ Canvas.Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
+            ]
+                ++ (case model.sprites of
+                        Loading ->
+                            [ Canvas.shapes [] [] ]
 
-                Success sprites ->
-                    Ui.Sprites.renderFloorSprite sprites.floor
-                        ++ Ui.Path.renderPathSprite model.path sprites.path
-                        ++ Ui.Tower.renderTowerSprite model.towers sprites.tower.tower1
-                        ++ (case model.placingTower of
-                                Nothing ->
-                                    []
+                        Success sprites ->
+                            Ui.Sprites.renderFloorSprite sprites.floor
+                                ++ Ui.Path.renderPathSprite model.path sprites.path
+                                ++ Ui.Tower.renderTowerSprite model.towers sprites.tower.tower1
+                                ++ (case model.placingTower of
+                                        Nothing ->
+                                            []
 
-                                Just placingTower ->
-                                    Ui.Tower.renderPlacingTowerSprite placingTower sprites.tower.selectTower
-                           )
+                                        Just placingTower ->
+                                            Ui.Tower.renderPlacingTowerSprite placingTower sprites.tower.selectTower
+                                   )
 
-                Failure ->
-                    [ Canvas.shapes [] [] ]
-           )
+                        Failure ->
+                            [ Canvas.shapes [] [] ]
+                   )
+
+        TopDown ->
+            [ Canvas.shapes [ Canvas.Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
+            , DrawUtils.drawCanvasGrid2d Area.area Area.fieldSize
+            , Ui.Path.pathToCanvas model.path
+            , Ui.Enemy.enemiesToCanvas model.enemies model.path
+            , Ui.Tower.towersToCanvas model.towers
+            , Ui.Tower.towerRadius model.towers
+            ]
+                ++ (case model.placingTower of
+                        Nothing ->
+                            []
+
+                        Just placingTower ->
+                            Ui.Tower.placingTowerToCanvas placingTower
+                   )
 
 
 
-{- , DrawUtils.drawCanvasGrid2d
-   , DrawUtils.drawCanvasGrid
-   , Ui.Path.pathToCanvas model.path
-   , Ui.Enemy.enemiesToCanvas model.enemies model.path
-   , Ui.Tower.towersToCanvas model.towers
-   , Ui.Tower.towerRadius model.towers
-   ]
-       ++ (case model.placingTower of
-               Nothing ->
-                   []
-
-               Just placingTower ->
-                   Ui.Tower.placingTowerToCanvas placingTower
-          )
--}
+{- -}
 
 
 debugModel : Model -> Html Msg
@@ -96,6 +101,7 @@ debugModel model =
         , div [] [ text "Enemies: ", text (Debug.toString model.enemies) ]
         , div [] [ text "Towers: ", text (Debug.toString model.towers) ]
         , div [] [ text "Sprites: ", text (Debug.toString model.sprites) ]
+        , div [] [ text "GameView: ", text (Debug.toString model.gameView) ]
 
         --, div [] [ text "Path: ", text (Debug.toString model.path) ]
         ]

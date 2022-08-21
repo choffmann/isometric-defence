@@ -1,4 +1,4 @@
-module Ui.Tower exposing (renderPlacingTowerSprite, renderTowerSprite, towerArea, towerCanvas, towerRadius)
+module Ui.Tower exposing (placingTowerToCanvas, renderPlacingTowerSprite, renderTowerSprite, towerArea, towerCanvas, towerRadius, towersToCanvas)
 
 import Area exposing (Area, Field(..))
 import Canvas exposing (Renderable)
@@ -36,33 +36,31 @@ towerRadius towers =
         |> Canvas.shapes [ Canvas.Settings.stroke (Color.rgb255 0 0 0), Canvas.Settings.Line.lineWidth 2 ]
 
 
+towersToCanvas : List Tower -> Renderable
+towersToCanvas towers =
+    towers
+        |> List.map
+            (\tower ->
+                DrawUtils.pointToCanvas tower.position (toFloat Area.fieldSize) (toFloat Area.fieldSize)
+            )
+        |> Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 50 50 255) ]
 
-{-
-   towersToCanvas : List Tower -> Renderable
-   towersToCanvas towers =
-       towers
-           |> List.map
-               (\tower ->
-                   DrawUtils.pointToCanvas tower.position (toFloat Area.fieldSize) (toFloat Area.fieldSize)
-               )
-           |> Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 50 50 255) ]
--}
-{- placingTowerToCanvas : PlacingTower -> List Renderable
-   placingTowerToCanvas placingTower =
-       [ Canvas.shapes
-           [ Canvas.Settings.fill
-               (if placingTower.canBePlaced then
-                   Color.green
 
-                else
-                   Color.red
-               )
-           ]
-           [ DrawUtils.pointToCanvas placingTower.tower.position (toFloat Area.fieldSize - 4) (toFloat Area.fieldSize - 4)
-           ]
-       , Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 50 50 255) ] [ DrawUtils.pointToCanvas placingTower.tower.position (toFloat Area.fieldSize - 20) (toFloat Area.fieldSize - 20) ]
-       ]
--}
+placingTowerToCanvas : PlacingTower -> List Renderable
+placingTowerToCanvas placingTower =
+    [ Canvas.shapes
+        [ Canvas.Settings.fill
+            (if placingTower.canBePlaced then
+                Color.green
+
+             else
+                Color.red
+            )
+        ]
+        [ DrawUtils.pointToCanvas placingTower.tower.position (toFloat Area.fieldSize - 4) (toFloat Area.fieldSize - 4)
+        ]
+    , Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 50 50 255) ] [ DrawUtils.pointToCanvas placingTower.tower.position (toFloat Area.fieldSize - 20) (toFloat Area.fieldSize - 20) ]
+    ]
 
 
 renderPlacingTowerSprite : PlacingTower -> TowerSelectionSprite -> List Renderable
