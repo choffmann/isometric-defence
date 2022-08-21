@@ -1,4 +1,4 @@
-module Ui.Tower exposing (towerArea, towerCanvas, towerRadius, towersToCanvas)
+module Ui.Tower exposing (placingTowerToCanvas, towerArea, towerCanvas, towerRadius, towersToCanvas)
 
 import Area exposing (Area, Field(..))
 import Canvas exposing (Renderable)
@@ -6,6 +6,7 @@ import Canvas.Settings
 import Canvas.Settings.Line
 import Canvas.Settings.Text
 import Color
+import Model exposing (PlacingTower)
 import Pixel
 import Point exposing (Point)
 import Tower exposing (Tower, Towers(..))
@@ -26,6 +27,7 @@ towerRadius towers =
                 |> Pixel.pixelToPoint
                 |> centerPoint
                 |> Point.toCanvasPoint
+                |> DrawUtils.toIsometric
     in
     towers
         |> List.map (\tower -> Canvas.circle (towerPositionToPixel tower.position) tower.attackRadius)
@@ -40,6 +42,23 @@ towersToCanvas towers =
                 DrawUtils.pointToCanvas tower.position (toFloat Area.fieldSize) (toFloat Area.fieldSize)
             )
         |> Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 50 50 255) ]
+
+
+placingTowerToCanvas : PlacingTower -> List Renderable
+placingTowerToCanvas placingTower =
+    [ Canvas.shapes
+        [ Canvas.Settings.fill
+            (if placingTower.canBePlaced then
+                Color.green
+
+             else
+                Color.red
+            )
+        ]
+        [ DrawUtils.pointToCanvas placingTower.tower.position (toFloat Area.fieldSize - 4) (toFloat Area.fieldSize - 4)
+        ]
+    , Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 50 50 255) ] [ DrawUtils.pointToCanvas placingTower.tower.position (toFloat Area.fieldSize - 20) (toFloat Area.fieldSize - 20) ]
+    ]
 
 
 demoTowers : List Tower
@@ -111,6 +130,7 @@ towersToSelectArea towers =
 towerCanvas : List Renderable
 towerCanvas =
     [ Canvas.shapes [ Canvas.Settings.fill Color.grey ] [ Canvas.rect ( 0, 0 ) (toFloat towerArea.width) (toFloat towerArea.height) ]
-    , DrawUtils.drawCanvasGrid towerArea towerFieldSize
+
+    --, DrawUtils.drawCanvasGrid towerArea towerFieldSize
     ]
         ++ towersToSelectArea demoTowers

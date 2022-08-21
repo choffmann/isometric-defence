@@ -29,26 +29,10 @@ import Utils.Decoder as Decoder
 import Utils.Ports as Ports
 
 
-placingTowerToCanvas : PlacingTower -> List Renderable
-placingTowerToCanvas placingTower =
-    [ Canvas.shapes
-        [ Canvas.Settings.fill
-            (if placingTower.canBePlaced then
-                Color.green
-
-             else
-                Color.red
-            )
-        ]
-        [ Canvas.rect ( toFloat (placingTower.tower.position.x * Area.fieldSize + 2), toFloat (placingTower.tower.position.y * Area.fieldSize + 2) ) (toFloat Area.fieldSize - 4) (toFloat Area.fieldSize - 4) ]
-    , Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 50 50 255) ] [ Canvas.rect ( toFloat (placingTower.tower.position.x * Area.fieldSize + 10), toFloat (placingTower.tower.position.y * Area.fieldSize + 10) ) (toFloat Area.fieldSize - 20) (toFloat Area.fieldSize - 20) ]
-    ]
-
-
 canvas : Model -> List Renderable
 canvas model =
     [ Canvas.shapes [ Canvas.Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
-    , DrawUtils.drawCanvasGrid Area.area Area.fieldSize
+    , DrawUtils.drawCanvasGrid
     , Ui.Path.pathToCanvas model.path
     , Ui.Enemy.enemiesToCanvas model.enemies model.path
     , Ui.Tower.towersToCanvas model.towers
@@ -59,7 +43,7 @@ canvas model =
                     []
 
                 Just placingTower ->
-                    placingTowerToCanvas placingTower
+                    Ui.Tower.placingTowerToCanvas placingTower
            )
 
 
@@ -95,7 +79,7 @@ view model =
             [ div
                 (Html.Events.onMouseEnter Messages.EnterCanvas :: id "canvasContainer" :: Styles.canvasStyles Area.area)
                 [ Canvas.toHtml
-                    ( Area.area.width, Area.area.height )
+                    ( Area.area.width * 2, Area.area.height * 2 )
                     []
                     (canvas model)
                 ]

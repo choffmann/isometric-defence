@@ -88,6 +88,10 @@ checkDirection path =
                     && checkIsOnPathDown
                     && checkOutOfBoundsDown
             then
+                let
+                    _ =
+                        Debug.log "checkDirection" ("[ Down, Up, Right ]" ++ " with Path: " ++ Debug.toString path)
+                in
                 [ Down, Up, Right ]
 
             else if
@@ -96,6 +100,10 @@ checkDirection path =
                     && checkIsOnPathDown
                     && checkOutOfBoundsDown
             then
+                let
+                    _ =
+                        Debug.log "checkDirection" ("[ Down, Right ]" ++ " with Path: " ++ Debug.toString path)
+                in
                 [ Down, Right ]
 
             else if
@@ -104,10 +112,18 @@ checkDirection path =
                     && checkIsOnPathUp
                     && checkOutOfBoundsUp
             then
+                let
+                    _ =
+                        Debug.log "checkDirection" ("[ Up, Right ]" ++ " with Path: " ++ Debug.toString path)
+                in
                 [ Up, Right ]
 
             else
                 -- Wenn nach oben und unten nicht möglich, kann nur nach rechts gewählt werden
+                let
+                    _ =
+                        Debug.log "checkDirection" ("[ Right ]" ++ " with Path: " ++ Debug.toString path)
+                in
                 [ Right ]
 
 

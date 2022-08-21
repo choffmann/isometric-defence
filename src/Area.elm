@@ -6,7 +6,7 @@ import Point exposing (Point)
 
 fieldSize : Int
 fieldSize =
-    30
+    32
 
 
 type alias Area =
@@ -22,7 +22,7 @@ widthTiles =
 
 heightTiles : Int
 heightTiles =
-    15
+    20
 
 
 area : Area
