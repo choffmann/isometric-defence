@@ -80,7 +80,7 @@ canvasPointToIsometric ( x, y ) =
 isometricOffset : ( Float, Float ) -> ( Float, Float )
 isometricOffset ( x, y ) =
     ( x - (toFloat fieldSize / 2) + toFloat area.width / 2
-    , y + (toFloat fieldSize / 2)
+    , y
     )
 
 
