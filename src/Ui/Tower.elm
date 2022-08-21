@@ -43,7 +43,7 @@ towersToCanvas towers =
             (\tower ->
                 DrawUtils.pointToCanvas tower.position (toFloat Area.fieldSize) (toFloat Area.fieldSize)
             )
-        |> Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 50 50 255) ]
+        |> Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 49 162 242) ]
 
 
 placingTowerToCanvas : PlacingTower -> List Renderable
@@ -59,7 +59,7 @@ placingTowerToCanvas placingTower =
         ]
         [ DrawUtils.pointToCanvas placingTower.tower.position (toFloat Area.fieldSize - 4) (toFloat Area.fieldSize - 4)
         ]
-    , Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 50 50 255) ] [ DrawUtils.pointToCanvas placingTower.tower.position (toFloat Area.fieldSize - 20) (toFloat Area.fieldSize - 20) ]
+    , Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 49 162 242) ] [ DrawUtils.pointToCanvas placingTower.tower.position (toFloat Area.fieldSize - 20) (toFloat Area.fieldSize - 20) ]
     ]
 
 
@@ -88,7 +88,7 @@ renderTowerSprite towers texture =
         |> List.map
             (\tower ->
                 Canvas.texture []
-                    (Area.canvasPointToIsometric ( toFloat tower.position.x, toFloat tower.position.y )
+                    (Area.canvasPointToIsometric ( toFloat tower.position.x - 1, toFloat tower.position.y - 1 )
                         |> Area.isometricOffset
                     )
                     texture

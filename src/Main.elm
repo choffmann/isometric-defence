@@ -66,7 +66,7 @@ canvas model =
                    )
 
         TopDown ->
-            [ Canvas.shapes [ Canvas.Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
+            [ Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 34 139 34) ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
             , DrawUtils.drawCanvasGrid2d Area.area Area.fieldSize
             , Ui.Path.pathToCanvas model.path
             , Ui.Enemy.enemiesToCanvas model.enemies model.path
