@@ -16,6 +16,7 @@ import Styles
 import Ui.DrawUtils as DrawUtils
 import Ui.Enemy
 import Ui.Path
+import Ui.Sprites
 import Ui.Tower
 import Update.Canvas as Canvas
 import Update.EnterCanvas as EnterCanvas
@@ -40,30 +41,36 @@ textures =
 canvas : Model -> List Renderable
 canvas model =
     [ Canvas.shapes [ Canvas.Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
-    , DrawUtils.drawCanvasGrid2d
-    , DrawUtils.drawCanvasGrid
-    , Ui.Path.pathToCanvas model.path
-    , Ui.Enemy.enemiesToCanvas model.enemies model.path
-    , Ui.Tower.towersToCanvas model.towers
-    , Ui.Tower.towerRadius model.towers
     ]
-        ++ (case model.placingTower of
-                Nothing ->
-                    []
-
-                Just placingTower ->
-                    Ui.Tower.placingTowerToCanvas placingTower
-           )
         ++ (case model.sprites of
                 Loading ->
                     [ Canvas.shapes [] [] ]
 
                 Success sprites ->
-                    [ Canvas.texture [] ( 0, 0 ) sprites.floor ]
+                    Ui.Sprites.renderFloorSprite sprites.floor
 
+                --[ Canvas.texture [] ( 0, 0 ) sprites.floor ]
                 Failure ->
                     [ Canvas.shapes [] [] ]
            )
+
+
+
+{- , DrawUtils.drawCanvasGrid2d
+   , DrawUtils.drawCanvasGrid
+   , Ui.Path.pathToCanvas model.path
+   , Ui.Enemy.enemiesToCanvas model.enemies model.path
+   , Ui.Tower.towersToCanvas model.towers
+   , Ui.Tower.towerRadius model.towers
+   ]
+       ++ (case model.placingTower of
+               Nothing ->
+                   []
+
+               Just placingTower ->
+                   Ui.Tower.placingTowerToCanvas placingTower
+          )
+-}
 
 
 debugModel : Model -> Html Msg

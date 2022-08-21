@@ -11,11 +11,13 @@ import Point exposing (Point)
 
 toIsometric : Canvas.Point -> Canvas.Point
 toIsometric ( x, y ) =
-    {- ( (x * 0.5) + (y * -0.5)
-       , (x * 0.25) + (y * 0.25)
-       )
-    -}
-    ( x - y, (x + y) / 2 )
+    ( (x * 0.5 * toFloat Area.fieldSize) + (y * -0.5 * toFloat Area.fieldSize)
+    , (x * 0.25 * toFloat Area.fieldSize) + (y * 0.25 * toFloat Area.fieldSize)
+    )
+
+
+
+{- ( x - y, (x + y) / 2 ) -}
 
 
 isometricOffset : Canvas.Point -> Canvas.Point
@@ -29,9 +31,13 @@ isometricOffset ( x, y ) =
     --  toIsometric: ( (x * 0.5) + (y * -0.5), (x * 0.25) + (y * 0.25))
     --  isometricOffset: ( x - (toFloat Area.fieldSize / 2) + toFloat Area.area.width / 2
     --  view: Area.height // 2
-    ( x - (toFloat Area.fieldSize / 2) + toFloat Area.area.width - toFloat Area.fieldSize
+    ( x - (toFloat Area.fieldSize / 2) + toFloat Area.area.width / 2
     , y + (toFloat Area.fieldSize / 2)
     )
+
+
+
+--( x, y )
 
 
 drawCanvasGrid2d : Renderable
@@ -115,9 +121,9 @@ textOverPoint point text =
 
 pointToCanvas : Point -> Float -> Float -> Shape
 pointToCanvas { x, y } width height =
-    Canvas.path (isometricOffset (toIsometric ( toFloat (x * Area.fieldSize), toFloat (y * Area.fieldSize) )))
-        [ Canvas.lineTo (isometricOffset (toIsometric ( toFloat (x * Area.fieldSize), toFloat (y * Area.fieldSize) - height )))
-        , Canvas.lineTo (isometricOffset (toIsometric ( toFloat (x * Area.fieldSize) + width, toFloat (y * Area.fieldSize) - height )))
-        , Canvas.lineTo (isometricOffset (toIsometric ( toFloat (x * Area.fieldSize) + width, toFloat (y * Area.fieldSize) )))
-        , Canvas.lineTo (isometricOffset (toIsometric ( toFloat (x * Area.fieldSize) - width, toFloat (y * Area.fieldSize) )))
+    Canvas.path (isometricOffset (toIsometric ( toFloat x, toFloat y )))
+        [ Canvas.lineTo (isometricOffset (toIsometric ( toFloat x, toFloat y - height )))
+        , Canvas.lineTo (isometricOffset (toIsometric ( toFloat x + width, toFloat y - height )))
+        , Canvas.lineTo (isometricOffset (toIsometric ( toFloat x + width, toFloat y )))
+        , Canvas.lineTo (isometricOffset (toIsometric ( toFloat x - width, toFloat y )))
         ]

@@ -1,13 +1,45 @@
 module Ui.Sprites exposing (..)
 
+import Area
 import Canvas exposing (Renderable)
 import Canvas.Texture exposing (Texture)
+import Point exposing (Point)
+import Ui.DrawUtils as DrawUtils
 
 
 type alias Sprites =
     { floor : Texture }
 
 
-renderFloorSprite : Texture -> Renderable
+renderFloorSprite : Texture -> List Renderable
 renderFloorSprite sprite =
-    Canvas.texture [] ( 0, 0 ) sprite
+    let
+        placeTile : Point -> Renderable
+        placeTile { x, y } =
+            Canvas.texture [] (DrawUtils.isometricOffset (DrawUtils.toIsometric ( toFloat x, toFloat y ))) sprite
+
+        drawWidth : List Renderable -> Int -> Int -> List Renderable
+        drawWidth list i j =
+            if j >= Area.widthTiles then
+                list
+
+            else
+                placeTile (Point i j) :: drawWidth list i (j + 1)
+
+        drawHeight : List Renderable -> Int -> List Renderable
+        drawHeight list index =
+            if index >= Area.heightTiles then
+                list
+
+            else
+                drawWidth [] index 0 ++ drawHeight list (index + 1)
+
+        draw : List Renderable
+        draw =
+            drawHeight [] 0
+    in
+    draw
+
+
+
+--Canvas.texture [] (DrawUtils.isometricOffset (DrawUtils.toIsometric ( 1 * toFloat Area.fieldSize, 1 * toFloat Area.fieldSize ))) sprite
