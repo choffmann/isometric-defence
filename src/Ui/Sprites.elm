@@ -26,8 +26,9 @@ renderFloorSprite sprite =
     let
         placeTile : Point -> Renderable
         placeTile { x, y } =
-            Canvas.texture [] (DrawUtils.isometricOffset (DrawUtils.toIsometric ( toFloat x, toFloat y ))) sprite
+            Canvas.texture [] (Area.isometricOffset (Area.canvasPointToIsometric ( toFloat x, toFloat y ))) sprite
 
+        --Canvas.texture [] (Area.canvasPointToIsometric ( toFloat x, toFloat y )) sprite
         drawWidth : List Renderable -> Int -> Int -> List Renderable
         drawWidth list i j =
             if j >= Area.widthTiles then

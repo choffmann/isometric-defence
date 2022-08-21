@@ -114,7 +114,7 @@ view model =
             [ div
                 (Html.Events.onMouseEnter Messages.EnterCanvas :: id "canvasContainer" :: Styles.canvasStyles Area.area)
                 [ Canvas.toHtmlWith
-                    { width = Area.area.width * 2, height = Area.area.height + Area.fieldSize, textures = textures }
+                    { width = Area.area.width, height = Area.area.height + Area.fieldSize, textures = textures }
                     --( Area.area.width * 2, Area.area.height + Area.fieldSize )
                     []
                     (canvas model)
