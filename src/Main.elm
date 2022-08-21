@@ -32,6 +32,7 @@ import Utils.Ports as Ports
 canvas : Model -> List Renderable
 canvas model =
     [ Canvas.shapes [ Canvas.Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
+    , DrawUtils.drawCanvasGrid2d
     , DrawUtils.drawCanvasGrid
     , Ui.Path.pathToCanvas model.path
     , Ui.Enemy.enemiesToCanvas model.enemies model.path
@@ -79,7 +80,7 @@ view model =
             [ div
                 (Html.Events.onMouseEnter Messages.EnterCanvas :: id "canvasContainer" :: Styles.canvasStyles Area.area)
                 [ Canvas.toHtml
-                    ( Area.area.width * 2, Area.area.height * 2 )
+                    ( Area.area.width * 2, Area.area.height + Area.fieldSize )
                     []
                     (canvas model)
                 ]
