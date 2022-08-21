@@ -35,7 +35,7 @@ import Utils.Ports as Ports
 
 textures : List (Texture.Source Msg)
 textures =
-    [ Texture.loadFromImageUrl "./assets/isometric_ground.png" TextureLoaded ]
+    [ Texture.loadFromImageUrl "./assets/tileset.png" TextureLoaded ]
 
 
 canvas : Model -> List Renderable
@@ -47,7 +47,7 @@ canvas model =
                     [ Canvas.shapes [] [] ]
 
                 Success sprites ->
-                    Ui.Sprites.renderFloorSprite sprites.floor
+                    Ui.Sprites.renderFloorSprite sprites.floor ++ Ui.Path.renderPathSprite model.path sprites.path
 
                 --[ Canvas.texture [] ( 0, 0 ) sprites.floor ]
                 Failure ->

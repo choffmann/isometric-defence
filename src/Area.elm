@@ -17,12 +17,12 @@ type alias Area =
 
 widthTiles : Int
 widthTiles =
-    10
+    20
 
 
 heightTiles : Int
 heightTiles =
-    10
+    20
 
 
 area : Area

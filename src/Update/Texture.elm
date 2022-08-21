@@ -1,5 +1,6 @@
 module Update.Texture exposing (..)
 
+import Area
 import Canvas.Texture as Texture exposing (Texture)
 import Messages exposing (Msg)
 import Model exposing (Model)
@@ -13,6 +14,23 @@ update maybeTexture model =
             ( { model | sprites = Failure }, Cmd.none )
 
         Just texture ->
-            ( { model | sprites = Success { floor = Texture.sprite { x = 0, y = 0, width = 32, height = 32 } texture } }
+            let
+                sprite : Float -> Float -> Texture -> Texture
+                sprite x y spriteTexture =
+                    Texture.sprite
+                        { x = x * toFloat Area.fieldSize
+                        , y = y * toFloat Area.fieldSize
+                        , width = toFloat Area.fieldSize
+                        , height = toFloat Area.fieldSize
+                        }
+                        spriteTexture
+            in
+            ( { model
+                | sprites =
+                    Success
+                        { floor = sprite 0 0 texture
+                        , path = sprite 1 0 texture
+                        }
+              }
             , Cmd.none
             )

@@ -8,7 +8,7 @@ import Ui.DrawUtils as DrawUtils
 
 
 type alias Sprites =
-    { floor : Texture }
+    { floor : Texture, path : Texture }
 
 
 renderFloorSprite : Texture -> List Renderable
@@ -39,6 +39,11 @@ renderFloorSprite sprite =
             drawHeight [] 0
     in
     draw
+
+
+renderPathSprite : Texture -> Renderable
+renderPathSprite sprite =
+    Canvas.texture [] ( 0, 0 ) sprite
 
 
 
