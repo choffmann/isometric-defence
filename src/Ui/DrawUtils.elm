@@ -1,4 +1,4 @@
-module Ui.DrawUtils exposing (drawCanvasGrid, pointToCanvas, textOverPoint, toIsometric)
+module Ui.DrawUtils exposing (drawCanvasGrid, isometricOffset, pointToCanvas, textOverPoint, toIsometric)
 
 import Area exposing (Area)
 import Canvas exposing (PathSegment, Renderable, Shape)
@@ -28,18 +28,16 @@ isometricOffset ( x, y ) =
 drawCanvasGrid : Renderable
 drawCanvasGrid =
     let
-        drawPoint : Point -> Shape
-        drawPoint point =
-            pointToCanvas point (toFloat Area.fieldSize) (toFloat Area.fieldSize)
-
         drawLine : Canvas.Point -> Canvas.Point -> List PathSegment
         drawLine fromPoint toPoint =
-            [ Canvas.moveTo (isometricOffset (toIsometric fromPoint)), Canvas.lineTo (isometricOffset (toIsometric toPoint)) ]
+            [ Canvas.moveTo (isometricOffset (toIsometric fromPoint))
+            , Canvas.lineTo (isometricOffset (toIsometric toPoint))
+            ]
 
         --[ Canvas.moveTo fromPoint, Canvas.lineTo toPoint ]
         drawWidth : List PathSegment -> Int -> List PathSegment
         drawWidth list index =
-            if index == Area.area.width then
+            if index == Area.widthTiles then
                 list
 
             else
@@ -48,7 +46,7 @@ drawCanvasGrid =
 
         drawHeight : List PathSegment -> Int -> List PathSegment
         drawHeight list index =
-            if index == Area.area.height then
+            if index == Area.heightTiles then
                 drawWidth list 0
 
             else
