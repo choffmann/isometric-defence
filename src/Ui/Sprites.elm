@@ -7,8 +7,18 @@ import Point exposing (Point)
 import Ui.DrawUtils as DrawUtils
 
 
+type alias TowerSelectionSprite =
+    { towerCanPlaced : Texture, towerCanNotPlaced : Texture }
+
+
 type alias Sprites =
-    { floor : Texture, path : Texture }
+    { floor : Texture
+    , path : Texture
+    , tower :
+        { selectTower : TowerSelectionSprite
+        , tower1 : Texture
+        }
+    }
 
 
 renderFloorSprite : Texture -> List Renderable

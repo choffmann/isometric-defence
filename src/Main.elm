@@ -47,9 +47,17 @@ canvas model =
                     [ Canvas.shapes [] [] ]
 
                 Success sprites ->
-                    Ui.Sprites.renderFloorSprite sprites.floor ++ Ui.Path.renderPathSprite model.path sprites.path
+                    Ui.Sprites.renderFloorSprite sprites.floor
+                        ++ Ui.Path.renderPathSprite model.path sprites.path
+                        ++ Ui.Tower.renderTowerSprite model.towers sprites.tower.tower1
+                        ++ (case model.placingTower of
+                                Nothing ->
+                                    []
 
-                --[ Canvas.texture [] ( 0, 0 ) sprites.floor ]
+                                Just placingTower ->
+                                    Ui.Tower.renderPlacingTowerSprite placingTower sprites.tower.selectTower
+                           )
+
                 Failure ->
                     [ Canvas.shapes [] [] ]
            )

@@ -30,6 +30,13 @@ update maybeTexture model =
                     Success
                         { floor = sprite 0 0 texture
                         , path = sprite 1 0 texture
+                        , tower =
+                            { selectTower =
+                                { towerCanPlaced = sprite 0 1 texture
+                                , towerCanNotPlaced = sprite 1 1 texture
+                                }
+                            , tower1 = sprite 2 0 texture
+                            }
                         }
               }
             , Cmd.none

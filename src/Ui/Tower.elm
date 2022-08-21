@@ -1,16 +1,18 @@
-module Ui.Tower exposing (placingTowerToCanvas, towerArea, towerCanvas, towerRadius, towersToCanvas)
+module Ui.Tower exposing (renderPlacingTowerSprite, renderTowerSprite, towerArea, towerCanvas, towerRadius, towersToCanvas)
 
 import Area exposing (Area, Field(..))
 import Canvas exposing (Renderable)
 import Canvas.Settings
 import Canvas.Settings.Line
 import Canvas.Settings.Text
+import Canvas.Texture exposing (Texture)
 import Color
 import Model exposing (PlacingTower)
 import Pixel
 import Point exposing (Point)
 import Tower exposing (Tower, Towers(..))
 import Ui.DrawUtils as DrawUtils
+import Ui.Sprites exposing (TowerSelectionSprite)
 
 
 towerRadius : List Tower -> Renderable
@@ -44,21 +46,55 @@ towersToCanvas towers =
         |> Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 50 50 255) ]
 
 
-placingTowerToCanvas : PlacingTower -> List Renderable
-placingTowerToCanvas placingTower =
-    [ Canvas.shapes
-        [ Canvas.Settings.fill
-            (if placingTower.canBePlaced then
-                Color.green
 
-             else
-                Color.red
+{- placingTowerToCanvas : PlacingTower -> List Renderable
+   placingTowerToCanvas placingTower =
+       [ Canvas.shapes
+           [ Canvas.Settings.fill
+               (if placingTower.canBePlaced then
+                   Color.green
+
+                else
+                   Color.red
+               )
+           ]
+           [ DrawUtils.pointToCanvas placingTower.tower.position (toFloat Area.fieldSize - 4) (toFloat Area.fieldSize - 4)
+           ]
+       , Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 50 50 255) ] [ DrawUtils.pointToCanvas placingTower.tower.position (toFloat Area.fieldSize - 20) (toFloat Area.fieldSize - 20) ]
+       ]
+-}
+
+
+renderPlacingTowerSprite : PlacingTower -> TowerSelectionSprite -> List Renderable
+renderPlacingTowerSprite placingTower texture =
+    if placingTower.canBePlaced then
+        [ Canvas.texture []
+            (DrawUtils.toIsometric ( toFloat placingTower.tower.position.x, toFloat placingTower.tower.position.y )
+                |> DrawUtils.isometricOffset
             )
+            texture.towerCanPlaced
         ]
-        [ DrawUtils.pointToCanvas placingTower.tower.position (toFloat Area.fieldSize - 4) (toFloat Area.fieldSize - 4)
+
+    else
+        [ Canvas.texture []
+            (DrawUtils.toIsometric ( toFloat placingTower.tower.position.x, toFloat placingTower.tower.position.y )
+                |> DrawUtils.isometricOffset
+            )
+            texture.towerCanNotPlaced
         ]
-    , Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 50 50 255) ] [ DrawUtils.pointToCanvas placingTower.tower.position (toFloat Area.fieldSize - 20) (toFloat Area.fieldSize - 20) ]
-    ]
+
+
+renderTowerSprite : List Tower -> Texture -> List Renderable
+renderTowerSprite towers texture =
+    towers
+        |> List.map
+            (\tower ->
+                Canvas.texture []
+                    (DrawUtils.toIsometric ( toFloat tower.position.x, toFloat tower.position.y )
+                        |> DrawUtils.isometricOffset
+                    )
+                    texture
+            )
 
 
 demoTowers : List Tower
