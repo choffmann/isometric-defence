@@ -5,6 +5,7 @@ import Browser
 import Browser.Events
 import Canvas exposing (Renderable)
 import Canvas.Settings
+import Canvas.Texture as Texture
 import Color
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (id)
@@ -24,9 +25,16 @@ import Update.Key as Key
 import Update.LeftClick as LeftClick
 import Update.MovePosition as MovePosition
 import Update.RightClick as RightClick
+import Update.Texture
 import Update.Tick as Tick
+import Utils.Data exposing (Load(..))
 import Utils.Decoder as Decoder
 import Utils.Ports as Ports
+
+
+textures : List (Texture.Source Msg)
+textures =
+    [ Texture.loadFromImageUrl "./assets/isometric_ground.png" TextureLoaded ]
 
 
 canvas : Model -> List Renderable
@@ -46,6 +54,16 @@ canvas model =
                 Just placingTower ->
                     Ui.Tower.placingTowerToCanvas placingTower
            )
+        ++ (case model.sprites of
+                Loading ->
+                    [ Canvas.shapes [] [] ]
+
+                Success sprites ->
+                    [ Canvas.texture [] ( 0, 0 ) sprites.floor ]
+
+                Failure ->
+                    [ Canvas.shapes [] [] ]
+           )
 
 
 debugModel : Model -> Html Msg
@@ -62,6 +80,7 @@ debugModel model =
         , div [] [ text "PlacingTower: ", text (Debug.toString model.placingTower) ]
         , div [] [ text "Enemies: ", text (Debug.toString model.enemies) ]
         , div [] [ text "Towers: ", text (Debug.toString model.towers) ]
+        , div [] [ text "Sprites: ", text (Debug.toString model.sprites) ]
 
         --, div [] [ text "Path: ", text (Debug.toString model.path) ]
         ]
@@ -79,8 +98,9 @@ view model =
         , div Styles.canvasContainerStyles
             [ div
                 (Html.Events.onMouseEnter Messages.EnterCanvas :: id "canvasContainer" :: Styles.canvasStyles Area.area)
-                [ Canvas.toHtml
-                    ( Area.area.width * 2, Area.area.height + Area.fieldSize )
+                [ Canvas.toHtmlWith
+                    { width = Area.area.width * 2, height = Area.area.height + Area.fieldSize, textures = textures }
+                    --( Area.area.width * 2, Area.area.height + Area.fieldSize )
                     []
                     (canvas model)
                 ]
@@ -129,6 +149,9 @@ update msg =
 
         PathPointGenerate point ->
             GeneratePath.update (PathPointGenerate point)
+
+        TextureLoaded texture ->
+            Update.Texture.update texture
 
 
 subscriptions : Model -> Sub Msg

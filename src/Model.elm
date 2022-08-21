@@ -8,6 +8,8 @@ import Path exposing (Path)
 import Point exposing (Point)
 import Random
 import Tower exposing (Tower)
+import Ui.Sprites exposing (Sprites)
+import Utils.Data exposing (Load(..))
 
 
 type GameState
@@ -37,6 +39,7 @@ type alias Model =
     , fullscreen : FullScreenMode
     , speedMulti : Float
     , path : Maybe Path
+    , sprites : Load Sprites
     }
 
 
@@ -68,6 +71,7 @@ init _ =
       , fullscreen = FullScreenMode.Close
       , speedMulti = 1.0
       , path = Nothing
+      , sprites = Loading
       }
     , Random.generate PathPointGenerate Path.pointGenerator
     )
