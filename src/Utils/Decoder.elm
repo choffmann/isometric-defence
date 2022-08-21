@@ -2,6 +2,7 @@ module Utils.Decoder exposing (keyDecoder, leftClickDecoder, mouseMoveDecoder, o
 
 import Area exposing (Field(..))
 import FullScreenMode exposing (FullScreenMode(..))
+import GameView exposing (GameView(..))
 import Json.Decode as Decode exposing (Decoder)
 import Messages exposing (Key(..), Msg, ReceivingEvents(..))
 import Model exposing (Model)
@@ -71,11 +72,18 @@ clearToCanvas model point =
             )
 
 
-maybePixelToPoint : Maybe Pixel -> Maybe Point
-maybePixelToPoint pixel =
-    pixel
-        |> Maybe.map Area.pixelToField
-        |> Maybe.map (\(Field point) -> point)
+maybePixelToPoint : GameView -> Maybe Pixel -> Maybe Point
+maybePixelToPoint gameView pixel =
+    case gameView of
+        Isometric ->
+            pixel
+                |> Maybe.map Area.pixelToFieldIso
+                |> Maybe.map (\(Field point) -> point)
+
+        TopDown ->
+            pixel
+                |> Maybe.map Area.pixelToField
+                |> Maybe.map (\(Field point) -> point)
 
 
 coordinateDecoder : Model -> Decoder (Maybe Point)
@@ -84,7 +92,7 @@ coordinateDecoder model =
         |> apply (Decode.field "pageX" Decode.int)
         |> apply (Decode.field "pageY" Decode.int)
         |> Decode.map (clearToCanvas model)
-        |> Decode.map maybePixelToPoint
+        |> Decode.map (maybePixelToPoint model.gameView)
 
 
 leftClickDecoder : Model -> Decoder Msg

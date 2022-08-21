@@ -1,4 +1,4 @@
-module Area exposing (Area, Field(..), area, canvasPointToIsometric, fieldSize, fieldToPixel, heightTiles, isometricOffset, isometricToPoint, pixelToField, widthTiles)
+module Area exposing (Area, Field(..), area, canvasPointToIsometric, fieldSize, fieldToPixel, heightTiles, isometricOffset, isometricToPoint, pixelToField, pixelToFieldIso, widthTiles)
 
 import Pixel exposing (Pixel(..))
 import Point exposing (Point)
@@ -34,9 +34,14 @@ type Field
     = Field Point
 
 
-pixelToField : Pixel -> Field
-pixelToField (Pixel point) =
+pixelToFieldIso : Pixel -> Field
+pixelToFieldIso (Pixel point) =
     Field (isometricToPoint point)
+
+
+pixelToField : Pixel -> Field
+pixelToField (Pixel { x, y }) =
+    Field { x = min (x // fieldSize) (widthTiles - 1), y = min (y // fieldSize) (heightTiles - 1) }
 
 
 fieldToPixel : Field -> Pixel
