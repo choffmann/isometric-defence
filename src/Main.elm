@@ -17,7 +17,7 @@ import Styles
 import Ui.DrawUtils as DrawUtils
 import Ui.Enemy
 import Ui.Path
-import Ui.Sprites
+import Ui.Sprites exposing (Sprites)
 import Ui.Tower
 import Update.Canvas as Canvas
 import Update.EnterCanvas as EnterCanvas
@@ -39,6 +39,21 @@ textures =
     [ Texture.loadFromImageUrl "./assets/tileset.png" TextureLoaded ]
 
 
+renderSprites : Model -> Sprites -> List Renderable
+renderSprites model sprites =
+    Ui.Sprites.renderFloorSprite sprites.floor
+        ++ Ui.Path.renderPathSprite model.path sprites.path
+        ++ Ui.Tower.renderTowerSprite model.towers sprites.tower.towers.tower1
+        ++ Ui.Enemy.renderEnemyIso model.enemies model.path sprites.enemy
+        ++ (case model.placingTower of
+                Nothing ->
+                    []
+
+                Just placingTower ->
+                    Ui.Tower.renderPlacingTowerSprite placingTower sprites.tower.selectTower
+           )
+
+
 canvas : Model -> List Renderable
 canvas model =
     case model.gameView of
@@ -50,16 +65,7 @@ canvas model =
                             [ Canvas.shapes [] [] ]
 
                         Success sprites ->
-                            Ui.Sprites.renderFloorSprite sprites.floor
-                                ++ Ui.Path.renderPathSprite model.path sprites.path
-                                ++ Ui.Tower.renderTowerSprite model.towers sprites.tower.tower1
-                                ++ (case model.placingTower of
-                                        Nothing ->
-                                            []
-
-                                        Just placingTower ->
-                                            Ui.Tower.renderPlacingTowerSprite placingTower sprites.tower.selectTower
-                                   )
+                            renderSprites model sprites
 
                         Failure ->
                             [ Canvas.shapes [] [] ]
@@ -100,8 +106,8 @@ debugModel model =
         , div [] [ text "PlacingTower: ", text (Debug.toString model.placingTower) ]
         , div [] [ text "Enemies: ", text (Debug.toString model.enemies) ]
         , div [] [ text "Towers: ", text (Debug.toString model.towers) ]
-        , div [] [ text "Sprites: ", text (Debug.toString model.sprites) ]
         , div [] [ text "GameView: ", text (Debug.toString model.gameView) ]
+        , div [] [ text "Sprites: ", text (Debug.toString model.sprites) ]
 
         --, div [] [ text "Path: ", text (Debug.toString model.path) ]
         ]
@@ -141,10 +147,19 @@ view model =
         , div Styles.canvasContainerStyles
             [ div
                 (onMouseEnter Messages.EnterCanvas :: id "canvasContainer" :: Styles.canvasStyles Ui.Tower.towerArea TopDown)
-                [ Canvas.toHtml
-                    ( Ui.Tower.towerArea.width, Ui.Tower.towerArea.height )
+                [ Canvas.toHtmlWith
+                    { width = Area.area.width, height = Area.area.height, textures = textures }
                     []
-                    Ui.Tower.towerCanvas
+                    (case model.sprites of
+                        Loading ->
+                            [ Canvas.shapes [] [] ]
+
+                        Success sprites ->
+                            Ui.Tower.towerCanvas sprites.tower.towers
+
+                        Failure ->
+                            [ Canvas.shapes [] [] ]
+                    )
                 ]
             ]
         ]

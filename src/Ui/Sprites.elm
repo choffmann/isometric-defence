@@ -4,11 +4,14 @@ import Area
 import Canvas exposing (Renderable)
 import Canvas.Texture exposing (Texture)
 import Point exposing (Point)
-import Ui.DrawUtils as DrawUtils
 
 
 type alias TowerSelectionSprite =
     { towerCanPlaced : Texture, towerCanNotPlaced : Texture }
+
+
+type alias TowerSprites =
+    { basic : Texture, tower1 : Texture }
 
 
 type alias Sprites =
@@ -16,8 +19,9 @@ type alias Sprites =
     , path : Texture
     , tower :
         { selectTower : TowerSelectionSprite
-        , tower1 : Texture
+        , towers : TowerSprites
         }
+    , enemy : Texture
     }
 
 
@@ -26,9 +30,12 @@ renderFloorSprite sprite =
     let
         placeTile : Point -> Renderable
         placeTile { x, y } =
-            Canvas.texture [] (Area.isometricOffset (Area.canvasPointToIsometric ( toFloat x, toFloat y ))) sprite
+            Canvas.texture []
+                (Area.canvasPointToIsometric ( toFloat x, toFloat y )
+                    |> Area.isometricOffset
+                )
+                sprite
 
-        --Canvas.texture [] (Area.canvasPointToIsometric ( toFloat x, toFloat y )) sprite
         drawWidth : List Renderable -> Int -> Int -> List Renderable
         drawWidth list i j =
             if j >= Area.widthTiles then
@@ -50,11 +57,6 @@ renderFloorSprite sprite =
             drawHeight [] 0
     in
     draw
-
-
-renderPathSprite : Texture -> Renderable
-renderPathSprite sprite =
-    Canvas.texture [] ( 0, 0 ) sprite
 
 
 

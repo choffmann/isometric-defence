@@ -35,8 +35,12 @@ update maybeTexture model =
                                 { towerCanPlaced = sprite 0 1 texture
                                 , towerCanNotPlaced = sprite 1 1 texture
                                 }
-                            , tower1 = sprite 2 0 texture
+                            , towers =
+                                { basic = sprite 2 0 texture
+                                , tower1 = sprite 2 0 texture
+                                }
                             }
+                        , enemy = sprite 1 2 texture
                         }
               }
             , Cmd.none
