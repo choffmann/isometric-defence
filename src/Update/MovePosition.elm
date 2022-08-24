@@ -19,7 +19,7 @@ canTowerBePlaced towerPoint price model =
                 Just (Last _ path) ->
                     not (List.any (\{ point } -> point == towerPoint) path)
     in
-    (model.money > price)
+    (model.money >= price)
         && not (List.any (\tower -> tower.position == towerPoint) model.towers)
         && notOnPath model.path
 

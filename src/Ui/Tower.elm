@@ -1,4 +1,4 @@
-module Ui.Tower exposing (placingTowerToCanvas, renderPlacingTowerSprite, renderTowerSprite, towerArea, towerCanvas, towerRadius, towersToCanvas)
+module Ui.Tower exposing (pixelToTower, placingTowerToCanvas, renderPlacingTowerSprite, renderTowerSprite, towerArea, towerCanvas, towerRadius, towersToCanvas)
 
 import Area exposing (Area, Field(..))
 import Canvas exposing (Renderable)
@@ -9,7 +9,7 @@ import Canvas.Settings.Text
 import Canvas.Texture exposing (Texture)
 import Color
 import Model exposing (PlacingTower)
-import Pixel
+import Pixel exposing (Pixel(..))
 import Point exposing (Point)
 import Tower exposing (Tower, Towers(..))
 import Ui.DrawUtils as DrawUtils
@@ -168,3 +168,10 @@ towerCanvas sprites =
     , DrawUtils.drawCanvasGrid2d towerArea towerFieldSize
     ]
         ++ towersToSelectArea demoTowers sprites
+
+
+pixelToTower : Pixel -> Maybe Towers
+pixelToTower (Pixel point) =
+    demoTowers
+        |> List.drop (10 * (point.y // towerFieldSize) + (point.x // towerFieldSize))
+        |> List.head

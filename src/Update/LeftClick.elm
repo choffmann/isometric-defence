@@ -2,9 +2,11 @@ module Update.LeftClick exposing (update)
 
 import Area exposing (Field(..))
 import Messages exposing (GameArea(..))
-import Model exposing (Model)
+import Model exposing (Model, PlacingTower)
 import Pixel exposing (Pixel)
 import Point exposing (Point)
+import Tower exposing (Towers(..))
+import Ui.Tower exposing (pixelToTower)
 
 
 update : Maybe Pixel -> GameArea -> Model -> ( Model, Cmd msg )
@@ -34,4 +36,16 @@ update mPixel gameArea model =
             )
 
         ToolArea ->
-            ( model, Cmd.none )
+            ( case mPixel of
+                Nothing ->
+                    { model | clicked = Nothing }
+
+                Just pixel ->
+                    { model
+                        | clicked = Nothing
+                        , placingTower =
+                            pixelToTower pixel
+                                |> Maybe.map (\tower -> PlacingTower (Tower.toTower tower) False)
+                    }
+            , Cmd.none
+            )
