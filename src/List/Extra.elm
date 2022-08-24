@@ -1,4 +1,6 @@
-module List.Extra exposing (removeNothing, snoc)
+module List.Extra exposing (last, removeNothing, snoc)
+
+import Html exposing (a)
 
 
 removeNothing : List (Maybe a) -> List a
@@ -18,6 +20,25 @@ removeNothing =
                             internal (value :: acc) hs
     in
     internal []
+
+
+last : List a -> Maybe a
+last list =
+    let
+        internal h hs =
+            case hs of
+                [] ->
+                    h
+
+                r :: rs ->
+                    internal r rs
+    in
+    case list of
+        [] ->
+            Nothing
+
+        h :: hs ->
+            Just (internal h hs)
 
 
 snoc : List a -> a -> List a

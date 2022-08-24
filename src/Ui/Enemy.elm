@@ -7,7 +7,7 @@ import Canvas.Texture exposing (Texture)
 import Color
 import Enemy exposing (Enemy)
 import List.Extra as List
-import Path exposing (Path(..))
+import Path exposing (Path)
 import Pixel exposing (Pixel(..))
 import Ui.DrawUtils as DrawUtils
 

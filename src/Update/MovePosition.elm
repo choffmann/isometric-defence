@@ -4,7 +4,7 @@ import Area exposing (Field(..))
 import GameView exposing (GameView(..))
 import Messages exposing (GameArea(..), Msg)
 import Model exposing (Model)
-import Path exposing (Path(..))
+import Path exposing (Path)
 import Pixel exposing (Pixel)
 import Point exposing (Point)
 
@@ -17,7 +17,7 @@ canTowerBePlaced towerPoint price model =
                 Nothing ->
                     True
 
-                Just (Last _ path) ->
+                Just path ->
                     not (List.any (\{ point } -> point == towerPoint) path)
     in
     (model.money >= price)

@@ -1,140 +1,102 @@
 module Update.GeneratePath exposing (update)
 
 import Area
+import List.Extra as List
 import Messages exposing (Msg(..))
 import Model exposing (GameState(..), Model)
-import Path exposing (Path(..), PathDirection(..), PathPoint)
+import Path exposing (Path, PathDirection(..), PathPoint)
 import Point exposing (Point)
 import Random
 
 
-createNeighbor : PathPoint -> PathPoint
-createNeighbor point =
-    case point.direction of
-        Up ->
-            PathPoint (Point point.point.x (point.point.y - 1)) point.direction
-
-        Down ->
-            PathPoint (Point point.point.x (point.point.y + 1)) point.direction
-
-        Right ->
-            PathPoint (Point (point.point.x + 1) point.point.y) point.direction
-
-
-createPoint : Path -> PathDirection -> Path
-createPoint (Last prevPoint path) direction =
-    case direction of
-        Up ->
-            let
-                newPoint : Point
-                newPoint =
-                    Point prevPoint.point.x (prevPoint.point.y - 1)
-            in
-            Path.addPathPoint (PathPoint newPoint direction) (Last prevPoint path)
-                |> Path.addPathPoint (createNeighbor (PathPoint newPoint direction))
-
-        Down ->
-            let
-                newPoint : Point
-                newPoint =
-                    Point prevPoint.point.x (prevPoint.point.y + 1)
-            in
-            Path.addPathPoint (PathPoint newPoint direction) (Last prevPoint path)
-                |> Path.addPathPoint (createNeighbor (PathPoint newPoint direction))
-
-        Right ->
-            let
-                newPoint : Point
-                newPoint =
-                    Point (prevPoint.point.x + 1) prevPoint.point.y
-            in
-            Path.addPathPoint (PathPoint newPoint direction) (Last prevPoint path)
-                |> Path.addPathPoint (createNeighbor (PathPoint newPoint direction))
-
-
-createFirstRandomPoint : PathPoint -> Path
-createFirstRandomPoint point =
-    createPoint (Last point []) point.direction
-
-
-checkDirection : Maybe Path -> List PathDirection
+checkDirection : Path -> List PathDirection
 checkDirection path =
-    case path of
+    let
+        checkDown direction y =
+            case direction of
+                Up ->
+                    False
+
+                Right ->
+                    (y + 2) < Area.heightTiles
+
+                Down ->
+                    (y + 2) < Area.heightTiles
+
+        checkUp direction y =
+            case direction of
+                Up ->
+                    (y - 2) > 0
+
+                Right ->
+                    (y - 2) > 0
+
+                Down ->
+                    False
+
+        internal { direction, point } =
+            case direction of
+                Right ->
+                    if checkDown direction point.y && checkUp direction point.y then
+                        [ Right, Up, Down ]
+
+                    else if checkDown direction point.y then
+                        [ Right, Down ]
+
+                    else if checkUp direction point.y then
+                        [ Right, Up ]
+
+                    else
+                        [ Right ]
+
+                Down ->
+                    if checkDown direction (point.y + 2) && checkUp direction (point.y + 2) then
+                        [ Right, Up, Down ]
+
+                    else if checkDown direction (point.y + 2) then
+                        [ Right, Down ]
+
+                    else if checkUp direction (point.y + 2) then
+                        [ Right, Up ]
+
+                    else
+                        [ Right ]
+
+                Up ->
+                    if checkDown direction (point.y - 2) && checkUp direction (point.y - 2) then
+                        [ Right, Up, Down ]
+
+                    else if checkDown direction (point.y - 2) then
+                        [ Right, Down ]
+
+                    else if checkUp direction (point.y - 2) then
+                        [ Right, Up ]
+
+                    else
+                        [ Right ]
+    in
+    case List.head path of
         Nothing ->
-            [ Right, Down, Up ]
+            [ Right, Up, Down ]
 
-        Just (Last prevPoint justPath) ->
-            let
-                checkIsOnPathUp : Bool
-                checkIsOnPathUp =
-                    not (List.any (\{ point } -> point.y == prevPoint.point.y - 1) justPath)
-
-                checkIsOnPathDown : Bool
-                checkIsOnPathDown =
-                    not (List.any (\{ point } -> point.y == prevPoint.point.y + 1) justPath)
-
-                checkOutOfBoundsUp : Bool
-                checkOutOfBoundsUp =
-                    prevPoint.point.y - 2 >= 0
-
-                checkOutOfBoundsDown : Bool
-                checkOutOfBoundsDown =
-                    prevPoint.point.y + 2 <= ((Area.area.height // Area.fieldSize) - 1)
-            in
-            if
-                -- Wenn alle abfragen erfolgreich, kann jede Richtung gewählt werden
-                checkIsOnPathUp
-                    && checkOutOfBoundsUp
-                    && checkIsOnPathDown
-                    && checkOutOfBoundsDown
-            then
-                let
-                    _ =
-                        Debug.log "checkDirection" ("[ Down, Up, Right ]" ++ " with Path: " ++ Debug.toString path)
-                in
-                [ Down, Up, Right ]
-
-            else if
-                -- Wenn nur nach oben nicht möglich, kann nur unten und rechts gewählt werden
-                (not checkIsOnPathUp || not checkOutOfBoundsUp)
-                    && checkIsOnPathDown
-                    && checkOutOfBoundsDown
-            then
-                let
-                    _ =
-                        Debug.log "checkDirection" ("[ Down, Right ]" ++ " with Path: " ++ Debug.toString path)
-                in
-                [ Down, Right ]
-
-            else if
-                -- Wenn nur nach unten nicht möglich, kann nur nach oben oder rechts gewählt werden
-                (not checkIsOnPathDown || not checkOutOfBoundsDown)
-                    && checkIsOnPathUp
-                    && checkOutOfBoundsUp
-            then
-                let
-                    _ =
-                        Debug.log "checkDirection" ("[ Up, Right ]" ++ " with Path: " ++ Debug.toString path)
-                in
-                [ Up, Right ]
-
-            else
-                -- Wenn nach oben und unten nicht möglich, kann nur nach rechts gewählt werden
-                let
-                    _ =
-                        Debug.log "checkDirection" ("[ Right ]" ++ " with Path: " ++ Debug.toString path)
-                in
-                [ Right ]
-
-
-checkIsLastPoint : Path -> Bool
-checkIsLastPoint (Last prevPoint _) =
-    -- TODO: area.width maybe without multiply by fieldSize????
-    prevPoint.point.x + 1 > ((Area.area.width // Area.fieldSize) - 1)
+        Just pathPoint ->
+            internal pathPoint
 
 
 update : Msg -> Model -> ( Model, Cmd Messages.Msg )
 update msg model =
+    let
+        newPath pathPoint path direction =
+            case pathPoint.direction of
+                Right ->
+                    PathPoint (Point (pathPoint.point.x + 2) pathPoint.point.y) direction :: PathPoint (Point (pathPoint.point.x + 1) pathPoint.point.y) Right :: pathPoint :: path
+
+                Up ->
+                    PathPoint (Point pathPoint.point.x (pathPoint.point.y - 2)) direction :: PathPoint (Point pathPoint.point.x (pathPoint.point.y - 1)) Up :: pathPoint :: path
+
+                Down ->
+                    PathPoint (Point pathPoint.point.x (pathPoint.point.y + 2)) direction :: PathPoint (Point pathPoint.point.x (pathPoint.point.y + 1)) Down :: pathPoint :: path
+    in
     case model.gameState of
         Running ->
             ( model, Cmd.none )
@@ -155,15 +117,20 @@ update msg model =
                         Nothing ->
                             ( model, Cmd.none )
 
-                        Just (Last prevPoint path) ->
-                            if checkIsLastPoint (Last prevPoint path) then
-                                ( { model | gameState = Paused }, Cmd.none )
+                        Just path ->
+                            case path of
+                                [] ->
+                                    ( model, Cmd.none )
 
-                            else
-                                ( { model | path = Just (createPoint (Last prevPoint path) direction) }, Random.generate PathDirectionGenerate (Path.directionGenerator (checkDirection (Just (Last prevPoint path)))) )
+                                h :: hs ->
+                                    if h.point.x + 2 > Area.widthTiles then
+                                        ( { model | gameState = Paused, path = Just (PathPoint (Point (h.point.x + 2) h.point.y) direction :: newPath h hs direction) }, Cmd.none )
+
+                                    else
+                                        ( { model | path = Just (newPath h hs direction) }, Random.generate PathDirectionGenerate (Path.directionGenerator (checkDirection (newPath h hs direction))) )
 
                 PathPointGenerate point ->
-                    ( { model | path = Just (createFirstRandomPoint (PathPoint point Right)) }, Random.generate PathDirectionGenerate (Path.directionGenerator (checkDirection model.path)) )
+                    ( { model | path = Just [ PathPoint point Right ], gameState = GeneratePath }, Random.generate PathDirectionGenerate (Path.directionGenerator (checkDirection [ PathPoint point Right ])) )
 
                 _ ->
                     ( model, Cmd.none )

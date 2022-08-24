@@ -63,7 +63,7 @@ restart model flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init _ =
-    ( { gameState = Paused
+    ( { gameState = GeneratePath
       , hp = 1000
       , money = 1000
       , enemies = [ Enemy.toEnemy Enemy.Soldat ] --, toEnemy Enemy.Soldat, toEnemy Enemy.Soldat, toEnemy Enemy.Soldat, toEnemy Enemy.Soldat ]
@@ -80,6 +80,5 @@ init _ =
       , gameView = TopDown
       , movePosition = Nothing
       }
-    , Cmd.none
-      -- Random.generate PathPointGenerate Path.pointGenerator
+    , Random.generate PathPointGenerate Path.pointGenerator
     )
