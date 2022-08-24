@@ -1,6 +1,7 @@
 module Messages exposing (Key(..), Msg(..), ReceivingEvents(..), SendingEvents(..))
 
 import Browser.Dom exposing (Element)
+import Canvas.Texture as Canvas
 import FullScreenMode exposing (FullScreenMode)
 import Path exposing (PathDirection)
 import Point exposing (Point)
@@ -10,6 +11,7 @@ type Key
     = Space
     | F
     | R
+    | I
     | ArrowDown
     | ArrowUp
     | UnknownKey
@@ -35,3 +37,4 @@ type Msg
     | Event ReceivingEvents
     | PathDirectionGenerate PathDirection
     | PathPointGenerate Point
+    | TextureLoaded (Maybe Canvas.Texture)

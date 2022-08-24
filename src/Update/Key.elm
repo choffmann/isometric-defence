@@ -1,6 +1,7 @@
 module Update.Key exposing (update)
 
 import FullScreenMode exposing (FullScreenMode(..))
+import GameView exposing (GameView(..))
 import Messages exposing (Key(..), Msg, SendingEvents(..))
 import Model exposing (GameState(..), Model)
 import Utils.Ports as Ports
@@ -38,6 +39,14 @@ update key model =
 
         R ->
             Model.restart model { msg = "" }
+
+        I ->
+            case model.gameView of
+                TopDown ->
+                    ( { model | gameView = Isometric }, Cmd.none )
+
+                Isometric ->
+                    ( { model | gameView = TopDown }, Cmd.none )
 
         ArrowDown ->
             ( { model | speedMulti = model.speedMulti - 0.2 }, Cmd.none )

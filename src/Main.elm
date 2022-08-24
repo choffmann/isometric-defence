@@ -5,7 +5,9 @@ import Browser
 import Browser.Events
 import Canvas exposing (Renderable)
 import Canvas.Settings
+import Canvas.Texture as Texture
 import Color
+import GameView exposing (GameView(..))
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (id)
 import Html.Events exposing (onMouseEnter)
@@ -15,6 +17,7 @@ import Styles
 import Ui.DrawUtils as DrawUtils
 import Ui.Enemy
 import Ui.Path
+import Ui.Sprites exposing (Sprites)
 import Ui.Tower
 import Update.Canvas as Canvas
 import Update.EnterCanvas as EnterCanvas
@@ -24,43 +27,69 @@ import Update.Key as Key
 import Update.LeftClick as LeftClick
 import Update.MovePosition as MovePosition
 import Update.RightClick as RightClick
+import Update.Texture
 import Update.Tick as Tick
+import Utils.Data exposing (Load(..))
 import Utils.Decoder as Decoder
 import Utils.Ports as Ports
 
 
-placingTowerToCanvas : PlacingTower -> List Renderable
-placingTowerToCanvas placingTower =
-    [ Canvas.shapes
-        [ Canvas.Settings.fill
-            (if placingTower.canBePlaced then
-                Color.green
-
-             else
-                Color.red
-            )
-        ]
-        [ Canvas.rect ( toFloat (placingTower.tower.position.x * Area.fieldSize + 2), toFloat (placingTower.tower.position.y * Area.fieldSize + 2) ) (toFloat Area.fieldSize - 4) (toFloat Area.fieldSize - 4) ]
-    , Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 50 50 255) ] [ Canvas.rect ( toFloat (placingTower.tower.position.x * Area.fieldSize + 10), toFloat (placingTower.tower.position.y * Area.fieldSize + 10) ) (toFloat Area.fieldSize - 20) (toFloat Area.fieldSize - 20) ]
-    ]
+textures : List (Texture.Source Msg)
+textures =
+    [ Texture.loadFromImageUrl "./assets/tileset.png" TextureLoaded ]
 
 
-canvas : Model -> List Renderable
-canvas model =
-    [ Canvas.shapes [ Canvas.Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
-    , DrawUtils.drawCanvasGrid Area.area Area.fieldSize
-    , Ui.Path.pathToCanvas model.path
-    , Ui.Enemy.enemiesToCanvas model.enemies model.path
-    , Ui.Tower.towersToCanvas model.towers
-    , Ui.Tower.towerRadius model.towers
-    ]
+renderSprites : Model -> Sprites -> List Renderable
+renderSprites model sprites =
+    Ui.Sprites.renderFloorSprite sprites.floor
+        ++ Ui.Path.renderPathSprite model.path sprites.path
+        ++ Ui.Tower.renderTowerSprite model.towers sprites.tower.towers.tower1
+        ++ Ui.Enemy.renderEnemyIso model.enemies model.path sprites.enemy
         ++ (case model.placingTower of
                 Nothing ->
                     []
 
                 Just placingTower ->
-                    placingTowerToCanvas placingTower
+                    Ui.Tower.renderPlacingTowerSprite placingTower sprites.tower.selectTower
            )
+
+
+canvas : Model -> List Renderable
+canvas model =
+    case model.gameView of
+        Isometric ->
+            [ Canvas.shapes [ Canvas.Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height / 2) ]
+            ]
+                ++ (case model.sprites of
+                        Loading ->
+                            [ Canvas.shapes [] [] ]
+
+                        Success sprites ->
+                            renderSprites model sprites
+
+                        Failure ->
+                            [ Canvas.shapes [] [] ]
+                   )
+
+        TopDown ->
+            [ Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 34 139 34) ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
+            , DrawUtils.drawCanvasGrid2d Area.area Area.fieldSize
+            , Ui.Path.pathToCanvas model.path
+            , Ui.Enemy.enemiesToCanvas model.enemies model.path
+            , Ui.Tower.towersToCanvas model.towers
+            , Ui.Tower.towerRadius model.towers
+            ]
+                ++ (case model.placingTower of
+                        Nothing ->
+                            []
+
+                        Just placingTower ->
+                            Ui.Tower.placingTowerToCanvas placingTower
+                   )
+
+
+
+{- -}
 
 
 debugModel : Model -> Html Msg
@@ -77,6 +106,8 @@ debugModel model =
         , div [] [ text "PlacingTower: ", text (Debug.toString model.placingTower) ]
         , div [] [ text "Enemies: ", text (Debug.toString model.enemies) ]
         , div [] [ text "Towers: ", text (Debug.toString model.towers) ]
+        , div [] [ text "GameView: ", text (Debug.toString model.gameView) ]
+        , div [] [ text "Sprites: ", text (Debug.toString model.sprites) ]
 
         --, div [] [ text "Path: ", text (Debug.toString model.path) ]
         ]
@@ -92,21 +123,43 @@ view model =
     div (id "app" :: onContextMenuEvent :: Styles.appContainer)
         [ debugModel model
         , div Styles.canvasContainerStyles
-            [ div
-                (Html.Events.onMouseEnter Messages.EnterCanvas :: id "canvasContainer" :: Styles.canvasStyles Area.area)
-                [ Canvas.toHtml
-                    ( Area.area.width, Area.area.height )
-                    []
-                    (canvas model)
-                ]
-            ]
+            (case model.gameView of
+                TopDown ->
+                    [ div
+                        (Html.Events.onMouseEnter Messages.EnterCanvas :: id "canvasContainer" :: Styles.canvasStyles Area.area TopDown)
+                        [ Canvas.toHtml
+                            ( Area.area.width, Area.area.height )
+                            []
+                            (canvas model)
+                        ]
+                    ]
+
+                Isometric ->
+                    [ div
+                        (Html.Events.onMouseEnter Messages.EnterCanvas :: id "canvasContainer" :: Styles.canvasStyles Area.area Isometric)
+                        [ Canvas.toHtmlWith
+                            { width = Area.area.width, height = Area.area.height // 2, textures = textures }
+                            []
+                            (canvas model)
+                        ]
+                    ]
+            )
         , div Styles.canvasContainerStyles
             [ div
-                (onMouseEnter Messages.EnterCanvas :: id "canvasContainer" :: Styles.canvasStyles Ui.Tower.towerArea)
-                [ Canvas.toHtml
-                    ( Ui.Tower.towerArea.width, Ui.Tower.towerArea.height )
+                (onMouseEnter Messages.EnterCanvas :: id "canvasContainer" :: Styles.canvasStyles Ui.Tower.towerArea TopDown)
+                [ Canvas.toHtmlWith
+                    { width = Area.area.width, height = Area.area.height, textures = textures }
                     []
-                    Ui.Tower.towerCanvas
+                    (case model.sprites of
+                        Loading ->
+                            [ Canvas.shapes [] [] ]
+
+                        Success sprites ->
+                            Ui.Tower.towerCanvas sprites.tower.towers
+
+                        Failure ->
+                            [ Canvas.shapes [] [] ]
+                    )
                 ]
             ]
         ]
@@ -144,6 +197,9 @@ update msg =
 
         PathPointGenerate point ->
             GeneratePath.update (PathPointGenerate point)
+
+        TextureLoaded texture ->
+            Update.Texture.update texture
 
 
 subscriptions : Model -> Sub Msg
