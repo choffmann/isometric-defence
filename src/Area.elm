@@ -1,4 +1,4 @@
-module Area exposing (Area, Field(..), area, canvasPointToIsometric, fieldSize, fieldToPixel, heightTiles, isometricOffset, isometricToPoint, pixelToField, pixelToFieldIso, widthTiles)
+module Area exposing (Area, Field(..), area, canvasPointToIsometric, fieldSize, fieldToPixel, heightTiles, isometricArea, isometricOffset, isometricToPoint, pixelToField, pixelToFieldIso, widthTiles)
 
 import Pixel exposing (Pixel(..))
 import Point exposing (Point)
@@ -51,6 +51,11 @@ fieldToPixel (Field { x, y }) =
 
 
 -- https://gist.github.com/jordwest/8a12196436ebcf8df98a2745251915b5
+
+
+isometricArea : Area
+isometricArea =
+    Area area.width (area.height // 2)
 
 
 type alias IsometricMatrix =

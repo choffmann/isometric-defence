@@ -1,7 +1,6 @@
 module Styles exposing (appContainer, borderWidth, canvasContainerStyles, canvasStyles)
 
 import Area exposing (Area)
-import GameView exposing (GameView(..))
 import Html exposing (Attribute)
 import Html.Attributes exposing (style)
 
@@ -24,20 +23,12 @@ canvasContainerStyles =
     ]
 
 
-canvasStyles : Area -> GameView -> List (Attribute msg)
-canvasStyles area gameView =
-    case gameView of
-        TopDown ->
-            [ style "width" (toPixelString (area.width + 2 * borderWidth))
-            , style "height" (toPixelString (area.height + 2 * borderWidth))
-            , style "border" (toPixelString borderWidth ++ " solid black")
-            ]
-
-        Isometric ->
-            [ style "width" (toPixelString (area.width + 2 * borderWidth))
-            , style "height" (toPixelString ((area.height // 2) + 2 * borderWidth))
-            , style "border" (toPixelString borderWidth ++ " solid black")
-            ]
+canvasStyles : Area -> List (Attribute msg)
+canvasStyles area =
+    [ style "width" (toPixelString (area.width + 2 * borderWidth))
+    , style "height" (toPixelString (area.height + 2 * borderWidth))
+    , style "border" (toPixelString borderWidth ++ " solid black")
+    ]
 
 
 appContainer : List (Attribute msg)

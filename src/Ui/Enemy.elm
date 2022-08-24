@@ -38,7 +38,6 @@ enemiesToCanvas enemies path =
 
 renderEnemyIso : List Enemy -> Maybe Path -> Texture -> List Renderable
 renderEnemyIso enemies maybePath texture =
-    -- [ DrawUtils.placeTile { x = 0, y = 0 } texture ]
     case maybePath of
         Nothing ->
             [ Canvas.shapes [] [] ]
@@ -54,27 +53,3 @@ renderEnemyIso enemies maybePath texture =
                                 )
                     )
                 |> List.removeNothing
-
-
-
-{- case maybePath of
-   Nothing ->
-       [ Canvas.shapes [] [] ]
-
-   Just path ->
-       enemies
-           |> List.map
-               (\enemy ->
-                   Path.distanceToPixel path enemy.distance
-                       |> Maybe.map
-                           (\(Pixel point) ->
-                               Canvas.texture []
-                                   (Area.canvasPointToIsometric ( toFloat point.x, toFloat point.y )
-                                       |> Area.isometricOffset
-                                   )
-                                   texture
-                           )
-               )
-           |> List.removeNothing
--}
---List.map (\enemy -> Canvas.texture [] (Area.canvasPointToIsometric (toFloat )) enemies

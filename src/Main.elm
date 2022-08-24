@@ -126,7 +126,7 @@ view model =
             (case model.gameView of
                 TopDown ->
                     [ div
-                        (Html.Events.onMouseEnter Messages.EnterCanvas :: id "canvasContainer" :: Styles.canvasStyles Area.area TopDown)
+                        (Html.Events.onMouseEnter Messages.EnterCanvas :: id "canvasContainer" :: Styles.canvasStyles Area.area)
                         [ Canvas.toHtml
                             ( Area.area.width, Area.area.height )
                             []
@@ -136,9 +136,9 @@ view model =
 
                 Isometric ->
                     [ div
-                        (Html.Events.onMouseEnter Messages.EnterCanvas :: id "canvasContainer" :: Styles.canvasStyles Area.area Isometric)
+                        (Html.Events.onMouseEnter Messages.EnterCanvas :: id "canvasContainer" :: Styles.canvasStyles Area.isometricArea)
                         [ Canvas.toHtmlWith
-                            { width = Area.area.width, height = Area.area.height // 2, textures = textures }
+                            { width = Area.isometricArea.width, height = Area.isometricArea.height, textures = textures }
                             []
                             (canvas model)
                         ]
@@ -146,7 +146,7 @@ view model =
             )
         , div Styles.canvasContainerStyles
             [ div
-                (onMouseEnter Messages.EnterCanvas :: id "canvasContainer" :: Styles.canvasStyles Ui.Tower.towerArea TopDown)
+                (onMouseEnter Messages.EnterCanvas :: id "canvasContainer" :: Styles.canvasStyles Ui.Tower.towerArea)
                 [ Canvas.toHtmlWith
                     { width = Area.area.width, height = Area.area.height, textures = textures }
                     []
