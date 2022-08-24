@@ -1,4 +1,4 @@
-module Area exposing (Area, Field(..), area, canvasPointToIsometric, fieldSize, fieldToPixel, heightTiles, isometricArea, isometricOffset, isometricToPoint, pixelToField, widthTiles)
+module Area exposing (Area, Field(..), area, canvasPointToIsometric, fieldSize, fieldToPixel, heightTiles, isOutOfBounds, isometricArea, isometricOffset, isometricPixelToField, pixelToField, widthTiles)
 
 import Pixel exposing (Pixel(..))
 import Point exposing (Point)
@@ -42,6 +42,19 @@ pixelToField (Pixel { x, y }) =
 fieldToPixel : Field -> Pixel
 fieldToPixel (Field { x, y }) =
     Pixel { x = x * fieldSize, y = y * fieldSize }
+
+
+isOutOfBounds : Maybe Field -> Maybe Field
+isOutOfBounds point =
+    point
+        |> Maybe.andThen
+            (\(Field { x, y }) ->
+                if x < 0 || x > widthTiles - 1 || y < 0 || y > heightTiles - 1 then
+                    Nothing
+
+                else
+                    Just (Field (Point x y))
+            )
 
 
 
@@ -88,8 +101,8 @@ isometricOffset ( x, y ) =
     )
 
 
-isometricToPoint : Point -> Point
-isometricToPoint { x, y } =
+isometricPixelToField : Pixel -> Field
+isometricPixelToField (Pixel { x, y }) =
     let
         invertMatrix : Float -> Float -> Float -> Float -> IsometricMatrix
         invertMatrix a b c d =
@@ -112,22 +125,18 @@ isometricToPoint { x, y } =
                 (matrix.x2 * 0.5 * toFloat fieldSize)
                 (matrix.y2 * 0.5 * toFloat fieldSize)
 
-        withOffset : Point -> Point
-        withOffset point =
-            let
-                backToPoint : ( Float, Float ) -> Point
-                backToPoint ( dx, dy ) =
-                    Point (floor dx) (floor dy)
-            in
-            isometricOffset ( toFloat point.x, toFloat point.y )
-                |> backToPoint
+        offset : Point -> Point
+        offset point =
+            { x = point.x - isometricArea.width // 2, y = point.y }
+
+        calc : Point -> Point
+        calc point =
+            Point
+                (floor (toFloat point.x * inv.x1 + toFloat point.y * inv.x2))
+                (floor (toFloat point.x * inv.y1 + toFloat point.y * inv.y2))
     in
-    Point
-        (floor (toFloat x * inv.x1 + toFloat y * inv.x2))
-        (floor (toFloat x * inv.y1 + toFloat y * inv.y2))
-
-
-
---|> withOffset
--- Point (floor (toFloat x * inv.x1 + toFloat y * inv.x2))
--- (floor (toFloat x * inv.y1 + toFloat y * inv.y2))
+    Field
+        (Point x y
+            |> offset
+            |> calc
+        )
