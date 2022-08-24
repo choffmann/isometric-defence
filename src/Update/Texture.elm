@@ -30,7 +30,7 @@ update maybeTexture model =
                     Success
                         { floor = sprite 0 0 texture
                         , path = sprite 1 0 texture
-                        , towerCanNotPlaced = sprite 0 3 texture
+                        , towerCanNotPlaced = sprite 3 0 texture
                         , towers =
                             { basic =
                                 { tower = sprite 0 1 texture
