@@ -42,6 +42,7 @@ type alias Model =
     , path : Maybe Path
     , sprites : Load Sprites
     , gameView : GameView
+    , movePosition : Maybe Point
     }
 
 
@@ -75,6 +76,7 @@ init _ =
       , path = Nothing
       , sprites = Loading
       , gameView = TopDown
+      , movePosition = Nothing
       }
     , Random.generate PathPointGenerate Path.pointGenerator
     )

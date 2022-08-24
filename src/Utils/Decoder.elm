@@ -72,27 +72,75 @@ clearToCanvas model point =
             )
 
 
+clearIso : Model -> Point -> Maybe Point
+clearIso model point =
+    let
+        newCoordsToCanvas x y =
+            if x < 0 || y < 0 then
+                Nothing
+
+            else
+                Just (Point x y |> calcOffset)
+    in
+    model.canvas
+        |> Maybe.andThen
+            (\canvas ->
+                newCoordsToCanvas (point.x - round canvas.element.x) (point.y - round canvas.element.y)
+            )
+
+
 maybePixelToPoint : GameView -> Maybe Pixel -> Maybe Point
 maybePixelToPoint gameView pixel =
-    case gameView of
-        Isometric ->
-            pixel
-                |> Maybe.map Area.pixelToFieldIso
-                |> Maybe.map (\(Field point) -> point)
+    pixel
+        |> Maybe.map Area.pixelToField
+        |> Maybe.map (\(Field point) -> point)
 
-        TopDown ->
-            pixel
-                |> Maybe.map Area.pixelToField
-                |> Maybe.map (\(Field point) -> point)
+
+clear : Model -> Point -> Maybe Point
+clear model point =
+    model.canvas
+        |> Maybe.andThen
+            (\canvas ->
+                Just (Point (point.x - round canvas.element.x) (point.y - round canvas.element.y) |> calcOffset)
+            )
+
+
+calcOffset : Point -> Point
+calcOffset { x, y } =
+    { x = x - (Area.isometricArea.width // 2), y = y }
+
+
+check : Maybe Point -> Maybe Point
+check point =
+    point
+        |> Maybe.andThen
+            (\{ x, y } ->
+                if x < 0 || x > Area.widthTiles - 1 || y < 0 || y > Area.heightTiles - 1 then
+                    Nothing
+
+                else
+                    Just (Point x y)
+            )
 
 
 coordinateDecoder : Model -> Decoder (Maybe Point)
 coordinateDecoder model =
-    Decode.succeed Point
-        |> apply (Decode.field "pageX" Decode.int)
-        |> apply (Decode.field "pageY" Decode.int)
-        |> Decode.map (clearToCanvas model)
-        |> Decode.map (maybePixelToPoint model.gameView)
+    case model.gameView of
+        TopDown ->
+            Decode.succeed Point
+                |> apply (Decode.field "pageX" Decode.int)
+                |> apply (Decode.field "pageY" Decode.int)
+                |> Decode.map (clearToCanvas model)
+                |> Decode.map (maybePixelToPoint model.gameView)
+
+        Isometric ->
+            Decode.succeed Point
+                |> apply (Decode.field "pageX" Decode.int)
+                |> apply (Decode.field "pageY" Decode.int)
+                --|> Decode.map (clearIso model)
+                |> Decode.map (clear model)
+                |> Decode.map (Maybe.map Area.isometricToPoint)
+                |> Decode.map check
 
 
 leftClickDecoder : Model -> Decoder Msg

@@ -1,4 +1,4 @@
-module Area exposing (Area, Field(..), area, canvasPointToIsometric, fieldSize, fieldToPixel, heightTiles, isometricArea, isometricOffset, isometricToPoint, pixelToField, pixelToFieldIso, widthTiles)
+module Area exposing (Area, Field(..), area, canvasPointToIsometric, fieldSize, fieldToPixel, heightTiles, isometricArea, isometricOffset, isometricToPoint, pixelToField, widthTiles)
 
 import Pixel exposing (Pixel(..))
 import Point exposing (Point)
@@ -34,11 +34,6 @@ type Field
     = Field Point
 
 
-pixelToFieldIso : Pixel -> Field
-pixelToFieldIso (Pixel point) =
-    Field (isometricToPoint point)
-
-
 pixelToField : Pixel -> Field
 pixelToField (Pixel { x, y }) =
     Field { x = min (x // fieldSize) (widthTiles - 1), y = min (y // fieldSize) (heightTiles - 1) }
@@ -56,6 +51,10 @@ fieldToPixel (Field { x, y }) =
 isometricArea : Area
 isometricArea =
     Area area.width (area.height // 2)
+
+
+
+-- Area area.width area.height
 
 
 type alias IsometricMatrix =
@@ -109,8 +108,8 @@ isometricToPoint { x, y } =
         inv =
             invertMatrix
                 (matrix.x1 * 0.5 * toFloat fieldSize)
-                (matrix.x2 * 0.5 * toFloat fieldSize)
                 (matrix.y1 * 0.5 * toFloat fieldSize)
+                (matrix.x2 * 0.5 * toFloat fieldSize)
                 (matrix.y2 * 0.5 * toFloat fieldSize)
 
         withOffset : Point -> Point
@@ -123,4 +122,12 @@ isometricToPoint { x, y } =
             isometricOffset ( toFloat point.x, toFloat point.y )
                 |> backToPoint
     in
-    Point (floor (toFloat x * inv.x1 + toFloat y * inv.x2)) (floor (toFloat x * inv.y1 + toFloat y * inv.y2))
+    Point
+        (floor (toFloat x * inv.x1 + toFloat y * inv.x2))
+        (floor (toFloat x * inv.y1 + toFloat y * inv.y2))
+
+
+
+--|> withOffset
+-- Point (floor (toFloat x * inv.x1 + toFloat y * inv.x2))
+-- (floor (toFloat x * inv.y1 + toFloat y * inv.y2))

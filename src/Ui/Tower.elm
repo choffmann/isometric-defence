@@ -64,13 +64,18 @@ placingTowerToCanvas placingTower =
     ]
 
 
-renderPlacingTowerSprite : PlacingTower -> TowerSelectionSprite -> List Renderable
-renderPlacingTowerSprite placingTower texture =
-    if placingTower.canBePlaced then
-        [ DrawUtils.placeTile placingTower.tower.position texture.towerCanPlaced ]
+renderPlacingTowerSprite : Maybe PlacingTower -> TowerSelectionSprite -> List Renderable
+renderPlacingTowerSprite maybePlacingTower texture =
+    case maybePlacingTower of
+        Nothing ->
+            []
 
-    else
-        [ DrawUtils.placeTile placingTower.tower.position texture.towerCanNotPlaced ]
+        Just placingTower ->
+            if placingTower.canBePlaced then
+                [ DrawUtils.placeTile placingTower.tower.position texture.towerCanPlaced ]
+
+            else
+                [ DrawUtils.placeTile placingTower.tower.position texture.towerCanNotPlaced ]
 
 
 renderTowerSprite : List Tower -> Texture -> List Renderable

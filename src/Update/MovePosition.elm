@@ -26,7 +26,7 @@ update : Maybe Point -> Model -> ( Model, Cmd Msg )
 update mPoint model =
     ( case mPoint of
         Nothing ->
-            model
+            { model | movePosition = mPoint }
 
         Just point ->
             { model
@@ -38,6 +38,7 @@ update mPoint model =
                                 , canBePlaced = canTowerBePlaced point tower.price model
                                 }
                             )
+                , movePosition = Just point
             }
     , Cmd.none
     )
