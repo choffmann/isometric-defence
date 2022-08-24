@@ -1,4 +1,4 @@
-module Area exposing (Area, Field(..), area, canvasPointToIsometric, fieldSize, fieldToPixel, heightTiles, isometricArea, isometricOffset, isometricToPoint, pixelToField, pixelToFieldIso, widthTiles)
+module Area exposing (Area, Field(..), area, canvasPointToIsometric, fieldSize, fieldToPixel, heightTiles, isOutOfBounds, isometricArea, isometricOffset, isometricPixelToField, pixelToField, widthTiles)
 
 import Pixel exposing (Pixel(..))
 import Point exposing (Point)
@@ -34,11 +34,6 @@ type Field
     = Field Point
 
 
-pixelToFieldIso : Pixel -> Field
-pixelToFieldIso (Pixel point) =
-    Field (isometricToPoint point)
-
-
 pixelToField : Pixel -> Field
 pixelToField (Pixel { x, y }) =
     Field { x = min (x // fieldSize) (widthTiles - 1), y = min (y // fieldSize) (heightTiles - 1) }
@@ -49,13 +44,27 @@ fieldToPixel (Field { x, y }) =
     Pixel { x = x * fieldSize, y = y * fieldSize }
 
 
+isOutOfBounds : Maybe Field -> Maybe Field
+isOutOfBounds point =
+    point
+        |> Maybe.andThen
+            (\(Field { x, y }) ->
+                if x < 0 || x > widthTiles - 1 || y < 0 || y > heightTiles - 1 then
+                    Nothing
+
+                else
+                    Just (Field (Point x y))
+            )
+
+
 
 -- https://gist.github.com/jordwest/8a12196436ebcf8df98a2745251915b5
 
 
 isometricArea : Area
 isometricArea =
-    Area area.width (area.height // 2)
+    --    Area area.width (area.height // 2)
+    Area area.width area.height
 
 
 type alias IsometricMatrix =
@@ -84,13 +93,14 @@ canvasPointToIsometric ( x, y ) =
 
 isometricOffset : ( Float, Float ) -> ( Float, Float )
 isometricOffset ( x, y ) =
-    ( x - (toFloat fieldSize / 2) + toFloat area.width / 2
+    ( x - (toFloat fieldSize / 2) + toFloat isometricArea.width / 2
     , y
+      --+ (toFloat area.height / 4)
     )
 
 
-isometricToPoint : Point -> Point
-isometricToPoint { x, y } =
+isometricPixelToField : Pixel -> Field
+isometricPixelToField (Pixel { x, y }) =
     let
         invertMatrix : Float -> Float -> Float -> Float -> IsometricMatrix
         invertMatrix a b c d =
@@ -109,18 +119,23 @@ isometricToPoint { x, y } =
         inv =
             invertMatrix
                 (matrix.x1 * 0.5 * toFloat fieldSize)
-                (matrix.x2 * 0.5 * toFloat fieldSize)
                 (matrix.y1 * 0.5 * toFloat fieldSize)
+                (matrix.x2 * 0.5 * toFloat fieldSize)
                 (matrix.y2 * 0.5 * toFloat fieldSize)
 
-        withOffset : Point -> Point
-        withOffset point =
-            let
-                backToPoint : ( Float, Float ) -> Point
-                backToPoint ( dx, dy ) =
-                    Point (floor dx) (floor dy)
-            in
-            isometricOffset ( toFloat point.x, toFloat point.y )
-                |> backToPoint
+        offset : Point -> Point
+        offset point =
+            { x = point.x - isometricArea.width // 2, y = point.y }
+
+        --+ area.height // 4 }
+        calc : Point -> Point
+        calc point =
+            Point
+                (floor (toFloat point.x * inv.x1 + toFloat point.y * inv.x2))
+                (floor (toFloat point.x * inv.y1 + toFloat point.y * inv.y2))
     in
-    Point (floor (toFloat x * inv.x1 + toFloat y * inv.x2)) (floor (toFloat x * inv.y1 + toFloat y * inv.y2))
+    Field
+        (Point x y
+            |> offset
+            |> calc
+        )

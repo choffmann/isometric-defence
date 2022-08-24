@@ -45,20 +45,14 @@ renderSprites model sprites =
         ++ Ui.Path.renderPathSprite model.path sprites.path
         ++ Ui.Tower.renderTowerSprite model.towers sprites.tower.towers.tower1
         ++ Ui.Enemy.renderEnemyIso model.enemies model.path sprites.enemy
-        ++ (case model.placingTower of
-                Nothing ->
-                    []
-
-                Just placingTower ->
-                    Ui.Tower.renderPlacingTowerSprite placingTower sprites.tower.selectTower
-           )
+        ++ Ui.Tower.renderPlacingTowerSprite model.placingTower sprites.tower.selectTower
 
 
 canvas : Model -> List Renderable
 canvas model =
     case model.gameView of
         Isometric ->
-            [ Canvas.shapes [ Canvas.Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height / 2) ]
+            [ Canvas.shapes [ Canvas.Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.isometricArea.width) (toFloat Area.isometricArea.height) ]
             ]
                 ++ (case model.sprites of
                         Loading ->
@@ -109,7 +103,9 @@ debugModel model =
         , div [] [ text "Towers: ", text (Debug.toString model.towers) ]
         , div [] [ text "GameView: ", text (Debug.toString model.gameView) ]
         , div [] [ text "Sprites: ", text (Debug.toString model.sprites) ]
-        , div [] [ text "Path: ", text (Debug.toString model.path) ]
+        , div [] [ text "MovePosition: ", text (Debug.toString model.movePosition) ]
+
+        --, div [] [ text "Path: ", text (Debug.toString model.path) ]
         ]
 
 
@@ -238,7 +234,7 @@ subscriptions model =
                         Browser.Events.onMouseMove (Decoder.mouseMoveDecoder model) :: running
 
                     Nothing ->
-                        running
+                        Browser.Events.onMouseMove (Decoder.mouseMoveDecoder model) :: running
 
             Paused ->
                 case model.placingTower of
@@ -246,7 +242,7 @@ subscriptions model =
                         Browser.Events.onMouseMove (Decoder.mouseMoveDecoder model) :: paused
 
                     Nothing ->
-                        paused
+                        Browser.Events.onMouseMove (Decoder.mouseMoveDecoder model) :: paused
 
             Won ->
                 won

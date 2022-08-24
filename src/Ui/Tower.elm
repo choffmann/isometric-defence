@@ -64,18 +64,23 @@ placingTowerToCanvas placingTower =
     ]
 
 
-renderPlacingTowerSprite : PlacingTower -> TowerSelectionSprite -> List Renderable
-renderPlacingTowerSprite placingTower texture =
-    if placingTower.canBePlaced then
-        [ DrawUtils.placeTile placingTower.tower.position texture.towerCanPlaced ]
+renderPlacingTowerSprite : Maybe PlacingTower -> TowerSelectionSprite -> List Renderable
+renderPlacingTowerSprite maybePlacingTower texture =
+    case maybePlacingTower of
+        Nothing ->
+            []
 
-    else
-        [ DrawUtils.placeTile placingTower.tower.position texture.towerCanNotPlaced ]
+        Just placingTower ->
+            if placingTower.canBePlaced then
+                [ DrawUtils.placeTile (Point (placingTower.tower.position.x - 1) (placingTower.tower.position.y - 1)) texture.towerCanPlaced ]
+
+            else
+                [ DrawUtils.placeTile (Point (placingTower.tower.position.x - 1) (placingTower.tower.position.y - 1)) texture.towerCanNotPlaced ]
 
 
 renderTowerSprite : List Tower -> Texture -> List Renderable
 renderTowerSprite towers texture =
-    List.map (\tower -> DrawUtils.placeTile tower.position texture) towers
+    List.map (\tower -> DrawUtils.placeTile (Point (tower.position.x - 1) (tower.position.y - 1)) texture) towers
 
 
 demoTowers : List Towers

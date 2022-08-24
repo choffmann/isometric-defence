@@ -16,27 +16,25 @@ textOverPoint point text =
 drawCanvasGrid2d : Area -> Int -> Renderable
 drawCanvasGrid2d area fieldSize =
     let
-        drawLine : Float -> Float -> Float -> Float -> List PathSegment
-        drawLine fromX fromY toX toY =
-            [ Canvas.moveTo ( fromX, fromY ), Canvas.lineTo ( toX, toY ) ]
+        drawLine : Canvas.Point -> Canvas.Point -> List PathSegment
+        drawLine fromPoint toPoint =
+            [ Canvas.moveTo fromPoint, Canvas.lineTo toPoint ]
 
-        drawWidth : List PathSegment -> Int -> List PathSegment
-        drawWidth list index =
-            if index == area.height then
+        drawWidth : List PathSegment -> Int -> Int -> List PathSegment
+        drawWidth list i j =
+            if j >= area.width // fieldSize then
                 list
 
             else
-                drawLine (toFloat (index * fieldSize)) 0 (toFloat (index * fieldSize)) (toFloat area.height)
-                    |> List.append (drawWidth list (index + 1))
+                drawLine ( toFloat (i * fieldSize), toFloat (j * fieldSize) ) ( toFloat (i * fieldSize), toFloat area.width )
 
         drawHeight : List PathSegment -> Int -> List PathSegment
         drawHeight list index =
             if index == area.width then
-                drawWidth list 0
+                list
 
             else
-                drawLine 0 (toFloat (index * fieldSize)) (toFloat area.width) (toFloat (index * fieldSize))
-                    |> List.append (drawHeight list (index + 1))
+                drawWidth [] index 0 ++ drawHeight list (index + 1)
 
         draw : List PathSegment
         draw =

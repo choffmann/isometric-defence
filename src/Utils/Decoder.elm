@@ -1,8 +1,6 @@
 module Utils.Decoder exposing (keyDecoder, leftClickDecoder, mouseMoveDecoder, onContextMenuDecoder, receiveEventDecoder)
 
-import Area exposing (Field(..))
 import FullScreenMode exposing (FullScreenMode(..))
-import GameView exposing (GameView(..))
 import Json.Decode as Decode exposing (Decoder)
 import Messages exposing (GameArea(..), Key(..), Msg, ReceivingEvents(..))
 import Model exposing (Model)
@@ -90,30 +88,12 @@ clearToCanvas model point =
             ( coordToCanvas toolCanvas, PlayArea )
 
 
-maybePixelToPoint : GameView -> Maybe Pixel -> Maybe Point
-maybePixelToPoint gameView pixel =
-    case gameView of
-        Isometric ->
-            pixel
-                |> Maybe.map Area.pixelToFieldIso
-                |> Maybe.map (\(Field point) -> point)
-
-        TopDown ->
-            pixel
-                |> Maybe.map Area.pixelToField
-                |> Maybe.map (\(Field point) -> point)
-
-
 coordinateDecoder : Model -> Decoder ( Maybe Pixel, GameArea )
 coordinateDecoder model =
     Decode.succeed Point
         |> apply (Decode.field "pageX" Decode.int)
         |> apply (Decode.field "pageY" Decode.int)
         |> Decode.map (clearToCanvas model)
-
-
-
--- hier muss noch dazu in welchen Canvas man geklickt hat und dementsprechend andere Sachen machen
 
 
 leftClickDecoder : Model -> Decoder Msg

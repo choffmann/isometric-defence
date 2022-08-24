@@ -49,7 +49,7 @@ renderEnemyIso enemies maybePath texture =
                         Path.distanceToPixel path enemy.distance
                             |> Maybe.map
                                 (\(Pixel point) ->
-                                    DrawUtils.placeTile { x = point.x // Area.fieldSize, y = point.y // Area.fieldSize } texture
+                                    DrawUtils.placeTile { x = (point.x // Area.fieldSize) - 1, y = (point.y // Area.fieldSize) - 1 } texture
                                 )
                     )
                 |> List.removeNothing
