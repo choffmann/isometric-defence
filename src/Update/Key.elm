@@ -4,6 +4,7 @@ import FullScreenMode exposing (FullScreenMode(..))
 import GameView exposing (GameView(..))
 import Messages exposing (Key(..), Msg, SendingEvents(..))
 import Model exposing (GameState(..), Model)
+import Utils.Commands as Commands
 import Utils.Ports as Ports
 
 
@@ -41,12 +42,14 @@ update key model =
             Model.restart model { msg = "" }
 
         I ->
-            case model.gameView of
+            ( case model.gameView of
                 TopDown ->
-                    ( { model | gameView = Isometric }, Cmd.none )
+                    { model | gameView = Isometric }
 
                 Isometric ->
-                    ( { model | gameView = TopDown }, Cmd.none )
+                    { model | gameView = TopDown }
+            , Cmd.batch [ Commands.getPlayAreaCanvas, Commands.getToolAreaCanvas ]
+            )
 
         ArrowDown ->
             ( { model | speedMulti = model.speedMulti - 0.2 }, Cmd.none )

@@ -4,7 +4,7 @@ import Area exposing (Field(..))
 import FullScreenMode exposing (FullScreenMode(..))
 import GameView exposing (GameView(..))
 import Json.Decode as Decode exposing (Decoder)
-import Messages exposing (Key(..), Msg, ReceivingEvents(..))
+import Messages exposing (GameArea(..), Key(..), Msg, ReceivingEvents(..))
 import Model exposing (Model)
 import Pixel exposing (Pixel(..))
 import Point exposing (Point)
@@ -55,21 +55,39 @@ keyDecoder =
         |> Decode.map Messages.Key
 
 
-clearToCanvas : Model -> Point -> Maybe Pixel
+clearToCanvas : Model -> Point -> ( Maybe Pixel, GameArea )
 clearToCanvas model point =
     let
-        newCoordsToCanvas x y =
-            if x > (Area.area.width + Area.fieldSize) || x < 0 || y > Area.area.height || y < 0 then
+        newCoordsToCanvas x y canvas =
+            if x > round canvas.element.width || x < 0 || y > round canvas.element.height || y < 0 then
                 Nothing
 
             else
                 Just (Pixel { x = x, y = y })
+
+        coordToCanvas canvas =
+            newCoordsToCanvas (point.x - round canvas.element.x) (point.y - round canvas.element.y) canvas
     in
-    model.canvas
-        |> Maybe.andThen
-            (\canvas ->
-                newCoordsToCanvas (point.x - round canvas.element.x) (point.y - round canvas.element.y)
-            )
+    case ( model.playCanvas, model.toolCanvas ) of
+        ( Nothing, Nothing ) ->
+            ( Nothing, PlayArea )
+
+        ( Just playCanvas, Just toolCanvas ) ->
+            case ( coordToCanvas playCanvas, coordToCanvas toolCanvas ) of
+                ( Nothing, Nothing ) ->
+                    ( Nothing, PlayArea )
+
+                ( Just newCoords, _ ) ->
+                    ( Just newCoords, PlayArea )
+
+                ( Nothing, Just newCoords ) ->
+                    ( Just newCoords, ToolArea )
+
+        ( Just playCanvas, Nothing ) ->
+            ( coordToCanvas playCanvas, PlayArea )
+
+        ( Nothing, Just toolCanvas ) ->
+            ( coordToCanvas toolCanvas, PlayArea )
 
 
 clearIso : Model -> Point -> Maybe Point
@@ -123,7 +141,7 @@ check point =
             )
 
 
-coordinateDecoder : Model -> Decoder (Maybe Point)
+coordinateDecoder : Model -> Decoder ( Maybe Pixel, GameArea )
 coordinateDecoder model =
     case model.gameView of
         TopDown ->
@@ -131,8 +149,8 @@ coordinateDecoder model =
                 |> apply (Decode.field "pageX" Decode.int)
                 |> apply (Decode.field "pageY" Decode.int)
                 |> Decode.map (clearToCanvas model)
-                |> Decode.map (maybePixelToPoint model.gameView)
 
+        -- hier muss noch dazu in welchen Canvas man geklickt hat und dementsprechend andere Sachen machen
         Isometric ->
             Decode.succeed Point
                 |> apply (Decode.field "pageX" Decode.int)
@@ -146,13 +164,13 @@ coordinateDecoder model =
 leftClickDecoder : Model -> Decoder Msg
 leftClickDecoder model =
     coordinateDecoder model
-        |> Decode.map Messages.LeftClick
+        |> Decode.map (\( maybePixel, gameArea ) -> Messages.LeftClick gameArea maybePixel)
 
 
 mouseMoveDecoder : Model -> Decoder Msg
 mouseMoveDecoder model =
     coordinateDecoder model
-        |> Decode.map Messages.MovePosition
+        |> Decode.map (\( maybePixel, gameArea ) -> Messages.MovePosition gameArea maybePixel)
 
 
 type alias EventMsg =

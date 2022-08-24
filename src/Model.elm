@@ -35,7 +35,8 @@ type alias Model =
     , towers : List Tower
     , delta : Float
     , placingTower : Maybe PlacingTower
-    , canvas : Maybe Element
+    , playCanvas : Maybe Element
+    , toolCanvas : Maybe Element
     , clicked : Maybe Point
     , fullscreen : FullScreenMode
     , speedMulti : Float
@@ -54,7 +55,7 @@ restart : Model -> Flags -> ( Model, Cmd Msg )
 restart model flags =
     let
         newModel ( initModel, command ) =
-            ( { initModel | canvas = model.canvas, fullscreen = model.fullscreen, speedMulti = model.speedMulti }, command )
+            ( { initModel | playCanvas = model.playCanvas, toolCanvas = model.toolCanvas, fullscreen = model.fullscreen, speedMulti = model.speedMulti }, command )
     in
     init flags
         |> newModel
@@ -62,21 +63,23 @@ restart model flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init _ =
-    ( { gameState = GeneratePath
+    ( { gameState = Paused
       , hp = 1000
       , money = 1000
       , enemies = [ Enemy.toEnemy Enemy.Soldat ] --, toEnemy Enemy.Soldat, toEnemy Enemy.Soldat, toEnemy Enemy.Soldat, toEnemy Enemy.Soldat ]
       , towers = [ Tower.toTower Tower.Basic ] --, toTower Tower.Basic ]
       , delta = 0
       , placingTower = Just { tower = Tower.toTower Tower.Basic, canBePlaced = False }
-      , canvas = Nothing
+      , playCanvas = Nothing
+      , toolCanvas = Nothing
       , clicked = Nothing
       , fullscreen = FullScreenMode.Close
       , speedMulti = 1.0
-      , path = Nothing
+      , path = Just Path.testPath
       , sprites = Loading
       , gameView = TopDown
       , movePosition = Nothing
       }
-    , Random.generate PathPointGenerate Path.pointGenerator
+    , Cmd.none
+      -- Random.generate PathPointGenerate Path.pointGenerator
     )

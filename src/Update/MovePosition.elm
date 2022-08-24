@@ -1,8 +1,10 @@
 module Update.MovePosition exposing (update)
 
-import Messages exposing (Msg)
+import Area exposing (Field(..))
+import Messages exposing (GameArea(..), Msg)
 import Model exposing (Model)
 import Path exposing (Path(..))
+import Pixel exposing (Pixel)
 import Point exposing (Point)
 
 
@@ -17,16 +19,22 @@ canTowerBePlaced towerPoint price model =
                 Just (Last _ path) ->
                     not (List.any (\{ point } -> point == towerPoint) path)
     in
-    (model.money > price)
+    (model.money >= price)
         && not (List.any (\tower -> tower.position == towerPoint) model.towers)
         && notOnPath model.path
 
 
-update : Maybe Point -> Model -> ( Model, Cmd Msg )
-update mPoint model =
-    ( case mPoint of
-        Nothing ->
-            { model | movePosition = mPoint }
+update : Maybe Pixel -> GameArea -> Model -> ( Model, Cmd Msg )
+update mPixel gameArea model =
+    case gameArea of
+        PlayArea ->
+            ( case
+                mPixel
+                    |> Maybe.map (\pixel -> Area.pixelToField pixel)
+                    |> Maybe.map (\(Field point) -> point)
+              of
+                Nothing ->
+                    { model | movePosition = mPoint }
 
         Just point ->
             { model
@@ -42,3 +50,6 @@ update mPoint model =
             }
     , Cmd.none
     )
+
+        ToolArea ->
+            ( model, Cmd.none )

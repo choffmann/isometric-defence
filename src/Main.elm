@@ -90,7 +90,8 @@ debugModel : Model -> Html Msg
 debugModel model =
     div []
         [ div [] [ text (String.fromFloat model.delta) ]
-        , div [] [ text "Canvas: ", text (Debug.toString model.canvas) ]
+        , div [] [ text "PlayCanvas: ", text (Debug.toString model.playCanvas) ]
+        , div [] [ text "ToolCanvas: ", text (Debug.toString model.toolCanvas) ]
         , div [] [ text "Clicked: ", text (Debug.toString model.clicked) ]
         , div [] [ text "Gamestate: ", text (Debug.toString model.gameState) ]
         , div [] [ text "SpeedMult: ", text (Debug.toString model.speedMulti) ]
@@ -121,7 +122,7 @@ view model =
             (case model.gameView of
                 TopDown ->
                     [ div
-                        (Html.Events.onMouseEnter Messages.EnterCanvas :: id "canvasContainer" :: Styles.canvasStyles Area.area)
+                        (Html.Events.onMouseEnter Messages.EnterCanvas :: id "playAreaContainer" :: Styles.canvasStyles Area.area)
                         [ Canvas.toHtml
                             ( Area.area.width, Area.area.height )
                             []
@@ -131,7 +132,7 @@ view model =
 
                 Isometric ->
                     [ div
-                        (Html.Events.onMouseEnter Messages.EnterCanvas :: id "canvasContainer" :: Styles.canvasStyles Area.isometricArea)
+                        (Html.Events.onMouseEnter Messages.EnterCanvas :: id "playAreaContainer" :: Styles.canvasStyles Area.isometricArea)
                         [ Canvas.toHtmlWith
                             { width = Area.isometricArea.width, height = Area.isometricArea.height, textures = textures }
                             []
@@ -141,7 +142,7 @@ view model =
             )
         , div Styles.canvasContainerStyles
             [ div
-                (onMouseEnter Messages.EnterCanvas :: id "canvasContainer" :: Styles.canvasStyles Ui.Tower.towerArea)
+                (onMouseEnter Messages.EnterCanvas :: id "toolAreaContainer" :: Styles.canvasStyles Ui.Tower.towerArea)
                 [ Canvas.toHtmlWith
                     { width = Area.area.width, height = Area.area.height, textures = textures }
                     []
@@ -169,17 +170,17 @@ update msg =
         Key key ->
             Key.update key
 
-        LeftClick point ->
-            LeftClick.update point
+        LeftClick gameArea point ->
+            LeftClick.update point gameArea
 
         RightClick ->
             RightClick.update
 
-        MovePosition point ->
-            MovePosition.update point
+        MovePosition gameArea point ->
+            MovePosition.update point gameArea
 
-        Canvas maybe ->
-            Canvas.update maybe
+        Canvas gameArea maybe ->
+            Canvas.update gameArea maybe
 
         EnterCanvas ->
             EnterCanvas.update

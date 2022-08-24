@@ -1,4 +1,4 @@
-module Path exposing (Path(..), PathDirection(..), PathPoint, addPathPoint, directionGenerator, distanceToPathPoint, distanceToPixel, pointGenerator)
+module Path exposing (Path(..), PathDirection(..), PathPoint, addPathPoint, directionGenerator, distanceToPathPoint, distanceToPixel, pointGenerator, testPath)
 
 import Area exposing (Field(..))
 import List.Extra
@@ -19,6 +19,36 @@ type PathDirection
     = Up
     | Down
     | Right
+
+
+testPath : Path
+testPath =
+    Last (PathPoint (Point 1 2) Right)
+        [ PathPoint (Point 0 1) Right
+        , PathPoint (Point 1 1) Down
+        , PathPoint (Point 1 2) Down
+        , PathPoint (Point 1 3) Down
+        , PathPoint (Point 1 4) Down
+        , PathPoint (Point 1 5) Down
+        , PathPoint (Point 1 6) Right
+        , PathPoint (Point 2 6) Right
+        , PathPoint (Point 3 6) Right
+        , PathPoint (Point 4 6) Right
+        , PathPoint (Point 5 6) Right
+        , PathPoint (Point 6 6) Right
+        , PathPoint (Point 7 6) Down
+        , PathPoint (Point 7 7) Down
+        , PathPoint (Point 7 8) Down
+        , PathPoint (Point 7 9) Right
+        , PathPoint (Point 8 9) Right
+        , PathPoint (Point 9 9) Up
+        , PathPoint (Point 9 8) Up
+        , PathPoint (Point 9 7) Up
+        , PathPoint (Point 9 6) Up
+        , PathPoint (Point 9 5) Right
+        , PathPoint (Point 10 5) Right
+        , PathPoint (Point 11 5) Right
+        ]
 
 
 addPathPoint : PathPoint -> Path -> Path
@@ -45,55 +75,70 @@ directionGenerator list =
             Random.uniform x xs
 
 
-distanceToPathPoint : Path -> Float -> Field
-distanceToPathPoint (Last _ path) distance =
-    if distance < 0 then
-        Field { x = -9999, y = -9999 }
-
-    else
-        case List.drop (round (distance / toFloat Area.fieldSize)) path |> List.head of
-            Nothing ->
-                Field { x = 9999, y = 9999 }
-
-            Just { point } ->
-                Field point
-
-
-distanceToPixel : Path -> Float -> Maybe Pixel
-distanceToPixel (Last _ path) distance =
+distanceToFieldAndRatio : Path -> Float -> ( PathPoint, Float )
+distanceToFieldAndRatio (Last _ path) distance =
     let
         getListPoint indexRatio =
-            List.drop (floor indexRatio) path
-                |> List.head
-                |> Maybe.map
-                    (\pathPoint ->
-                        let
-                            tuplePositionToPixelXY ( newX, newY ) =
-                                Pixel { x = newX, y = newY }
+            case
+                List.drop (floor indexRatio) path
+                    |> List.head
+            of
+                Nothing ->
+                    ( PathPoint { x = 9999, y = 9999 } Right, -1 )
 
-                            tuplePositionToPixelYX ( newY, newX ) =
-                                Pixel { x = newX, y = newY }
-
-                            generateValue main second op =
-                                ( floor (toFloat Area.fieldSize * 0.5)
-                                    + floor ((indexRatio - toFloat (floor indexRatio)) * toFloat Area.fieldSize)
-                                    |> op (main * Area.fieldSize)
-                                , second * Area.fieldSize + floor (toFloat Area.fieldSize * 0.5)
-                                )
-                        in
-                        case pathPoint.direction of
-                            Right ->
-                                generateValue pathPoint.point.x pathPoint.point.y (+) |> tuplePositionToPixelXY
-
-                            Down ->
-                                generateValue pathPoint.point.y pathPoint.point.x (+) |> tuplePositionToPixelYX
-
-                            Up ->
-                                generateValue pathPoint.point.y pathPoint.point.x (-) |> tuplePositionToPixelYX
-                    )
+                Just pathPoint ->
+                    ( pathPoint, indexRatio - toFloat (floor indexRatio) )
     in
     if distance < 0 then
-        Nothing
+        ( PathPoint { x = -9999, y = -9999 } Right, -1 )
 
     else
         getListPoint (distance / toFloat Area.fieldSize)
+
+
+distanceToPathPoint : Path -> Float -> Field
+distanceToPathPoint path distance =
+    let
+        internal ( { point }, _ ) =
+            Field point
+    in
+    distanceToFieldAndRatio path distance
+        |> internal
+
+
+distanceToPixel : Path -> Float -> Maybe Pixel
+distanceToPixel path distance =
+    let
+        tuplePositionToPixelXY ( newX, newY ) =
+            Pixel { x = newX, y = newY }
+
+        tuplePositionToPixelYX ( newY, newX ) =
+            Pixel { x = newX, y = newY }
+
+        internal ( pathPoint, ratio ) =
+            let
+                generateValue main second op =
+                    ( floor (toFloat Area.fieldSize * 0.5)
+                        + floor (ratio * toFloat Area.fieldSize)
+                        |> op (main * Area.fieldSize)
+                    , second * Area.fieldSize + floor (toFloat Area.fieldSize * 0.5)
+                    )
+            in
+            if ratio < 0 then
+                Nothing
+
+            else
+                Just
+                    (case pathPoint.direction of
+                        Right ->
+                            generateValue pathPoint.point.x pathPoint.point.y (+) |> tuplePositionToPixelXY
+
+                        Down ->
+                            generateValue pathPoint.point.y pathPoint.point.x (+) |> tuplePositionToPixelYX
+
+                        Up ->
+                            generateValue pathPoint.point.y pathPoint.point.x (\y1 -> (-) (y1 + Area.fieldSize)) |> tuplePositionToPixelYX
+                    )
+    in
+    distanceToFieldAndRatio path distance
+        |> internal
