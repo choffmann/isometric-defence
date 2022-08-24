@@ -30,14 +30,23 @@ update maybeTexture model =
                     Success
                         { floor = sprite 0 0 texture
                         , path = sprite 1 0 texture
-                        , tower =
-                            { selectTower =
-                                { towerCanPlaced = sprite 0 1 texture
-                                , towerCanNotPlaced = sprite 1 1 texture
+                        , towerCanNotPlaced = sprite 0 3 texture
+                        , towers =
+                            { basic =
+                                { tower = sprite 0 1 texture
+                                , selection = sprite 1 1 texture
                                 }
-                            , towers =
-                                { basic = sprite 2 0 texture
-                                , tower1 = sprite 2 0 texture
+                            , tower1 =
+                                { tower = sprite 2 1 texture
+                                , selection = sprite 3 1 texture
+                                }
+                            , tower2 =
+                                { tower = sprite 0 2 texture
+                                , selection = sprite 1 2 texture
+                                }
+                            , tower3 =
+                                { tower = sprite 2 2 texture
+                                , selection = sprite 3 2 texture
                                 }
                             }
                         , enemy = sprite 2 1 texture

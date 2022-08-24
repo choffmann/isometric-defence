@@ -13,7 +13,7 @@ import Pixel exposing (Pixel(..))
 import Point exposing (Point)
 import Tower exposing (Tower, Towers(..))
 import Ui.DrawUtils as DrawUtils
-import Ui.Sprites exposing (TowerSelectionSprite, TowerSprites)
+import Ui.Sprites exposing (TowerSprite, TowerTexture)
 
 
 towerRadius : List Tower -> Renderable
@@ -64,23 +64,57 @@ placingTowerToCanvas placingTower =
     ]
 
 
-renderPlacingTowerSprite : Maybe PlacingTower -> TowerSelectionSprite -> List Renderable
-renderPlacingTowerSprite maybePlacingTower texture =
+renderPlacingTowerSprite : Maybe PlacingTower -> TowerTexture -> Texture -> List Renderable
+renderPlacingTowerSprite maybePlacingTower texture towerCanNotPlaced =
     case maybePlacingTower of
         Nothing ->
             []
 
         Just placingTower ->
             if placingTower.canBePlaced then
-                [ DrawUtils.placeTile (Point (placingTower.tower.position.x - 1) (placingTower.tower.position.y - 1)) texture.towerCanPlaced ]
+                [ DrawUtils.placeTile (Point (placingTower.tower.position.x - 1) (placingTower.tower.position.y - 1))
+                    (selectionToSprite placingTower.tower texture)
+                ]
 
             else
-                [ DrawUtils.placeTile (Point (placingTower.tower.position.x - 1) (placingTower.tower.position.y - 1)) texture.towerCanNotPlaced ]
+                [ DrawUtils.placeTile (Point (placingTower.tower.position.x - 1) (placingTower.tower.position.y - 1)) towerCanNotPlaced ]
 
 
-renderTowerSprite : List Tower -> Texture -> List Renderable
+renderTowerSprite : List Tower -> TowerTexture -> List Renderable
 renderTowerSprite towers texture =
-    List.map (\tower -> DrawUtils.placeTile (Point (tower.position.x - 1) (tower.position.y - 1)) texture) towers
+    List.map (\tower -> DrawUtils.placeTile (Point (tower.position.x - 1) (tower.position.y - 1)) (towerToSprite tower texture)) towers
+
+
+selectionToSprite : Tower -> TowerTexture -> Texture
+selectionToSprite tower texture =
+    case tower.towerType of
+        Basic ->
+            texture.basic.selection
+
+        Tower1 ->
+            texture.tower1.selection
+
+        Tower2 ->
+            texture.tower2.selection
+
+        Tower3 ->
+            texture.tower3.selection
+
+
+towerToSprite : Tower -> TowerTexture -> Texture
+towerToSprite tower texture =
+    case tower.towerType of
+        Basic ->
+            texture.basic.tower
+
+        Tower1 ->
+            texture.tower1.tower
+
+        Tower2 ->
+            texture.tower2.tower
+
+        Tower3 ->
+            texture.tower3.tower
 
 
 demoTowers : List Towers
@@ -117,8 +151,8 @@ towerArea =
     Area Area.area.width (towerFieldSize * maxTowerAreaHeight demoTowers)
 
 
-towersToSelectArea : List Towers -> TowerSprites -> List Renderable
-towersToSelectArea towers sprites =
+towersToSelectArea : List Towers -> TowerTexture -> List Renderable
+towersToSelectArea towers texture =
     let
         currentHeight : Int -> Int
         currentHeight i =
@@ -135,19 +169,7 @@ towersToSelectArea towers sprites =
                     [ Canvas.Settings.Advanced.transform [ Canvas.Settings.Advanced.scale scale scale ] ]
                     -- durch scale teilen
                     ( toFloat i * toFloat towerFieldSize / scale, toFloat (currentHeight j * towerFieldSize) )
-                    (case tower of
-                        Basic ->
-                            sprites.basic
-
-                        Tower1 ->
-                            sprites.tower1
-
-                        Tower2 ->
-                            sprites.tower1
-
-                        Tower3 ->
-                            sprites.tower1
-                    )
+                    (towerToSprite (Tower.toTower tower) texture)
                 , Canvas.text [ Canvas.Settings.Text.font { size = 12, family = "arial" } ] ( toFloat ((i * towerFieldSize) + 3), toFloat ((currentHeight j * towerFieldSize) + towerFieldSize - 3) ) (String.fromInt (Tower.toTower tower).price)
                 ]
 
@@ -167,7 +189,7 @@ towersToSelectArea towers sprites =
     draw 0 0 towers []
 
 
-towerCanvas : TowerSprites -> List Renderable
+towerCanvas : TowerTexture -> List Renderable
 towerCanvas sprites =
     [ Canvas.shapes [ Canvas.Settings.fill Color.grey ] [ Canvas.rect ( 0, 0 ) (toFloat towerArea.width) (toFloat towerArea.height) ]
     , DrawUtils.drawCanvasGrid2d towerArea towerFieldSize

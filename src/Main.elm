@@ -43,9 +43,9 @@ renderSprites : Model -> Sprites -> List Renderable
 renderSprites model sprites =
     Ui.Sprites.renderFloorSprite sprites.floor
         ++ Ui.Path.renderPathSprite model.path sprites.path
-        ++ Ui.Tower.renderTowerSprite model.towers sprites.tower.towers.tower1
+        ++ Ui.Tower.renderTowerSprite model.towers sprites.towers
         ++ Ui.Enemy.renderEnemyIso model.enemies model.path sprites.enemy
-        ++ Ui.Tower.renderPlacingTowerSprite model.placingTower sprites.tower.selectTower
+        ++ Ui.Tower.renderPlacingTowerSprite model.placingTower sprites.towers sprites.towerCanNotPlaced
 
 
 canvas : Model -> List Renderable
@@ -151,7 +151,7 @@ view model =
                             [ Canvas.shapes [] [] ]
 
                         Success sprites ->
-                            Ui.Tower.towerCanvas sprites.tower.towers
+                            Ui.Tower.towerCanvas sprites.towers
 
                         Failure ->
                             [ Canvas.shapes [] [] ]

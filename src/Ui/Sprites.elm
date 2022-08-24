@@ -1,4 +1,4 @@
-module Ui.Sprites exposing (Sprites, TowerSelectionSprite, TowerSprites, renderFloorSprite)
+module Ui.Sprites exposing (Sprites, TowerSprite, TowerTexture, renderFloorSprite)
 
 import Area
 import Canvas exposing (Renderable)
@@ -7,21 +7,25 @@ import Point exposing (Point)
 import Ui.DrawUtils as DrawUtils
 
 
-type alias TowerSelectionSprite =
-    { towerCanPlaced : Texture, towerCanNotPlaced : Texture }
+type alias TowerSprite =
+    { tower : Texture
+    , selection : Texture
+    }
 
 
-type alias TowerSprites =
-    { basic : Texture, tower1 : Texture }
+type alias TowerTexture =
+    { basic : TowerSprite
+    , tower1 : TowerSprite
+    , tower2 : TowerSprite
+    , tower3 : TowerSprite
+    }
 
 
 type alias Sprites =
     { floor : Texture
     , path : Texture
-    , tower :
-        { selectTower : TowerSelectionSprite
-        , towers : TowerSprites
-        }
+    , towerCanNotPlaced : Texture
+    , towers : TowerTexture
     , enemy : Texture
     }
 
