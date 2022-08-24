@@ -63,11 +63,8 @@ isOutOfBounds point =
 
 isometricArea : Area
 isometricArea =
-    Area area.width (area.height // 2)
-
-
-
--- Area area.width area.height
+    --    Area area.width (area.height // 2)
+    Area area.width area.height
 
 
 type alias IsometricMatrix =
@@ -96,8 +93,9 @@ canvasPointToIsometric ( x, y ) =
 
 isometricOffset : ( Float, Float ) -> ( Float, Float )
 isometricOffset ( x, y ) =
-    ( x - (toFloat fieldSize / 2) + toFloat area.width / 2
+    ( x - (toFloat fieldSize / 2) + toFloat isometricArea.width / 2
     , y
+      --+ (toFloat area.height / 4)
     )
 
 
@@ -129,6 +127,7 @@ isometricPixelToField (Pixel { x, y }) =
         offset point =
             { x = point.x - isometricArea.width // 2, y = point.y }
 
+        --+ area.height // 4 }
         calc : Point -> Point
         calc point =
             Point
