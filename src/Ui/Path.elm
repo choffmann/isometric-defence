@@ -5,7 +5,7 @@ import Canvas exposing (Renderable)
 import Canvas.Settings
 import Canvas.Texture exposing (Texture)
 import Color
-import Path exposing (Path(..))
+import Path exposing (Path)
 import Ui.DrawUtils as DrawUtils
 
 
@@ -15,7 +15,7 @@ pathToCanvas path =
         Nothing ->
             Canvas.shapes [] []
 
-        Just (Last _ justPath) ->
+        Just justPath ->
             Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 194 27 29) ] (List.map (\pathPoint -> DrawUtils.pointToCanvas pathPoint.point (toFloat Area.fieldSize) (toFloat Area.fieldSize)) justPath)
 
 
@@ -25,7 +25,7 @@ renderPathSprite maybePath texture =
         Nothing ->
             [ Canvas.shapes [] [] ]
 
-        Just (Last _ path) ->
+        Just path ->
             List.map
                 (\pathPoint ->
                     DrawUtils.placeTile pathPoint.point texture

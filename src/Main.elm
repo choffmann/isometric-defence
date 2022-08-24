@@ -109,8 +109,7 @@ debugModel model =
         , div [] [ text "Towers: ", text (Debug.toString model.towers) ]
         , div [] [ text "GameView: ", text (Debug.toString model.gameView) ]
         , div [] [ text "Sprites: ", text (Debug.toString model.sprites) ]
-
-        --, div [] [ text "Path: ", text (Debug.toString model.path) ]
+        , div [] [ text "Path: ", text (Debug.toString model.path) ]
         ]
 
 
