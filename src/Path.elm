@@ -68,7 +68,10 @@ distanceToPixel (Last _ path) distance =
                 |> Maybe.map
                     (\pathPoint ->
                         let
-                            tuplePositionToPixel ( newX, newY ) =
+                            tuplePositionToPixelXY ( newX, newY ) =
+                                Pixel { x = newX, y = newY }
+
+                            tuplePositionToPixelYX ( newY, newX ) =
                                 Pixel { x = newX, y = newY }
 
                             generateValue main second op =
@@ -80,16 +83,13 @@ distanceToPixel (Last _ path) distance =
                         in
                         case pathPoint.direction of
                             Right ->
-                                generateValue pathPoint.point.x pathPoint.point.y (+)
-                                    |> tuplePositionToPixel
+                                generateValue pathPoint.point.x pathPoint.point.y (+) |> tuplePositionToPixelXY
 
                             Down ->
-                                generateValue pathPoint.point.y pathPoint.point.x (+)
-                                    |> tuplePositionToPixel
+                                generateValue pathPoint.point.y pathPoint.point.x (+) |> tuplePositionToPixelYX
 
                             Up ->
-                                generateValue pathPoint.point.y pathPoint.point.x (-)
-                                    |> tuplePositionToPixel
+                                generateValue pathPoint.point.y pathPoint.point.x (-) |> tuplePositionToPixelYX
                     )
     in
     if distance < 0 then
