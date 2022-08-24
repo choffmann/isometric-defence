@@ -28,10 +28,6 @@ renderPathSprite maybePath texture =
         Just (Last _ path) ->
             List.map
                 (\pathPoint ->
-                    Canvas.texture [] (Area.isometricOffset (Area.canvasPointToIsometric ( toFloat pathPoint.point.x, toFloat pathPoint.point.y ))) texture
+                    DrawUtils.placeTile pathPoint.point texture
                 )
                 path
-
-
-
--- [ Canvas.texture [] (DrawUtils.isometricOffset (DrawUtils.toIsometric ( 1, 1 ))) texture ]

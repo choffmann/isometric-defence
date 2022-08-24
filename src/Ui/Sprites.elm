@@ -1,9 +1,10 @@
-module Ui.Sprites exposing (..)
+module Ui.Sprites exposing (Sprites, TowerSelectionSprite, TowerSprites, renderFloorSprite)
 
 import Area
 import Canvas exposing (Renderable)
 import Canvas.Texture exposing (Texture)
 import Point exposing (Point)
+import Ui.DrawUtils as DrawUtils
 
 
 type alias TowerSelectionSprite =
@@ -26,23 +27,15 @@ type alias Sprites =
 
 
 renderFloorSprite : Texture -> List Renderable
-renderFloorSprite sprite =
+renderFloorSprite texture =
     let
-        placeTile : Point -> Renderable
-        placeTile { x, y } =
-            Canvas.texture []
-                (Area.canvasPointToIsometric ( toFloat x, toFloat y )
-                    |> Area.isometricOffset
-                )
-                sprite
-
         drawWidth : List Renderable -> Int -> Int -> List Renderable
         drawWidth list i j =
             if j >= Area.widthTiles then
                 list
 
             else
-                placeTile (Point i j) :: drawWidth list i (j + 1)
+                DrawUtils.placeTile (Point i j) texture :: drawWidth list i (j + 1)
 
         drawHeight : List Renderable -> Int -> List Renderable
         drawHeight list index =

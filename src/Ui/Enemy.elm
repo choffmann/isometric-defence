@@ -9,6 +9,7 @@ import Enemy exposing (Enemy)
 import List.Extra as List
 import Path exposing (Path(..))
 import Pixel exposing (Pixel(..))
+import Ui.DrawUtils as DrawUtils
 
 
 enemiesToCanvas : List Enemy -> Maybe Path -> Renderable
@@ -37,12 +38,22 @@ enemiesToCanvas enemies path =
 
 renderEnemyIso : List Enemy -> Maybe Path -> Texture -> List Renderable
 renderEnemyIso enemies maybePath texture =
-    [ Canvas.texture []
-        (Area.canvasPointToIsometric ( 0, 0 )
-            |> Area.isometricOffset
-        )
-        texture
-    ]
+    -- [ DrawUtils.placeTile { x = 0, y = 0 } texture ]
+    case maybePath of
+        Nothing ->
+            [ Canvas.shapes [] [] ]
+
+        Just path ->
+            enemies
+                |> List.map
+                    (\enemy ->
+                        Path.distanceToPixel path enemy.distance
+                            |> Maybe.map
+                                (\(Pixel point) ->
+                                    DrawUtils.placeTile { x = point.x // Area.fieldSize, y = point.y // Area.fieldSize } texture
+                                )
+                    )
+                |> List.removeNothing
 
 
 

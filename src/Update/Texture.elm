@@ -40,7 +40,7 @@ update maybeTexture model =
                                 , tower1 = sprite 2 0 texture
                                 }
                             }
-                        , enemy = sprite 1 2 texture
+                        , enemy = sprite 2 1 texture
                         }
               }
             , Cmd.none
