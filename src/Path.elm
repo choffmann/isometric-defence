@@ -1,7 +1,7 @@
-module Path exposing (Path, PathDirection(..), PathPoint, directionGenerator, distanceToPathPoint, distanceToPixel, pointGenerator)
+module Path exposing (Path(..), PathDirection(..), PathPoint, addPathPoint, directionGenerator, distanceToPathPoint, distanceToPixel, pointGenerator)
 
 import Area exposing (Field(..))
-import List.Nonempty as Nonempty exposing (Nonempty(..))
+import List.Extra
 import Pixel exposing (Pixel(..))
 import Point exposing (Point)
 import Random
@@ -11,14 +11,23 @@ type alias PathPoint =
     { point : Point, direction : PathDirection }
 
 
-type alias Path =
-    Nonempty PathPoint
+type Path
+    = Last PathPoint (List PathPoint)
 
 
 type PathDirection
     = Up
     | Down
     | Right
+
+
+addPathPoint : PathPoint -> Path -> Path
+addPathPoint point (Last prevPoint path) =
+    let
+        _ =
+            Debug.log "Path" (Debug.toString (Last prevPoint path))
+    in
+    Last point (List.Extra.snoc path prevPoint)
 
 
 pointGenerator : Random.Generator Point
@@ -30,7 +39,6 @@ directionGenerator : List PathDirection -> Random.Generator PathDirection
 directionGenerator list =
     case list of
         [] ->
-            -- TODO: Was wenn Liste leer? - Kann aber eigentlich nie sein
             Random.uniform Right [ Up, Down ]
 
         x :: xs ->
@@ -38,12 +46,12 @@ directionGenerator list =
 
 
 distanceToPathPoint : Path -> Float -> Field
-distanceToPathPoint path distance =
+distanceToPathPoint (Last _ path) distance =
     if distance < 0 then
         Field { x = -9999, y = -9999 }
 
     else
-        case List.drop (round (distance / toFloat Area.fieldSize)) (Nonempty.toList path) |> List.head of
+        case List.drop (round (distance / toFloat Area.fieldSize)) path |> List.head of
             Nothing ->
                 Field { x = 9999, y = 9999 }
 
@@ -52,10 +60,10 @@ distanceToPathPoint path distance =
 
 
 distanceToPixel : Path -> Float -> Maybe Pixel
-distanceToPixel path distance =
+distanceToPixel (Last _ path) distance =
     let
         getListPoint indexRatio =
-            List.drop (floor indexRatio) (Nonempty.toList path)
+            List.drop (floor indexRatio) path
                 |> List.head
                 |> Maybe.map
                     (\pathPoint ->
