@@ -35,7 +35,8 @@ type alias Model =
     , towers : List Tower
     , delta : Float
     , placingTower : Maybe PlacingTower
-    , canvas : Maybe Element
+    , playCanvas : Maybe Element
+    , toolCanvas : Maybe Element
     , clicked : Maybe Point
     , fullscreen : FullScreenMode
     , speedMulti : Float
@@ -53,7 +54,7 @@ restart : Model -> Flags -> ( Model, Cmd Msg )
 restart model flags =
     let
         newModel ( initModel, command ) =
-            ( { initModel | canvas = model.canvas, fullscreen = model.fullscreen, speedMulti = model.speedMulti }, command )
+            ( { initModel | playCanvas = model.playCanvas, toolCanvas = model.toolCanvas, fullscreen = model.fullscreen, speedMulti = model.speedMulti }, command )
     in
     init flags
         |> newModel
@@ -68,7 +69,8 @@ init _ =
       , towers = [ Tower.toTower Tower.Basic ] --, toTower Tower.Basic ]
       , delta = 0
       , placingTower = Just { tower = Tower.toTower Tower.Basic, canBePlaced = False }
-      , canvas = Nothing
+      , playCanvas = Nothing
+      , toolCanvas = Nothing
       , clicked = Nothing
       , fullscreen = FullScreenMode.Close
       , speedMulti = 1.0

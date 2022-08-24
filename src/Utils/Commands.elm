@@ -1,7 +1,7 @@
-module Utils.Commands exposing (getCanvas)
+module Utils.Commands exposing (getPlayAreaCanvas, getToolAreaCanvas)
 
 import Browser.Dom exposing (Element)
-import Messages exposing (Msg)
+import Messages exposing (GameArea(..), Msg)
 import Styles
 import Task
 
@@ -20,11 +20,11 @@ correctToCanvas e =
     { e | element = correctElement e.element }
 
 
-getCanvas : Cmd Msg
-getCanvas =
+getPlayAreaCanvas : Cmd Msg
+getPlayAreaCanvas =
     Task.attempt
         (\result ->
-            Messages.Canvas
+            Messages.Canvas PlayArea
                 (case result of
                     Err _ ->
                         Nothing
@@ -33,4 +33,20 @@ getCanvas =
                         Just (correctToCanvas element)
                 )
         )
-        (Browser.Dom.getElement "canvasContainer")
+        (Browser.Dom.getElement "playAreaContainer")
+
+
+getToolAreaCanvas : Cmd Msg
+getToolAreaCanvas =
+    Task.attempt
+        (\result ->
+            Messages.Canvas ToolArea
+                (case result of
+                    Err _ ->
+                        Nothing
+
+                    Ok element ->
+                        Just (correctToCanvas element)
+                )
+        )
+        (Browser.Dom.getElement "toolAreaContainer")

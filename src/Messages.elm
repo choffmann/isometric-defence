@@ -1,9 +1,10 @@
-module Messages exposing (Key(..), Msg(..), ReceivingEvents(..), SendingEvents(..))
+module Messages exposing (GameArea(..), Key(..), Msg(..), ReceivingEvents(..), SendingEvents(..))
 
 import Browser.Dom exposing (Element)
 import Canvas.Texture as Canvas
 import FullScreenMode exposing (FullScreenMode)
 import Path exposing (PathDirection)
+import Pixel exposing (Pixel)
 import Point exposing (Point)
 
 
@@ -15,6 +16,11 @@ type Key
     | ArrowDown
     | ArrowUp
     | UnknownKey
+
+
+type GameArea
+    = PlayArea
+    | ToolArea
 
 
 type ReceivingEvents
@@ -29,10 +35,10 @@ type SendingEvents
 type Msg
     = Tick Float
     | Key Key
-    | LeftClick (Maybe Point)
+    | LeftClick GameArea (Maybe Pixel)
     | RightClick
-    | MovePosition (Maybe Point)
-    | Canvas (Maybe Element)
+    | MovePosition GameArea (Maybe Pixel)
+    | Canvas GameArea (Maybe Element)
     | EnterCanvas
     | Event ReceivingEvents
     | PathDirectionGenerate PathDirection

@@ -7,4 +7,4 @@ import Utils.Commands as Commands
 
 update : Model -> ( Model, Cmd Msg )
 update model =
-    ( model, Commands.getCanvas )
+    ( model, Cmd.batch [ Commands.getPlayAreaCanvas, Commands.getToolAreaCanvas ] )

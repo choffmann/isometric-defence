@@ -84,13 +84,13 @@ distanceToFieldAndRatio (Last _ path) distance =
                     |> List.head
             of
                 Nothing ->
-                    ( PathPoint { x = -9999, y = -9999 } Right, -1 )
+                    ( PathPoint { x = 9999, y = 9999 } Right, -1 )
 
                 Just pathPoint ->
                     ( pathPoint, indexRatio - toFloat (floor indexRatio) )
     in
     if distance < 0 then
-        ( PathPoint { x = 9999, y = 9999 } Right, -1 )
+        ( PathPoint { x = -9999, y = -9999 } Right, -1 )
 
     else
         getListPoint (distance / toFloat Area.fieldSize)
