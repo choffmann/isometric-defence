@@ -1,4 +1,4 @@
-module Area exposing (Area, Field(..), area, canvasPointToIsometric, fieldSize, fieldToPixel, heightTiles, isOutOfBounds, isometricArea, isometricOffset, isometricPixelToField, pixelToField, widthTiles)
+module Area exposing (Area, Field(..), area, canvasPointToIsometric, fieldSize, fieldToPixel, heightTiles, isOutOfBounds, isometricOffset, isometricPixelToField, pixelToField, widthTiles)
 
 import Pixel exposing (Pixel(..))
 import Point exposing (Point)
@@ -61,12 +61,6 @@ isOutOfBounds point =
 -- https://gist.github.com/jordwest/8a12196436ebcf8df98a2745251915b5
 
 
-isometricArea : Area
-isometricArea =
-    --    Area area.width (area.height // 2)
-    Area area.width area.height
-
-
 type alias IsometricMatrix =
     { x1 : Float
     , y1 : Float
@@ -93,9 +87,8 @@ canvasPointToIsometric ( x, y ) =
 
 isometricOffset : ( Float, Float ) -> ( Float, Float )
 isometricOffset ( x, y ) =
-    ( x - (toFloat fieldSize / 2) + toFloat isometricArea.width / 2
-    , y
-      --+ (toFloat area.height / 4)
+    ( x - (toFloat fieldSize / 2) + toFloat area.width / 2
+    , y + (toFloat area.height / 4)
     )
 
 
@@ -125,7 +118,7 @@ isometricPixelToField (Pixel { x, y }) =
 
         offset : Point -> Point
         offset point =
-            { x = point.x - isometricArea.width // 2, y = point.y }
+            { x = point.x - area.width // 2, y = point.y - floor (toFloat area.height / 4) }
 
         --+ area.height // 4 }
         calc : Point -> Point

@@ -52,7 +52,7 @@ canvas : Model -> List Renderable
 canvas model =
     case model.gameView of
         Isometric ->
-            [ Canvas.shapes [ Canvas.Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.isometricArea.width) (toFloat Area.isometricArea.height) ]
+            [ Canvas.shapes [ Canvas.Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
             ]
                 ++ (case model.sprites of
                         Loading ->
@@ -119,27 +119,14 @@ view model =
     div (id "app" :: onContextMenuEvent :: Styles.appContainer)
         [ debugModel model
         , div Styles.canvasContainerStyles
-            (case model.gameView of
-                TopDown ->
-                    [ div
-                        (Html.Events.onMouseEnter Messages.EnterCanvas :: id "playAreaContainer" :: Styles.canvasStyles Area.area)
-                        [ Canvas.toHtml
-                            ( Area.area.width, Area.area.height )
-                            []
-                            (canvas model)
-                        ]
-                    ]
-
-                Isometric ->
-                    [ div
-                        (Html.Events.onMouseEnter Messages.EnterCanvas :: id "playAreaContainer" :: Styles.canvasStyles Area.isometricArea)
-                        [ Canvas.toHtmlWith
-                            { width = Area.isometricArea.width, height = Area.isometricArea.height, textures = textures }
-                            []
-                            (canvas model)
-                        ]
-                    ]
-            )
+            [ div
+                (Html.Events.onMouseEnter Messages.EnterCanvas :: id "playAreaContainer" :: Styles.canvasStyles Area.area)
+                [ Canvas.toHtmlWith
+                    { width = Area.area.width, height = Area.area.height, textures = textures }
+                    []
+                    (canvas model)
+                ]
+            ]
         , div Styles.canvasContainerStyles
             [ div
                 (onMouseEnter Messages.EnterCanvas :: id "toolAreaContainer" :: Styles.canvasStyles Ui.Tower.towerArea)
