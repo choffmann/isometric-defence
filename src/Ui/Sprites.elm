@@ -1,33 +1,10 @@
-module Ui.Sprites exposing (Sprites, TowerSprite, TowerTexture, renderFloorSprite)
+module Ui.Sprites exposing (renderFloorSprite)
 
 import Area
 import Canvas exposing (Renderable)
 import Canvas.Texture exposing (Texture)
 import Point exposing (Point)
 import Ui.DrawUtils as DrawUtils
-
-
-type alias TowerSprite =
-    { tower : Texture
-    , selection : Texture
-    }
-
-
-type alias TowerTexture =
-    { basic : TowerSprite
-    , tower1 : TowerSprite
-    , tower2 : TowerSprite
-    , tower3 : TowerSprite
-    }
-
-
-type alias Sprites =
-    { floor : Texture
-    , path : Texture
-    , towerCanNotPlaced : Texture
-    , towers : TowerTexture
-    , enemy : Texture
-    }
 
 
 renderFloorSprite : Texture -> List Renderable
@@ -54,7 +31,3 @@ renderFloorSprite texture =
             drawHeight [] 0
     in
     draw
-
-
-
---Canvas.texture [] (DrawUtils.isometricOffset (DrawUtils.toIsometric ( 1 * toFloat Area.fieldSize, 1 * toFloat Area.fieldSize ))) sprite

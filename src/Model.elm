@@ -8,8 +8,8 @@ import Messages exposing (Msg(..))
 import Path exposing (Path)
 import Point exposing (Point)
 import Random
+import Sprite exposing (IsometricViewSprite, Sprite, TowerAreaSprite)
 import Tower exposing (Tower)
-import Ui.Sprites exposing (Sprites)
 import Utils.Data exposing (Load(..))
 
 
@@ -41,7 +41,7 @@ type alias Model =
     , fullscreen : FullScreenMode
     , speedMulti : Float
     , path : Maybe Path
-    , sprites : Load Sprites
+    , sprite : Load Sprite
     , gameView : GameView
     , movePosition : Maybe Point
     }
@@ -67,7 +67,7 @@ init _ =
       , hp = 1000
       , money = 1000
       , enemies = [ Enemy.toEnemy Enemy.Soldat ] --, toEnemy Enemy.Soldat, toEnemy Enemy.Soldat, toEnemy Enemy.Soldat, toEnemy Enemy.Soldat ]
-      , towers = [ Tower.toTower Tower.Basic ] --, toTower Tower.Basic ]
+      , towers = [] --, toTower Tower.Basic ]
       , delta = 0
       , placingTower = Just { tower = Tower.toTower Tower.Basic, canBePlaced = False }
       , playCanvas = Nothing
@@ -76,7 +76,7 @@ init _ =
       , fullscreen = FullScreenMode.Close
       , speedMulti = 1.0
       , path = Just Path.testPath
-      , sprites = Loading
+      , sprite = Loading
       , gameView = TopDown
       , movePosition = Nothing
       }

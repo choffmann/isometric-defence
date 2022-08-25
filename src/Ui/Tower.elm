@@ -11,9 +11,9 @@ import Color
 import Model exposing (PlacingTower)
 import Pixel exposing (Pixel(..))
 import Point exposing (Point)
+import Sprite exposing (TowerAreaSprite, TowerTexture)
 import Tower exposing (Tower, Towers(..))
 import Ui.DrawUtils as DrawUtils
-import Ui.Sprites exposing (TowerSprite, TowerTexture)
 
 
 towerRadius : List Tower -> Renderable
@@ -126,19 +126,24 @@ demoTowers =
     ]
 
 
-towerFieldSizeFactor : Int
+towerFieldSizeFactor : Float
 towerFieldSizeFactor =
-    2
+    2.5
 
 
-towerFieldSize : Int
+towerSpriteWidth : Float
+towerSpriteWidth =
+    64
+
+
+towerFieldSize : Float
 towerFieldSize =
-    Area.fieldSize * towerFieldSizeFactor
+    toFloat Area.fieldSize * towerFieldSizeFactor
 
 
 maxTowerAreaWidth : Int
 maxTowerAreaWidth =
-    (Area.area.width // Area.fieldSize) // towerFieldSizeFactor
+    (Area.area.width // Area.fieldSize) // floor towerFieldSizeFactor
 
 
 maxTowerAreaHeight : List Towers -> Int
@@ -148,10 +153,10 @@ maxTowerAreaHeight towers =
 
 towerArea : Area
 towerArea =
-    Area Area.area.width (towerFieldSize * maxTowerAreaHeight demoTowers)
+    Area Area.area.width (floor (towerFieldSize * toFloat (maxTowerAreaHeight demoTowers)))
 
 
-towersToSelectArea : List Towers -> TowerTexture -> List Renderable
+towersToSelectArea : List Towers -> TowerAreaSprite -> List Renderable
 towersToSelectArea towers texture =
     let
         currentHeight : Int -> Int
@@ -160,17 +165,25 @@ towersToSelectArea towers texture =
 
         canvasShape : Int -> Int -> Towers -> Renderable
         canvasShape i j tower =
-            let
-                scale =
-                    1.5
-            in
             Canvas.group []
                 [ Canvas.texture
-                    [ Canvas.Settings.Advanced.transform [ Canvas.Settings.Advanced.scale scale scale ] ]
-                    -- durch scale teilen
-                    ( toFloat i * toFloat towerFieldSize / scale, toFloat (currentHeight j * towerFieldSize) )
-                    (towerToSprite (Tower.toTower tower) texture)
-                , Canvas.text [ Canvas.Settings.Text.font { size = 12, family = "arial" } ] ( toFloat ((i * towerFieldSize) + 3), toFloat ((currentHeight j * towerFieldSize) + towerFieldSize - 3) ) (String.fromInt (Tower.toTower tower).price)
+                    [ Canvas.Settings.Advanced.transform [] ]
+                    -- Center Sprite in Tower Area Field
+                    ( toFloat i * towerFieldSize + ((towerFieldSize - towerSpriteWidth) / 2), toFloat (currentHeight j) * towerFieldSize + 3 )
+                    (case tower of
+                        Basic ->
+                            texture.basic
+
+                        Tower1 ->
+                            texture.tower1
+
+                        Tower2 ->
+                            texture.tower2
+
+                        Tower3 ->
+                            texture.tower3
+                    )
+                , Canvas.text [ Canvas.Settings.Text.font { size = 12, family = "arial" } ] ( toFloat i * towerFieldSize + 3, (toFloat (currentHeight j) * towerFieldSize) + towerFieldSize - 3 ) (String.fromInt (Tower.toTower tower).price)
                 ]
 
         draw : Int -> Int -> List Towers -> List Renderable -> List Renderable
@@ -189,10 +202,11 @@ towersToSelectArea towers texture =
     draw 0 0 towers []
 
 
-towerCanvas : TowerTexture -> List Renderable
+towerCanvas : TowerAreaSprite -> List Renderable
 towerCanvas sprites =
     [ Canvas.shapes [ Canvas.Settings.fill Color.grey ] [ Canvas.rect ( 0, 0 ) (toFloat towerArea.width) (toFloat towerArea.height) ]
-    , DrawUtils.drawCanvasGrid2d towerArea towerFieldSize
+
+    --, DrawUtils.drawCanvasGrid2d towerArea (floor towerFieldSize)
     ]
         ++ towersToSelectArea demoTowers sprites
 
@@ -200,5 +214,5 @@ towerCanvas sprites =
 pixelToTower : Pixel -> Maybe Towers
 pixelToTower (Pixel point) =
     demoTowers
-        |> List.drop (10 * (point.y // towerFieldSize) + (point.x // towerFieldSize))
+        |> List.drop (10 * (point.y // floor towerFieldSize) + (point.x // floor towerFieldSize))
         |> List.head

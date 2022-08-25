@@ -13,11 +13,12 @@ import Html.Attributes exposing (id)
 import Html.Events exposing (onMouseEnter)
 import Messages exposing (Msg(..))
 import Model exposing (Flags, GameState(..), Model, PlacingTower)
+import Sprite exposing (IsometricViewSprite)
 import Styles
 import Ui.DrawUtils as DrawUtils
 import Ui.Enemy
 import Ui.Path
-import Ui.Sprites exposing (Sprites)
+import Ui.Sprites
 import Ui.Tower
 import Update.Canvas as Canvas
 import Update.EnterCanvas as EnterCanvas
@@ -39,7 +40,7 @@ textures =
     [ Texture.loadFromImageUrl "./assets/tileset.png" TextureLoaded ]
 
 
-renderSprites : Model -> Sprites -> List Renderable
+renderSprites : Model -> IsometricViewSprite -> List Renderable
 renderSprites model sprites =
     Ui.Sprites.renderFloorSprite sprites.floor
         ++ Ui.Path.renderPathSprite model.path sprites.path
@@ -54,12 +55,12 @@ canvas model =
         Isometric ->
             [ Canvas.shapes [ Canvas.Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
             ]
-                ++ (case model.sprites of
+                ++ (case model.sprite of
                         Loading ->
                             [ Canvas.shapes [] [] ]
 
                         Success sprites ->
-                            renderSprites model sprites
+                            renderSprites model sprites.gameView
 
                         Failure ->
                             [ Canvas.shapes [] [] ]
@@ -102,8 +103,7 @@ debugModel model =
         , div [] [ text "Enemies: ", text (Debug.toString model.enemies) ]
         , div [] [ text "Towers: ", text (Debug.toString model.towers) ]
         , div [] [ text "GameView: ", text (Debug.toString model.gameView) ]
-        , div [] [ text "Sprites: ", text (Debug.toString model.sprites) ]
-        , div [] [ text "MovePosition: ", text (Debug.toString model.movePosition) ]
+        , div [] [ text "TowerAreaSprite: ", text (Debug.toString model.sprite) ]
 
         --, div [] [ text "Path: ", text (Debug.toString model.path) ]
         ]
@@ -133,12 +133,12 @@ view model =
                 [ Canvas.toHtmlWith
                     { width = Area.area.width, height = Area.area.height, textures = textures }
                     []
-                    (case model.sprites of
+                    (case model.sprite of
                         Loading ->
                             [ Canvas.shapes [] [] ]
 
                         Success sprites ->
-                            Ui.Tower.towerCanvas sprites.towers
+                            Ui.Tower.towerCanvas sprites.towerArea
 
                         Failure ->
                             [ Canvas.shapes [] [] ]

@@ -2,54 +2,76 @@ module Update.Texture exposing (..)
 
 import Area
 import Canvas.Texture as Texture exposing (Texture)
-import Messages exposing (Msg)
+import Messages exposing (Msg(..))
 import Model exposing (Model)
 import Utils.Data exposing (Load(..))
+
+
+sprite : Float -> Float -> Float -> Float -> Texture -> Texture
+sprite x y w h texture =
+    Texture.sprite
+        { x = x * w
+        , y = y * h
+        , width = w
+        , height = h
+        }
+        texture
 
 
 update : Maybe Texture -> Model -> ( Model, Cmd Msg )
 update maybeTexture model =
     case maybeTexture of
         Nothing ->
-            ( { model | sprites = Failure }, Cmd.none )
+            ( { model | sprite = Failure }, Cmd.none )
 
         Just texture ->
             let
-                sprite : Float -> Float -> Texture -> Texture
-                sprite x y spriteTexture =
-                    Texture.sprite
-                        { x = x * toFloat Area.fieldSize
-                        , y = y * toFloat Area.fieldSize
-                        , width = toFloat Area.fieldSize
-                        , height = toFloat Area.fieldSize
-                        }
-                        spriteTexture
+                towerAreaWidth =
+                    64
+
+                towerAreaHeight =
+                    64
+
+                gameViewWidth =
+                    toFloat Area.fieldSize
+
+                gameViewHeight =
+                    toFloat Area.fieldSize
             in
             ( { model
-                | sprites =
+                | sprite =
                     Success
-                        { floor = sprite 0 0 texture
-                        , path = sprite 1 0 texture
-                        , towerCanNotPlaced = sprite 3 0 texture
-                        , towers =
-                            { basic =
-                                { tower = sprite 0 1 texture
-                                , selection = sprite 1 1 texture
+                        { gameView =
+                            { floor = sprite 0 0 gameViewWidth gameViewHeight texture
+                            , path = sprite 1 0 gameViewWidth gameViewHeight texture
+                            , towerCanNotPlaced = sprite 3 0 gameViewWidth gameViewHeight texture
+                            , towers =
+                                { basic =
+                                    { tower = sprite 0 1 gameViewWidth gameViewHeight texture
+                                    , selection = sprite 1 1 gameViewWidth gameViewHeight texture
+                                    }
+                                , tower1 =
+                                    { tower = sprite 2 1 gameViewWidth gameViewHeight texture
+                                    , selection = sprite 3 1 gameViewWidth gameViewHeight texture
+                                    }
+                                , tower2 =
+                                    { tower = sprite 0 2 gameViewWidth gameViewHeight texture
+                                    , selection = sprite 1 2 gameViewWidth gameViewHeight texture
+                                    }
+                                , tower3 =
+                                    { tower = sprite 2 2 gameViewWidth gameViewHeight texture
+                                    , selection = sprite 3 2 gameViewWidth gameViewHeight texture
+                                    }
                                 }
-                            , tower1 =
-                                { tower = sprite 2 1 texture
-                                , selection = sprite 3 1 texture
-                                }
-                            , tower2 =
-                                { tower = sprite 0 2 texture
-                                , selection = sprite 1 2 texture
-                                }
-                            , tower3 =
-                                { tower = sprite 2 2 texture
-                                , selection = sprite 3 2 texture
-                                }
+                            , enemy = sprite 2 0 gameViewWidth gameViewHeight texture
                             }
-                        , enemy = sprite 2 1 texture
+                        , towerArea =
+                            { deselect = sprite 0 2 towerAreaWidth towerAreaHeight texture
+                            , basic = sprite 2 0 towerAreaWidth towerAreaHeight texture
+                            , tower1 = sprite 2 1 towerAreaWidth towerAreaHeight texture
+                            , tower2 = sprite 2 2 towerAreaWidth towerAreaHeight texture
+                            , tower3 = sprite 2 3 towerAreaWidth towerAreaHeight texture
+                            }
                         }
               }
             , Cmd.none
