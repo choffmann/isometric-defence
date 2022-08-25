@@ -128,13 +128,16 @@ distanceToPixel path distance =
                 Just
                     (case pathPoint.direction of
                         Right ->
-                            generateValue pathPoint.point.x pathPoint.point.y (+) |> tuplePositionToPixelXY
+                            generateValue pathPoint.point.x pathPoint.point.y (+)
+                                |> tuplePositionToPixelXY
 
                         Down ->
-                            generateValue pathPoint.point.y pathPoint.point.x (+) |> tuplePositionToPixelYX
+                            generateValue pathPoint.point.y pathPoint.point.x (+)
+                                |> tuplePositionToPixelYX
 
                         Up ->
-                            generateValue pathPoint.point.y pathPoint.point.x (\y1 -> (-) (y1 + Area.fieldSize)) |> tuplePositionToPixelYX
+                            generateValue pathPoint.point.y pathPoint.point.x (\y1 -> (-) (y1 + Area.fieldSize))
+                                |> tuplePositionToPixelYX
                     )
     in
     distanceToFieldAndRatio path distance
