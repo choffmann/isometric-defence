@@ -35,6 +35,7 @@ type alias Model =
     , towers : List Tower
     , delta : Float
     , placingTower : Maybe PlacingTower
+    , inspectingTower : Maybe Tower
     , playCanvas : Maybe Element
     , toolCanvas : Maybe Element
     , clicked : Maybe Point
@@ -70,6 +71,7 @@ init _ =
       , towers = [] --, toTower Tower.Basic ]
       , delta = 0
       , placingTower = Just { tower = Tower.toTower Tower.Basic, canBePlaced = False }
+      , inspectingTower = Nothing
       , playCanvas = Nothing
       , toolCanvas = Nothing
       , clicked = Nothing

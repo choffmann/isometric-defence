@@ -12,7 +12,7 @@ import Html exposing (Html, div, text)
 import Html.Attributes exposing (id)
 import Html.Events exposing (onMouseEnter)
 import Messages exposing (Msg(..))
-import Model exposing (Flags, GameState(..), Model, PlacingTower)
+import Model exposing (Flags, GameState(..), Model)
 import Sprite exposing (IsometricViewSprite)
 import Styles
 import Ui.DrawUtils as DrawUtils
@@ -72,7 +72,7 @@ canvas model =
             , Ui.Path.pathToCanvas model.path
             , Ui.Enemy.enemiesToCanvas model.enemies model.path
             , Ui.Tower.towersToCanvas model.towers
-            , Ui.Tower.towerRadius model.towers
+            , Ui.Tower.towerRadius model.inspectingTower model.gameView
             ]
                 ++ (case model.placingTower of
                         Nothing ->
@@ -100,11 +100,12 @@ debugModel model =
         , div [] [ text "Money: ", text (Debug.toString model.money) ]
         , div [] [ text "Fullscreen: ", text (Debug.toString model.fullscreen) ]
         , div [] [ text "PlacingTower: ", text (Debug.toString model.placingTower) ]
+        , div [] [ text "InspectingTower: ", text (Debug.toString model.inspectingTower) ]
         , div [] [ text "Enemies: ", text (Debug.toString model.enemies) ]
         , div [] [ text "Towers: ", text (Debug.toString model.towers) ]
         , div [] [ text "GameView: ", text (Debug.toString model.gameView) ]
-        , div [] [ text "TowerAreaSprite: ", text (Debug.toString model.sprite) ]
 
+        --, div [] [ text "TowerAreaSprite: ", text (Debug.toString model.sprite) ]
         --, div [] [ text "Path: ", text (Debug.toString model.path) ]
         ]
 

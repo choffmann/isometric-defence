@@ -56,13 +56,16 @@ dealingDamage =
 inRange : Point -> Float -> Field -> Bool
 inRange point1 radius (Field point2) =
     let
+        _ =
+            Debug.log "" { point1 = point1, radius = radius, point2 = point2, range = sqrt (pointToQuadrat point1.x point2.x + pointToQuadrat point1.y point2.y) }
+
         pointToQuadrat first second =
             abs (first - second)
                 ^ 2
                 |> toFloat
     in
     sqrt (pointToQuadrat point1.x point2.x + pointToQuadrat point1.y point2.y)
-        |> (>) radius
+        |> (>=) radius
 
 
 moveEnemies : Float -> Float -> Path -> List Enemy -> List Enemy

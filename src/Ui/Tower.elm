@@ -8,6 +8,7 @@ import Canvas.Settings.Line
 import Canvas.Settings.Text
 import Canvas.Texture exposing (Texture)
 import Color
+import GameView exposing (GameView(..))
 import Model exposing (PlacingTower)
 import Pixel exposing (Pixel(..))
 import Point exposing (Point)
@@ -16,8 +17,8 @@ import Tower exposing (Tower, Towers(..))
 import Ui.DrawUtils as DrawUtils
 
 
-towerRadius : List Tower -> Renderable
-towerRadius towers =
+towerRadius : Maybe Tower -> GameView -> Renderable
+towerRadius mTower gameView =
     let
         centerPoint : Point -> Point
         centerPoint { x, y } =
@@ -30,11 +31,25 @@ towerRadius towers =
                 |> Pixel.pixelToPoint
                 |> centerPoint
                 |> Point.toCanvasPoint
-                |> Area.canvasPointToIsometric
     in
-    towers
-        |> List.map (\tower -> Canvas.circle (towerPositionToPixel tower.position) tower.attackRadius)
-        |> Canvas.shapes [ Canvas.Settings.stroke (Color.rgb255 0 0 0), Canvas.Settings.Line.lineWidth 2 ]
+    Canvas.shapes [ Canvas.Settings.stroke (Color.rgb255 0 0 0), Canvas.Settings.Line.lineWidth 2 ]
+        (case mTower of
+            Nothing ->
+                []
+
+            Just tower ->
+                [ Canvas.circle
+                    (case gameView of
+                        Isometric ->
+                            towerPositionToPixel tower.position
+                                |> Area.canvasPointToIsometric
+
+                        TopDown ->
+                            towerPositionToPixel tower.position
+                    )
+                    (tower.attackRadius * toFloat Area.fieldSize)
+                ]
+        )
 
 
 towersToCanvas : List Tower -> Renderable
