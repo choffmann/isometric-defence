@@ -1,6 +1,6 @@
 module Update.Tick exposing (update)
 
-import Area exposing (Field(..))
+import Area exposing (Field(..), isOutOfBounds)
 import Enemy exposing (Enemy)
 import Model exposing (GameState(..), Model)
 import Path exposing (Path)
@@ -15,7 +15,10 @@ damageEnemies =
         internal acc tower enemyList =
             case enemyList of
                 [] ->
-                    ( tower, List.sortBy (\enemy -> enemy.distance) acc )
+                    ( tower
+                    , acc
+                        |> List.sortBy (\enemy -> enemy.distance)
+                    )
 
                 enemy :: hs ->
                     if tower.lastShot > tower.attackSpeed && inRange tower.position tower.attackRadius enemy.position then
@@ -27,9 +30,12 @@ damageEnemies =
     internal []
 
 
-damage : List Tower -> List Enemy -> ( List Tower, List Enemy )
-damage =
+dealingDamage : List Tower -> List Enemy -> ( List Tower, List Enemy )
+dealingDamage =
     let
+        rec newTowers oldTowers ( tower, enemies ) =
+            internal (tower :: newTowers) oldTowers enemies
+
         internal : List Tower -> List Tower -> List Enemy -> ( List Tower, List Enemy )
         internal acc towers enemies =
             case towers of
@@ -38,19 +44,13 @@ damage =
 
                 tower :: hs ->
                     if tower.lastShot > tower.attackSpeed then
-                        case damageEnemies tower enemies of
-                            ( newTower, newEnemies ) ->
-                                internal (newTower :: acc) hs newEnemies
+                        damageEnemies tower enemies
+                            |> rec acc hs
 
                     else
                         internal (tower :: acc) hs enemies
     in
     internal []
-
-
-killEnemies : List Enemy -> List Enemy
-killEnemies =
-    List.filter (\enemy -> enemy.hp > 0)
 
 
 inRange : Point -> Float -> Field -> Bool
@@ -75,7 +75,9 @@ moveEnemies globalSpeedMulti delta path =
         (\enemy ->
             { enemy
                 | distance = moveAmount enemy.distance enemy.speed
-                , position = moveAmount enemy.distance enemy.speed |> Path.distanceToPathPoint path
+                , position =
+                    moveAmount enemy.distance enemy.speed
+                        |> Path.distanceToPathPoint path
             }
         )
 
@@ -88,7 +90,7 @@ cooldownTowers globalSpeedMulti delta =
 tick : Model -> Float -> Model
 tick model delta =
     let
-        moneyFromKilledEnemies enemies =
+        moneyFromKilledEnemies =
             List.foldl
                 (\enemy money ->
                     if enemy.hp <= 0 then
@@ -98,18 +100,57 @@ tick model delta =
                         money
                 )
                 0
-                enemies
+
+        damageFromFinishedEnemies =
+            List.foldl (\enemy damage -> damage + enemy.damage) 0
+
+        killEnemies =
+            List.filter (\enemy -> enemy.hp > 0)
+
+        filterFinishedEnemiesByOp op =
+            let
+                internal (Field point) =
+                    op point.x 9999
+            in
+            List.filter
+                (\enemy -> internal enemy.position)
 
         changeModel towers newEnemies =
             { model
                 | towers = cooldownTowers model.speedMulti delta towers
-                , enemies = killEnemies newEnemies
-                , money = model.money + moneyFromKilledEnemies newEnemies
+                , enemies =
+                    newEnemies
+                        |> filterFinishedEnemiesByOp (<)
+                        |> killEnemies
+                , money =
+                    newEnemies
+                        |> moneyFromKilledEnemies
+                        |> (+) model.money
+                , hp =
+                    model.hp
+                        - (newEnemies
+                            |> filterFinishedEnemiesByOp (>=)
+                            |> damageFromFinishedEnemies
+                          )
                 , delta = delta
             }
-    in
-    case damage model.towers model.enemies of
-        ( towers, enemies ) ->
+
+        checkLoose newModel =
+            if newModel.hp > 0 then
+                newModel
+
+            else
+                { newModel | gameState = Lost }
+
+        checkWin newModel =
+            case newModel.enemies of
+                [] ->
+                    { newModel | gameState = Won }
+
+                _ ->
+                    newModel
+
+        setState ( towers, enemies ) =
             case model.path of
                 Nothing ->
                     model
@@ -118,6 +159,11 @@ tick model delta =
                     enemies
                         |> moveEnemies model.speedMulti delta path
                         |> changeModel towers
+                        |> checkLoose
+                        |> checkWin
+    in
+    dealingDamage model.towers model.enemies
+        |> setState
 
 
 update : Float -> Model -> ( Model, Cmd msg )
