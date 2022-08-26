@@ -6,6 +6,7 @@ import FullScreenMode exposing (FullScreenMode)
 import Path exposing (PathDirection)
 import Pixel exposing (Pixel)
 import Point exposing (Point)
+import Screen exposing (Screen)
 
 
 type Key
@@ -44,3 +45,4 @@ type Msg
     | PathDirectionGenerate PathDirection
     | PathPointGenerate Point
     | TextureLoaded (Maybe Canvas.Texture)
+    | ChangeScreen Screen

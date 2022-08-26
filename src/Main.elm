@@ -4,10 +4,7 @@ import Area
 import Browser
 import Browser.Events
 import Canvas exposing (Renderable)
-import Canvas.Settings
 import Canvas.Texture as Texture
-import Color
-import GameView exposing (GameView(..))
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (id)
 import Html.Events exposing (onMouseEnter)
@@ -15,10 +12,7 @@ import Messages exposing (Msg(..))
 import Model exposing (Flags, GameState(..), Model)
 import Sprite exposing (IsometricViewSprite)
 import Styles
-import Ui.DrawUtils as DrawUtils
-import Ui.Enemy
-import Ui.Path
-import Ui.Sprites
+import Ui.Canvas
 import Ui.Tower
 import Update.Canvas as Canvas
 import Update.EnterCanvas as EnterCanvas
@@ -28,6 +22,7 @@ import Update.Key as Key
 import Update.LeftClick as LeftClick
 import Update.MovePosition as MovePosition
 import Update.RightClick as RightClick
+import Update.Screen
 import Update.Texture
 import Update.Tick as Tick
 import Utils.Data exposing (Load(..))
@@ -38,53 +33,6 @@ import Utils.Ports as Ports
 textures : List (Texture.Source Msg)
 textures =
     [ Texture.loadFromImageUrl "./assets/tileset.png" TextureLoaded ]
-
-
-renderSprites : Model -> IsometricViewSprite -> List Renderable
-renderSprites model sprites =
-    Ui.Sprites.renderFloorSprite sprites.floor
-        ++ Ui.Path.renderPathSprite model.path sprites.path
-        ++ Ui.Tower.renderTowerSprite model.towers sprites.towers
-        ++ Ui.Enemy.renderEnemyIso model.enemies model.path sprites.enemy
-        ++ Ui.Tower.renderPlacingTowerSprite model.placingTower sprites.towers sprites.towerCanNotPlaced
-
-
-canvas : Model -> List Renderable
-canvas model =
-    case model.gameView of
-        Isometric ->
-            [ Canvas.shapes [ Canvas.Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
-            ]
-                ++ (case model.sprite of
-                        Loading ->
-                            [ Canvas.shapes [] [] ]
-
-                        Success sprites ->
-                            renderSprites model sprites.gameView
-
-                        Failure ->
-                            [ Canvas.shapes [] [] ]
-                   )
-
-        TopDown ->
-            [ Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 34 139 34) ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
-            , DrawUtils.drawCanvasGrid2d Area.area Area.fieldSize
-            , Ui.Path.pathToCanvas model.path
-            , Ui.Enemy.enemiesToCanvas model.enemies model.path
-            , Ui.Tower.towersToCanvas model.towers
-            , Ui.Tower.towerRadius model.inspectingTower model.gameView
-            ]
-                ++ (case model.placingTower of
-                        Nothing ->
-                            []
-
-                        Just placingTower ->
-                            Ui.Tower.placingTowerToCanvas placingTower
-                   )
-
-
-
-{- -}
 
 
 debugModel : Model -> Html Msg
@@ -104,6 +52,7 @@ debugModel model =
         , div [] [ text "Enemies: ", text (Debug.toString model.enemies) ]
         , div [] [ text "Towers: ", text (Debug.toString model.towers) ]
         , div [] [ text "GameView: ", text (Debug.toString model.gameView) ]
+        , div [] [ text "CurrentScreen: ", text (Debug.toString model.screen) ]
 
         --, div [] [ text "TowerAreaSprite: ", text (Debug.toString model.sprite) ]
         --, div [] [ text "Path: ", text (Debug.toString model.path) ]
@@ -125,7 +74,7 @@ view model =
                 [ Canvas.toHtmlWith
                     { width = Area.area.width, height = Area.area.height, textures = textures }
                     []
-                    (canvas model)
+                    (Ui.Canvas.canvas model)
                 ]
             ]
         , div Styles.canvasContainerStyles
@@ -184,6 +133,9 @@ update msg =
 
         TextureLoaded texture ->
             Update.Texture.update texture
+
+        ChangeScreen screen ->
+            Update.Screen.update screen
 
 
 subscriptions : Model -> Sub Msg
