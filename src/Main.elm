@@ -10,6 +10,7 @@ import Html.Attributes exposing (id)
 import Html.Events exposing (onMouseEnter)
 import Messages exposing (Msg(..))
 import Model exposing (Flags, GameState(..), Model)
+import Screen exposing (Screen(..))
 import Sprite exposing (IsometricViewSprite)
 import Styles
 import Ui.Canvas
@@ -78,23 +79,29 @@ view model =
                 ]
             ]
         , div Styles.canvasContainerStyles
-            [ div
-                (onMouseEnter Messages.EnterCanvas :: id "toolAreaContainer" :: Styles.canvasStyles Ui.Tower.towerArea)
-                [ Canvas.toHtmlWith
-                    { width = Area.area.width, height = Area.area.height, textures = textures }
+            (case model.screen of
+                PlayScreen ->
+                    [ div
+                        (onMouseEnter Messages.EnterCanvas :: id "toolAreaContainer" :: Styles.canvasStyles Ui.Tower.towerArea)
+                        [ Canvas.toHtmlWith
+                            { width = Area.area.width, height = Area.area.height, textures = textures }
+                            []
+                            (case model.sprite of
+                                Loading ->
+                                    [ Canvas.shapes [] [] ]
+
+                                Success sprites ->
+                                    Ui.Tower.towerCanvas sprites.towerArea
+
+                                Failure ->
+                                    [ Canvas.shapes [] [] ]
+                            )
+                        ]
+                    ]
+
+                _ ->
                     []
-                    (case model.sprite of
-                        Loading ->
-                            [ Canvas.shapes [] [] ]
-
-                        Success sprites ->
-                            Ui.Tower.towerCanvas sprites.towerArea
-
-                        Failure ->
-                            [ Canvas.shapes [] [] ]
-                    )
-                ]
-            ]
+            )
         ]
 
 

@@ -5,6 +5,7 @@ import Enemy exposing (Enemy)
 import Model exposing (GameState(..), Model)
 import Path exposing (Path)
 import Point exposing (Point)
+import Screen exposing (Screen(..))
 import Tower exposing (Tower)
 
 
@@ -176,15 +177,15 @@ update delta model =
             tick model delta
 
         Paused ->
-            { model | delta = delta }
+            { model | delta = delta, screen = PauseScreen }
 
         Won ->
-            { model | delta = delta }
+            { model | delta = delta, screen = WonScreen }
 
         Lost ->
-            { model | delta = delta }
+            { model | delta = delta, screen = LostScreen }
 
         GeneratePath ->
-            { model | delta = delta }
+            { model | delta = delta, screen = PlayScreen }
     , Cmd.none
     )

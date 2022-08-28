@@ -14,25 +14,32 @@ import Ui.Tower
 import Utils.Data exposing (Load(..))
 
 
-renderSprites : Model -> IsometricViewSprite -> List Renderable
-renderSprites model sprites =
-    Ui.Sprites.renderFloorSprite sprites.floor
-        ++ Ui.Path.renderPathSprite model.path sprites.path
-        ++ Ui.Tower.renderTowerSprite model.towers sprites.towers
-        ++ Ui.Enemy.renderEnemyIso model.enemies model.path sprites.enemy
-        ++ Ui.Tower.renderPlacingTowerSprite model.placingTower sprites.towers sprites.towerCanNotPlaced
+renderSprites : Model -> List Renderable
+renderSprites model =
+    case model.sprite of
+        Loading ->
+            [ Canvas.shapes [] [] ]
+
+        Success sprites ->
+            Ui.Sprites.renderFloorSprite sprites.gameView.floor
+                ++ Ui.Path.renderPathSprite model.path sprites.gameView.path
+                ++ Ui.Tower.renderTowerSprite model.towers sprites.gameView.towers
+                ++ Ui.Enemy.renderEnemyIso model.enemies model.path sprites.gameView.enemy
+                ++ Ui.Tower.renderPlacingTowerSprite model.placingTower sprites.gameView.towers sprites.gameView.towerCanNotPlaced
+
+        Failure ->
+            [ Canvas.shapes [] [] ]
 
 
 isometricCanvas : Model -> List Renderable
 isometricCanvas model =
-    [ Canvas.shapes [ Canvas.Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
-    ]
-        ++ (case model.sprite of
+    Canvas.shapes [ Canvas.Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
+        :: (case model.sprite of
                 Loading ->
                     [ Canvas.shapes [] [] ]
 
-                Success sprites ->
-                    renderSprites model sprites.gameView
+                Success _ ->
+                    renderSprites model
 
                 Failure ->
                     [ Canvas.shapes [] [] ]

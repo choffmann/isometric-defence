@@ -3,14 +3,30 @@ module Ui.Canvas exposing (..)
 import Canvas exposing (Renderable)
 import GameView exposing (GameView(..))
 import Model exposing (Model)
+import Screen exposing (Screen(..))
 import Ui.Screens.PlayScreen as PlayScreen
+import Ui.Screens.StartScreen as StartScreen
 
 
 canvas : Model -> List Renderable
 canvas model =
-    case model.gameView of
-        Isometric ->
-            PlayScreen.isometricCanvas model
+    case model.screen of
+        StartScreen ->
+            StartScreen.canvas
 
-        TopDown ->
-            PlayScreen.topDownCanvas model
+        PlayScreen ->
+            case model.gameView of
+                Isometric ->
+                    PlayScreen.isometricCanvas model
+
+                TopDown ->
+                    PlayScreen.topDownCanvas model
+
+        PauseScreen ->
+            []
+
+        WonScreen ->
+            []
+
+        LostScreen ->
+            []
