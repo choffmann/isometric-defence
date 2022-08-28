@@ -13,7 +13,7 @@ canvas : Model -> List Renderable
 canvas model =
     case model.screen of
         StartScreen ->
-            StartScreen.canvas
+            StartScreen.canvas model.sprite
 
         PlayScreen ->
             case model.gameView of

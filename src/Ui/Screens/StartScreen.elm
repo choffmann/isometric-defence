@@ -4,10 +4,14 @@ import Area
 import Canvas exposing (Renderable)
 import Canvas.Settings as Settings
 import Canvas.Settings.Text as Text exposing (TextAlign(..), TextBaseLine(..))
+import Canvas.Texture exposing (Texture)
 import Color
 import Point exposing (Point)
+import Sprite exposing (Sprite)
 import Ui.Button as Button exposing (Button)
 import Ui.DrawUtils as DrawUtils
+import Ui.Sprites as Sprites
+import Utils.Data exposing (Load(..))
 
 
 gameTitle : String
@@ -29,37 +33,20 @@ startButton =
     }
 
 
-
-{- startButton : Renderable
-   startButton =
-       let
-           w : Float
-           w =
-               128
-
-           h : Float
-           h =
-               40
-
-           x : Float
-           x =
-               (toFloat Area.area.width / 2) - w / 2
-
-           y : Float
-           y =
-               toFloat Area.area.height - h * 3
-       in
-       Canvas.group []
-           [ Canvas.shapes [ Settings.fill Color.gray ] [ Canvas.rect ( x, y ) w h ]
-           , Canvas.text [ Text.font { size = 24, family = "Consolas" }, Text.align Center, Text.baseLine Middle ] ( x + w / 2, y + 20 ) "Start"
-           ]
--}
-
-
-canvas : List Renderable
-canvas =
+canvas : Load Sprite -> List Renderable
+canvas floorTexture =
     [ Canvas.shapes [ Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
     , DrawUtils.drawCanvasGrid2d Area.area Area.fieldSize
     , title
     , Button.draw startButton
     ]
+        ++ (case floorTexture of
+                Loading ->
+                    []
+
+                Success texture ->
+                    Sprites.renderFloorSprite texture.gameView.floor
+
+                Failure ->
+                    []
+           )
