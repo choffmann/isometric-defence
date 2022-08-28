@@ -1,4 +1,4 @@
-module Ui.DrawUtils exposing (convertToCanvasPoint, drawCanvasGrid2d, placeTile, pointToCanvas)
+module Ui.DrawUtils exposing (convertToCanvasPoint, drawCanvasGrid2d, placeTile, placeTileOnCanvas, pointToCanvas)
 
 import Area exposing (Area)
 import Canvas exposing (PathSegment, Renderable, Shape)
@@ -48,6 +48,15 @@ placeTile : Point -> Texture -> Renderable
 placeTile { x, y } texture =
     Canvas.texture []
         (Area.canvasPointToIsometric ( toFloat x, toFloat y )
+            |> Area.isometricOffset
+        )
+        texture
+
+
+placeTileOnCanvas : Canvas.Point -> Texture -> Renderable
+placeTileOnCanvas point texture =
+    Canvas.texture []
+        (Area.canvasPointToIsometric point
             |> Area.isometricOffset
         )
         texture

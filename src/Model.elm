@@ -11,6 +11,7 @@ import Random
 import Screen exposing (Screen(..))
 import Sprite exposing (IsometricViewSprite, Sprite, TowerAreaSprite)
 import Tower exposing (Tower)
+import Ui.Animation exposing (Animation)
 import Utils.Data exposing (Load(..))
 
 
@@ -47,6 +48,7 @@ type alias Model =
     , gameView : GameView
     , movePosition : Maybe Point
     , screen : Screen
+    , animation : Maybe Animation
     }
 
 
@@ -84,6 +86,7 @@ init _ =
       , gameView = TopDown
       , movePosition = Nothing
       , screen = StartScreen
+      , animation = Nothing
       }
     , Random.generate PathPointGenerate Path.pointGenerator
     )

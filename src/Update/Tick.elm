@@ -7,6 +7,8 @@ import Path exposing (Path)
 import Point exposing (Point)
 import Screen exposing (Screen(..))
 import Tower exposing (Tower)
+import Ui.Animation as Animation
+import Ui.Screens.StartScreen as StartScreen
 
 
 damageEnemies : Tower -> List Enemy -> ( Tower, List Enemy )
@@ -91,6 +93,16 @@ cooldownTowers globalSpeedMulti delta =
     List.map (\tower -> { tower | lastShot = tower.lastShot + delta * globalSpeedMulti * 0.5 })
 
 
+startScreenAnimation : Model -> Float -> Model
+startScreenAnimation model delta =
+    case model.animation of
+        Nothing ->
+            model
+
+        Just animation ->
+            { model | animation = Just { floor = Animation.animatedFloor animation.floor delta }, delta = delta }
+
+
 tick : Model -> Float -> Model
 tick model delta =
     let
@@ -154,6 +166,14 @@ tick model delta =
                 _ ->
                     newModel
 
+        animatedFloor newModel =
+            case model.animation of
+                Nothing ->
+                    { newModel | animation = Just { floor = StartScreen.generateFloor }, delta = delta }
+
+                Just animation ->
+                    { newModel | animation = Just { floor = Animation.animatedFloor animation.floor delta }, delta = delta }
+
         setState ( towers, enemies ) =
             case model.path of
                 Nothing ->
@@ -165,6 +185,7 @@ tick model delta =
                         |> changeModel towers
                         |> checkLoose
                         |> checkWin
+                        |> animatedFloor
     in
     dealingDamage model.towers model.enemies
         |> setState
