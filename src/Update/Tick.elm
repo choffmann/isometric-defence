@@ -144,12 +144,12 @@ tick model delta =
                 newModel
 
             else
-                { newModel | gameState = Lost }
+                { newModel | gameState = Lost, screen = LostScreen }
 
         checkWin newModel =
             case newModel.enemies of
                 [] ->
-                    { newModel | gameState = Won }
+                    { newModel | gameState = Won, screen = WonScreen }
 
                 _ ->
                     newModel
@@ -177,15 +177,15 @@ update delta model =
             tick model delta
 
         Paused ->
-            { model | delta = delta, screen = PauseScreen }
+            { model | delta = delta }
 
         Won ->
-            { model | delta = delta, screen = WonScreen }
+            { model | delta = delta }
 
         Lost ->
-            { model | delta = delta, screen = LostScreen }
+            { model | delta = delta }
 
         GeneratePath ->
-            { model | delta = delta, screen = PlayScreen }
+            { model | delta = delta }
     , Cmd.none
     )
