@@ -8,6 +8,7 @@ import Model exposing (Model)
 import Sprite exposing (IsometricViewSprite, Sprite)
 import Ui.DrawUtils as DrawUtils
 import Ui.Enemy
+import Ui.Hud
 import Ui.Path
 import Ui.Sprites
 import Ui.Tower
@@ -40,6 +41,7 @@ isometricCanvas model =
 
                 Success _ ->
                     renderSprites model
+                        ++ Ui.Hud.drawCoin model.money model.sprite
 
                 Failure ->
                     [ Canvas.shapes [] [] ]
@@ -62,3 +64,4 @@ topDownCanvas model =
                 Just placingTower ->
                     Ui.Tower.placingTowerToCanvas placingTower
            )
+        ++ Ui.Hud.drawCoin model.money model.sprite
