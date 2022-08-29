@@ -41,8 +41,6 @@ isometricCanvas model =
 
                 Success _ ->
                     renderSprites model
-                        ++ Ui.Hud.drawCoin model.money model.sprite
-                        ++ [ Ui.Hud.drawWaitToStartButton model.gameState model.sprite ]
 
                 Failure ->
                     [ Canvas.shapes [] [] ]
@@ -66,4 +64,3 @@ topDownCanvas model =
                 Just placingTower ->
                     Ui.Tower.placingTowerToCanvas placingTower
            )
-        ++ Ui.Hud.drawCoin model.money model.sprite

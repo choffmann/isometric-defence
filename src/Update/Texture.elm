@@ -74,6 +74,7 @@ update maybeTexture model =
                             }
                         , ui =
                             { coin = sprite 0 3 gameViewWidth gameViewHeight texture
+                            , heart = sprite 1 3 gameViewWidth gameViewHeight texture
                             , buttons =
                                 { start = sprite 0 5 128 32 texture }
                             }

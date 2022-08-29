@@ -41,6 +41,7 @@ type alias ButtonSprites =
 
 type alias UiSprite =
     { coin : Texture
+    , heart : Texture
     , buttons : ButtonSprites
     }
 

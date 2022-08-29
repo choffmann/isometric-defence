@@ -10,49 +10,71 @@ import Model exposing (GameState(..))
 import Point exposing (Point)
 import Sprite exposing (ButtonSprites, Sprite)
 import Ui.Button as Button exposing (Button)
-import Ui.Coin as Coin
 import Ui.DrawUtils as DrawUtils
 import Utils.Data exposing (Load(..))
 
 
-drawCoin : Int -> Load Sprite -> List Renderable
-drawCoin amount loadTexture =
+renderSprite : Point -> Texture -> Renderable
+renderSprite point texture =
+    Canvas.texture [] (DrawUtils.convertToCanvasPoint point) texture
+
+
+drawBackground : Point -> Float -> Shape
+drawBackground fromPoint width =
+    Canvas.rect (DrawUtils.convertToCanvasPoint fromPoint) width (toFloat Area.fieldSize)
+
+
+renderText : Point -> String -> Renderable
+renderText point text =
+    Canvas.text
+        [ Text.font { size = 24, family = "Silkscreen" }, Text.align Left, Text.baseLine Middle ]
+        ( toFloat ((point.x + 1) * Area.fieldSize), toFloat (point.y * Area.fieldSize) + (toFloat Area.fieldSize / 2) )
+        text
+
+
+drawHp : Int -> Texture -> Renderable
+drawHp hp texture =
+    let
+        position : Point
+        position =
+            Point (Area.widthTiles - ceiling (toFloat Area.widthTiles / 4)) 1
+    in
+    Canvas.group []
+        [ Canvas.shapes [ Settings.fill (Color.rgba 50 50 50 0.5) ] [ drawBackground position (toFloat ((Area.widthTiles - position.x) * Area.fieldSize)) ]
+        , renderText position (String.fromInt hp)
+        , renderSprite position texture
+        ]
+
+
+drawCoin : Int -> Texture -> Renderable
+drawCoin amount texture =
     let
         position : Point
         position =
             Point (Area.widthTiles - ceiling (toFloat Area.widthTiles / 4)) 0
-
-        drawBackground : Point -> Float -> Shape
-        drawBackground fromPoint width =
-            Canvas.rect (DrawUtils.convertToCanvasPoint fromPoint) width (toFloat Area.fieldSize)
-
-        renderCoin : Texture -> List Renderable
-        renderCoin texture =
-            [ Coin.drawCoin position texture ]
-
-        renderText : List Renderable
-        renderText =
-            [ Canvas.text
-                [ Text.font { size = 24, family = "Silkscreen" }, Text.align Left, Text.baseLine Middle ]
-                ( toFloat ((position.x + 1) * Area.fieldSize), toFloat position.y + (toFloat Area.fieldSize / 2) )
-                (String.fromInt amount)
-            ]
     in
-    [ Canvas.shapes [ Settings.fill Color.gray ]
-        [ drawBackground position (toFloat ((Area.widthTiles - position.x) * Area.fieldSize))
+    Canvas.group []
+        [ Canvas.shapes [ Settings.fill (Color.rgba 50 50 50 0.5) ]
+            [ drawBackground position (toFloat ((Area.widthTiles - position.x) * Area.fieldSize)) ]
+        , renderText position (String.fromInt amount)
+        , renderSprite position texture
         ]
-    ]
-        ++ renderText
-        ++ (case loadTexture of
-                Loading ->
-                    []
 
-                Success sprite ->
-                    renderCoin sprite.ui.coin
 
-                Failure ->
-                    []
-           )
+hud : Int -> Int -> Load Sprite -> Renderable
+hud money hp loadTexture =
+    case loadTexture of
+        Loading ->
+            Canvas.shapes [] []
+
+        Success sprite ->
+            Canvas.group []
+                [ drawCoin money sprite.ui.coin
+                , drawHp hp sprite.ui.heart
+                ]
+
+        Failure ->
+            Canvas.shapes [] []
 
 
 waitToStartButton : Button
