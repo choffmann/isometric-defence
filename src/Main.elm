@@ -156,10 +156,16 @@ subscriptions model =
             always
 
         won =
-            always ++ [ Browser.Events.onKeyDown Decoder.keyDecoder ]
+            always
+                ++ [ Browser.Events.onKeyDown Decoder.keyDecoder
+                   , Browser.Events.onClick (Decoder.leftClickDecoder model)
+                   ]
 
         lost =
-            always ++ [ Browser.Events.onKeyDown Decoder.keyDecoder ]
+            always
+                ++ [ Browser.Events.onKeyDown Decoder.keyDecoder
+                   , Browser.Events.onClick (Decoder.leftClickDecoder model)
+                   ]
 
         running =
             always
