@@ -198,7 +198,7 @@ towersToSelectArea towers texture =
                         Tower3 ->
                             texture.tower3
                     )
-                , Canvas.text [ Canvas.Settings.Text.font { size = 12, family = "arial" } ] ( toFloat i * towerFieldSize + 3, (toFloat (currentHeight j) * towerFieldSize) + towerFieldSize - 3 ) (String.fromInt (Tower.toTower tower).price)
+                , Canvas.text [ Canvas.Settings.Text.font { size = 12, family = "Silkscreen" } ] ( toFloat i * towerFieldSize + 3, (toFloat (currentHeight j) * towerFieldSize) + towerFieldSize - 3 ) (String.fromInt (Tower.toTower tower).price)
                 ]
 
         draw : Int -> Int -> List Towers -> List Renderable -> List Renderable
@@ -220,8 +220,6 @@ towersToSelectArea towers texture =
 towerCanvas : TowerAreaSprite -> List Renderable
 towerCanvas sprites =
     [ Canvas.shapes [ Canvas.Settings.fill Color.grey ] [ Canvas.rect ( 0, 0 ) (toFloat towerArea.width) (toFloat towerArea.height) ]
-
-    --, DrawUtils.drawCanvasGrid2d towerArea (floor towerFieldSize)
     ]
         ++ towersToSelectArea demoTowers sprites
 
