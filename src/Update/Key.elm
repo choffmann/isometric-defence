@@ -28,6 +28,9 @@ update key model =
 
                 GeneratePath ->
                     model
+
+                WaitToStart ->
+                    model
             , Cmd.none
             )
 

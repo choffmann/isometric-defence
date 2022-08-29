@@ -70,6 +70,9 @@ update msg model =
         Lost ->
             ( model, Cmd.none )
 
+        WaitToStart ->
+            ( model, Cmd.none )
+
         Model.GeneratePath ->
             case msg of
                 PathDirectionGenerate direction ->
@@ -87,11 +90,11 @@ update msg model =
                                         Right ->
                                             if h.point.x + 1 >= Area.widthTiles - 1 then
                                                 if h.point.x >= Area.widthTiles - 1 then
-                                                    ( { model | gameState = Paused, path = Just (List.reverse ({ h | direction = direction } :: hs)) }, Cmd.none )
+                                                    ( { model | gameState = WaitToStart, path = Just (List.reverse ({ h | direction = direction } :: hs)) }, Cmd.none )
 
                                                 else
                                                     ( { model
-                                                        | gameState = Paused
+                                                        | gameState = WaitToStart
                                                         , path =
                                                             Just
                                                                 (List.reverse

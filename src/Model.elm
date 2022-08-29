@@ -21,6 +21,7 @@ type GameState
     | Won
     | Lost
     | GeneratePath
+    | WaitToStart
 
 
 type alias PlacingTower =

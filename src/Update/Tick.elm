@@ -208,5 +208,8 @@ update delta model =
 
         GeneratePath ->
             { model | delta = delta }
+
+        WaitToStart ->
+            { model | delta = delta }
     , Cmd.none
     )

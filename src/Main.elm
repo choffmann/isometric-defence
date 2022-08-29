@@ -173,6 +173,12 @@ subscriptions model =
                 ++ [ Browser.Events.onKeyDown Decoder.keyDecoder
                    , Browser.Events.onClick (Decoder.leftClickDecoder model)
                    ]
+
+        waitToStart =
+            always
+                ++ [ Browser.Events.onKeyDown Decoder.keyDecoder
+                   , Browser.Events.onClick (Decoder.leftClickDecoder model)
+                   ]
     in
     Sub.batch
         (case model.gameState of
@@ -200,6 +206,14 @@ subscriptions model =
 
             GeneratePath ->
                 generatePath
+
+            WaitToStart ->
+                case model.placingTower of
+                    Just _ ->
+                        Browser.Events.onMouseMove (Decoder.mouseMoveDecoder model) :: waitToStart
+
+                    Nothing ->
+                        Browser.Events.onMouseMove (Decoder.mouseMoveDecoder model) :: waitToStart
         )
 
 

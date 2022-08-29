@@ -6,8 +6,10 @@ import Canvas.Settings as Settings
 import Canvas.Settings.Text as Text exposing (TextAlign(..), TextBaseLine(..))
 import Canvas.Texture exposing (Texture)
 import Color
+import Model exposing (GameState(..))
 import Point exposing (Point)
-import Sprite exposing (Sprite)
+import Sprite exposing (ButtonSprites, Sprite)
+import Ui.Button as Button
 import Ui.Coin as Coin
 import Ui.DrawUtils as DrawUtils
 import Utils.Data exposing (Load(..))
@@ -51,3 +53,45 @@ drawCoin amount loadTexture =
                 Failure ->
                     []
            )
+
+
+drawPausePlayButton : GameState -> Load Sprite -> Renderable
+drawPausePlayButton gameState loadSprite =
+    let
+        spriteWidth : Int
+        spriteWidth =
+            4
+
+        calcPoint : Point
+        calcPoint =
+            Point (ceiling (toFloat Area.widthTiles / 2) - (spriteWidth // 2)) 0
+    in
+    case loadSprite of
+        Loading ->
+            Canvas.shapes [] []
+
+        Failure ->
+            Canvas.shapes [] []
+
+        Success sprites ->
+            case gameState of
+                WaitToStart ->
+                    --Canvas.texture [] calcPoint sprites.ui.buttons.start
+                    Button.drawSpriteButton
+                        { position = calcPoint, width = toFloat spriteWidth, height = 1 }
+                        sprites.ui.buttons.start
+
+                Running ->
+                    Canvas.shapes [] []
+
+                Paused ->
+                    Canvas.shapes [] []
+
+                GeneratePath ->
+                    Canvas.shapes [] []
+
+                Won ->
+                    Canvas.shapes [] []
+
+                Lost ->
+                    Canvas.shapes [] []

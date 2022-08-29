@@ -25,7 +25,6 @@ restartButton =
     { position = Point 8 16
     , width = 4
     , height = 2
-    , text = "Restart"
     }
 
 
@@ -33,6 +32,6 @@ canvas : List Renderable
 canvas =
     [ Canvas.shapes [ Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
     , DrawUtils.drawCanvasGrid2d Area.area Area.fieldSize
-    , Button.draw restartButton
+    , Button.drawUiButton restartButton "Restart"
     , text
     ]

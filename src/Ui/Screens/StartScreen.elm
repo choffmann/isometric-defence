@@ -30,7 +30,6 @@ startButton =
     { position = Point 8 16
     , width = 4
     , height = 2
-    , text = "Start"
     }
 
 
@@ -39,7 +38,7 @@ canvas floorTexture mFloor =
     [ Canvas.shapes [ Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
     , DrawUtils.drawCanvasGrid2d Area.area Area.fieldSize
     , title
-    , Button.draw startButton
+    , Button.drawUiButton startButton "Start"
     ]
         ++ (case mFloor of
                 Nothing ->
