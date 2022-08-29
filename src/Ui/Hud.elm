@@ -9,7 +9,7 @@ import Color
 import Model exposing (GameState(..))
 import Point exposing (Point)
 import Sprite exposing (ButtonSprites, Sprite)
-import Ui.Button as Button
+import Ui.Button as Button exposing (Button)
 import Ui.Coin as Coin
 import Ui.DrawUtils as DrawUtils
 import Utils.Data exposing (Load(..))
@@ -55,8 +55,8 @@ drawCoin amount loadTexture =
            )
 
 
-drawPausePlayButton : GameState -> Load Sprite -> Renderable
-drawPausePlayButton gameState loadSprite =
+waitToStartButton : Button
+waitToStartButton =
     let
         spriteWidth : Int
         spriteWidth =
@@ -66,6 +66,14 @@ drawPausePlayButton gameState loadSprite =
         calcPoint =
             Point (ceiling (toFloat Area.widthTiles / 2) - (spriteWidth // 2)) 0
     in
+    { position = calcPoint
+    , width = toFloat spriteWidth
+    , height = 1
+    }
+
+
+drawWaitToStartButton : GameState -> Load Sprite -> Renderable
+drawWaitToStartButton gameState loadSprite =
     case loadSprite of
         Loading ->
             Canvas.shapes [] []
@@ -76,9 +84,8 @@ drawPausePlayButton gameState loadSprite =
         Success sprites ->
             case gameState of
                 WaitToStart ->
-                    --Canvas.texture [] calcPoint sprites.ui.buttons.start
                     Button.drawSpriteButton
-                        { position = calcPoint, width = toFloat spriteWidth, height = 1 }
+                        waitToStartButton
                         sprites.ui.buttons.start
 
                 Running ->

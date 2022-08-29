@@ -42,6 +42,7 @@ isometricCanvas model =
                 Success _ ->
                     renderSprites model
                         ++ Ui.Hud.drawCoin model.money model.sprite
+                        ++ [ Ui.Hud.drawWaitToStartButton model.gameState model.sprite ]
 
                 Failure ->
                     [ Canvas.shapes [] [] ]
@@ -56,7 +57,7 @@ topDownCanvas model =
     , Ui.Enemy.enemiesToCanvas model.enemies model.path
     , Ui.Tower.towersToCanvas model.towers
     , Ui.Tower.towerRadius model.inspectingTower model.gameView
-    , Ui.Hud.drawPausePlayButton model.gameState model.sprite
+    , Ui.Hud.drawWaitToStartButton model.gameState model.sprite
     ]
         ++ (case model.placingTower of
                 Nothing ->
