@@ -1,6 +1,6 @@
 module Ui.Button exposing (Button, drawSpriteButton, drawUiButton, isClicked)
 
-import Area
+import Area exposing (Field)
 import Canvas exposing (Renderable)
 import Canvas.Settings as Settings
 import Canvas.Settings.Text as Text exposing (TextAlign(..), TextBaseLine(..))

@@ -6,7 +6,6 @@ import Model exposing (GameState(..), Model)
 import Path exposing (Path)
 import Point exposing (Point)
 import Screen exposing (Screen(..))
-import Shoot exposing (Shoot)
 import Tower exposing (Tower)
 import Ui.Animation as Animation
 import Ui.Screens.StartScreen as StartScreen
@@ -87,17 +86,6 @@ moveEnemies globalSpeedMulti delta path =
                         |> Path.distanceToPathPoint path
             }
         )
-
-
-
-{- moveShoot: Float -> Float -> Enemy -> List Shoot -> List Shoot
-   moveShoot globalSpeedMulti delta enemy =
-       let
-           moveAmount
-           moveAmount distance speed =
-               distance + (speed * 0.025 * delta * globalSpeedMulti)
-       in
--}
 
 
 cooldownTowers : Float -> Float -> List Tower -> List Tower

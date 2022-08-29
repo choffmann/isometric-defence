@@ -30,7 +30,7 @@ towerRadius mTower gameView =
                 |> Area.fieldToPixel
                 |> Pixel.pixelToPoint
                 |> centerPoint
-                |> Point.toCanvasPoint
+                |> DrawUtils.pointToFloat
     in
     Canvas.shapes [ Canvas.Settings.stroke (Color.rgb255 0 0 0), Canvas.Settings.Line.lineWidth 2 ]
         (case mTower of
@@ -52,14 +52,35 @@ towerRadius mTower gameView =
         )
 
 
-towersToCanvas : List Tower -> Renderable
+towerColor : Towers -> Canvas.Settings.Setting
+towerColor tower =
+    case tower of
+        Basic ->
+            Canvas.Settings.fill (Color.rgb255 49 162 242)
+
+        Tower1 ->
+            Canvas.Settings.fill (Color.rgb255 253 200 75)
+
+        Tower2 ->
+            Canvas.Settings.fill (Color.rgb255 158 117 85)
+
+        Tower3 ->
+            Canvas.Settings.fill (Color.rgb255 3 3 67)
+
+
+towersToCanvas : List Tower -> List Renderable
 towersToCanvas towers =
     towers
         |> List.map
             (\tower ->
-                DrawUtils.pointToCanvas tower.position (toFloat Area.fieldSize) (toFloat Area.fieldSize)
+                Canvas.shapes
+                    [ towerColor tower.towerType ]
+                    [ DrawUtils.pointToCanvas tower.position (toFloat Area.fieldSize) (toFloat Area.fieldSize) ]
             )
-        |> Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 49 162 242) ]
+
+
+
+--Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 49 162 242) ]
 
 
 placingTowerToCanvas : PlacingTower -> List Renderable
@@ -75,7 +96,8 @@ placingTowerToCanvas placingTower =
         ]
         [ DrawUtils.pointToCanvas placingTower.tower.position (toFloat Area.fieldSize - 4) (toFloat Area.fieldSize - 4)
         ]
-    , Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 49 162 242) ] [ DrawUtils.pointToCanvas placingTower.tower.position (toFloat Area.fieldSize - 20) (toFloat Area.fieldSize - 20) ]
+    , Canvas.shapes [ towerColor placingTower.tower.towerType ] [ DrawUtils.pointToCanvas placingTower.tower.position (toFloat Area.fieldSize - 20) (toFloat Area.fieldSize - 20) ]
+    , towerRadius (Just placingTower.tower) TopDown
     ]
 
 
