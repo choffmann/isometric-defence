@@ -35,7 +35,12 @@ type alias TowerAreaSprite =
     }
 
 
+type alias UiSprite =
+    { coin : Texture }
+
+
 type alias Sprite =
     { gameView : IsometricViewSprite
     , towerArea : TowerAreaSprite
+    , ui : UiSprite
     }

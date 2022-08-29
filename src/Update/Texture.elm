@@ -72,6 +72,8 @@ update maybeTexture model =
                             , tower2 = sprite 2 2 towerAreaWidth towerAreaHeight texture
                             , tower3 = sprite 2 3 towerAreaWidth towerAreaHeight texture
                             }
+                        , ui =
+                            { coin = sprite 0 3 gameViewWidth gameViewHeight texture }
                         }
               }
             , Cmd.none

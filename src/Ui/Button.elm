@@ -28,7 +28,7 @@ draw button =
     in
     Canvas.group []
         [ Canvas.shapes [ Settings.fill Color.gray ] [ Canvas.rect (DrawUtils.convertToCanvasPoint button.position) (button.width * toFloat Area.fieldSize) (button.height * toFloat Area.fieldSize) ]
-        , Canvas.text [ Text.font { size = 24, family = "Consolas" }, Text.align Center, Text.baseLine Middle ] textPosition button.text
+        , Canvas.text [ Text.font { size = 24, family = "Silkscreen" }, Text.align Center, Text.baseLine Middle ] textPosition button.text
         ]
 
 
