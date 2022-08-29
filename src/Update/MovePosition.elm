@@ -7,6 +7,8 @@ import Model exposing (Model)
 import Path exposing (Path)
 import Pixel exposing (Pixel)
 import Point exposing (Point)
+import Ui.Button as Button
+import Ui.Hud as Hud
 
 
 canTowerBePlaced : Point -> Int -> Model -> Bool
@@ -46,16 +48,20 @@ update mPixel gameArea model =
                     model
 
                 Just point ->
-                    { model
-                        | placingTower =
-                            model.placingTower
-                                |> Maybe.map
-                                    (\{ tower } ->
-                                        { tower = { tower | position = point }
-                                        , canBePlaced = canTowerBePlaced point tower.price model
-                                        }
-                                    )
-                    }
+                    if Button.isClicked Hud.waitToStartButton point then
+                        { model | placingTower = Nothing }
+
+                    else
+                        { model
+                            | placingTower =
+                                model.placingTower
+                                    |> Maybe.map
+                                        (\{ tower } ->
+                                            { tower = { tower | position = point }
+                                            , canBePlaced = canTowerBePlaced point tower.price model
+                                            }
+                                        )
+                        }
             , Cmd.none
             )
 

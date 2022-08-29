@@ -8,8 +8,10 @@ import Messages exposing (Msg(..))
 import Path exposing (Path)
 import Point exposing (Point)
 import Random
+import Screen exposing (Screen(..))
 import Sprite exposing (IsometricViewSprite, Sprite, TowerAreaSprite)
 import Tower exposing (Tower)
+import Ui.Animation exposing (Animation)
 import Utils.Data exposing (Load(..))
 
 
@@ -19,6 +21,7 @@ type GameState
     | Won
     | Lost
     | GeneratePath
+    | WaitToStart
 
 
 type alias PlacingTower =
@@ -45,6 +48,8 @@ type alias Model =
     , sprite : Load Sprite
     , gameView : GameView
     , movePosition : Maybe Point
+    , screen : Screen
+    , animation : Maybe Animation
     }
 
 
@@ -67,7 +72,7 @@ init _ =
     ( { gameState = GeneratePath
       , hp = 1000
       , money = 1000
-      , enemies = [ Enemy.toEnemy Enemy.Soldat ] --, toEnemy Enemy.Soldat, toEnemy Enemy.Soldat, toEnemy Enemy.Soldat, toEnemy Enemy.Soldat ]
+      , enemies = [ Enemy.toEnemy Enemy.Soldat ] --, Enemy.toEnemy Enemy.Soldat, Enemy.toEnemy Enemy.Soldat, Enemy.toEnemy Enemy.Soldat, Enemy.toEnemy Enemy.Soldat ]
       , towers = [] --, toTower Tower.Basic ]
       , delta = 0
       , placingTower = Just { tower = Tower.toTower Tower.Basic, canBePlaced = False }
@@ -81,6 +86,8 @@ init _ =
       , sprite = Loading
       , gameView = TopDown
       , movePosition = Nothing
+      , screen = StartScreen
+      , animation = Nothing
       }
     , Random.generate PathPointGenerate Path.pointGenerator
     )

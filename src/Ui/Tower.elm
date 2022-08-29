@@ -42,7 +42,7 @@ towerRadius mTower gameView =
                     (case gameView of
                         Isometric ->
                             towerPositionToPixel tower.position
-                                |> Area.canvasPointToIsometric
+                                |> Area.canvasPointToIsometric Area.isometricMatrix
 
                         TopDown ->
                             towerPositionToPixel tower.position

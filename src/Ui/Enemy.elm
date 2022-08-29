@@ -32,10 +32,6 @@ enemiesToCanvas enemies path =
                 |> Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 50 255 50) ]
 
 
-
--- TODO: Not working
-
-
 renderEnemyIso : List Enemy -> Maybe Path -> Texture -> List Renderable
 renderEnemyIso enemies maybePath texture =
     case maybePath of
@@ -49,7 +45,7 @@ renderEnemyIso enemies maybePath texture =
                         Path.distanceToPixel path enemy.distance
                             |> Maybe.map
                                 (\(Pixel point) ->
-                                    DrawUtils.placeTile { x = (point.x // Area.fieldSize) - 1, y = (point.y // Area.fieldSize) - 1 } texture
+                                    DrawUtils.placeTileOnCanvas ( (toFloat point.x / toFloat Area.fieldSize) - 1, (toFloat point.y / toFloat Area.fieldSize) - 1 ) texture Area.isometricMatrix
                                 )
                     )
                 |> List.removeNothing

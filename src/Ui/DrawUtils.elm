@@ -1,16 +1,10 @@
-module Ui.DrawUtils exposing (drawCanvasGrid2d, placeTile, pointToCanvas, textOverPoint)
+module Ui.DrawUtils exposing (convertToCanvasPoint, drawCanvasGrid2d, placeTile, placeTileOnCanvas, pointToCanvas)
 
-import Area exposing (Area)
+import Area exposing (Area, IsometricMatrix)
 import Canvas exposing (PathSegment, Renderable, Shape)
 import Canvas.Settings.Line
-import Canvas.Settings.Text
 import Canvas.Texture exposing (Texture)
 import Point exposing (Point)
-
-
-textOverPoint : Point -> String -> Renderable
-textOverPoint point text =
-    Canvas.text [ Canvas.Settings.Text.font { size = 12, family = "arial" } ] (Point.toCanvasPoint point) text
 
 
 drawCanvasGrid2d : Area -> Int -> Renderable
@@ -53,7 +47,21 @@ pointToCanvas point width height =
 placeTile : Point -> Texture -> Renderable
 placeTile { x, y } texture =
     Canvas.texture []
-        (Area.canvasPointToIsometric ( toFloat x, toFloat y )
+        (Area.canvasPointToIsometric Area.isometricMatrix ( toFloat x, toFloat y )
             |> Area.isometricOffset
         )
         texture
+
+
+placeTileOnCanvas : Canvas.Point -> Texture -> IsometricMatrix -> Renderable
+placeTileOnCanvas point texture matrix =
+    Canvas.texture []
+        (Area.canvasPointToIsometric matrix point
+            |> Area.isometricOffset
+        )
+        texture
+
+
+convertToCanvasPoint : Point -> Canvas.Point
+convertToCanvasPoint { x, y } =
+    ( toFloat (x * Area.fieldSize), toFloat (y * Area.fieldSize) )
