@@ -9,14 +9,15 @@ import Enemy exposing (Enemy)
 import List.Extra as List
 import Path exposing (Path)
 import Pixel exposing (Pixel(..))
+import Point exposing (Point)
 import Ui.DrawUtils as DrawUtils
 
 
-enemiesToCanvas : List Enemy -> Maybe Path -> Renderable
-enemiesToCanvas enemies path =
-    case path of
+enemiesToCanvas : List Enemy -> Maybe Path -> List Renderable
+enemiesToCanvas enemies maybePath =
+    case maybePath of
         Nothing ->
-            Canvas.shapes [] []
+            [ Canvas.shapes [] [] ]
 
         Just justPath ->
             enemies
@@ -25,11 +26,13 @@ enemiesToCanvas enemies path =
                         Path.distanceToPixel justPath enemy.distance
                             |> Maybe.map
                                 (\(Pixel point) ->
-                                    Canvas.rect ( toFloat point.x - 10, toFloat point.y - 10 ) 20 20
+                                    Canvas.group []
+                                        [ Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 50 255 50) ] [ Canvas.rect ( toFloat point.x - 10, toFloat point.y - 10 ) 20 20 ]
+                                        , DrawUtils.drawTextOverPoint (Point point.x (point.y - ((Area.fieldSize // 2) + 3))) (String.fromInt enemy.hp)
+                                        ]
                                 )
                     )
                 |> List.removeNothing
-                |> Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 50 255 50) ]
 
 
 renderEnemyIso : List Enemy -> Maybe Path -> Texture -> List Renderable

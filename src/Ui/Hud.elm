@@ -16,12 +16,12 @@ import Utils.Data exposing (Load(..))
 
 renderSprite : Point -> Texture -> Renderable
 renderSprite point texture =
-    Canvas.texture [] (DrawUtils.convertToCanvasPoint point) texture
+    Canvas.texture [] (DrawUtils.fieldToCanvas point) texture
 
 
 drawBackground : Point -> Float -> Shape
 drawBackground fromPoint width =
-    Canvas.rect (DrawUtils.convertToCanvasPoint fromPoint) width (toFloat Area.fieldSize)
+    Canvas.rect (DrawUtils.fieldToCanvas fromPoint) width (toFloat Area.fieldSize)
 
 
 renderText : Point -> String -> Renderable

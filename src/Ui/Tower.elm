@@ -30,7 +30,7 @@ towerRadius mTower gameView =
                 |> Area.fieldToPixel
                 |> Pixel.pixelToPoint
                 |> centerPoint
-                |> Point.toCanvasPoint
+                |> DrawUtils.pointToFloat
     in
     Canvas.shapes [ Canvas.Settings.stroke (Color.rgb255 0 0 0), Canvas.Settings.Line.lineWidth 2 ]
         (case mTower of
@@ -43,6 +43,7 @@ towerRadius mTower gameView =
                         Isometric ->
                             towerPositionToPixel tower.position
                                 |> Area.canvasPointToIsometric Area.isometricMatrix
+                                |> Area.isometricOffset
 
                         TopDown ->
                             towerPositionToPixel tower.position
@@ -52,14 +53,35 @@ towerRadius mTower gameView =
         )
 
 
-towersToCanvas : List Tower -> Renderable
+towerColor : Towers -> Canvas.Settings.Setting
+towerColor tower =
+    case tower of
+        Basic ->
+            Canvas.Settings.fill (Color.rgb255 49 162 242)
+
+        Tower1 ->
+            Canvas.Settings.fill (Color.rgb255 253 200 75)
+
+        Tower2 ->
+            Canvas.Settings.fill (Color.rgb255 158 117 85)
+
+        Tower3 ->
+            Canvas.Settings.fill (Color.rgb255 3 3 67)
+
+
+towersToCanvas : List Tower -> List Renderable
 towersToCanvas towers =
     towers
         |> List.map
             (\tower ->
-                DrawUtils.pointToCanvas tower.position (toFloat Area.fieldSize) (toFloat Area.fieldSize)
+                Canvas.shapes
+                    [ towerColor tower.towerType ]
+                    [ DrawUtils.pointToCanvas tower.position (toFloat Area.fieldSize) (toFloat Area.fieldSize) ]
             )
-        |> Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 49 162 242) ]
+
+
+
+--Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 49 162 242) ]
 
 
 placingTowerToCanvas : PlacingTower -> List Renderable
@@ -75,7 +97,8 @@ placingTowerToCanvas placingTower =
         ]
         [ DrawUtils.pointToCanvas placingTower.tower.position (toFloat Area.fieldSize - 4) (toFloat Area.fieldSize - 4)
         ]
-    , Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 49 162 242) ] [ DrawUtils.pointToCanvas placingTower.tower.position (toFloat Area.fieldSize - 20) (toFloat Area.fieldSize - 20) ]
+    , Canvas.shapes [ towerColor placingTower.tower.towerType ] [ DrawUtils.pointToCanvas placingTower.tower.position (toFloat Area.fieldSize - 20) (toFloat Area.fieldSize - 20) ]
+    , towerRadius (Just placingTower.tower) TopDown
     ]
 
 
@@ -89,6 +112,7 @@ renderPlacingTowerSprite maybePlacingTower texture towerCanNotPlaced =
             if placingTower.canBePlaced then
                 [ DrawUtils.placeTile (Point (placingTower.tower.position.x - 1) (placingTower.tower.position.y - 1))
                     (selectionToSprite placingTower.tower texture)
+                , towerRadius (Just placingTower.tower) Isometric
                 ]
 
             else
@@ -132,8 +156,8 @@ towerToSprite tower texture =
             texture.tower3.tower
 
 
-demoTowers : List Towers
-demoTowers =
+availableTowers : List Towers
+availableTowers =
     [ Basic
     , Tower1
     , Tower2
@@ -168,7 +192,7 @@ maxTowerAreaHeight towers =
 
 towerArea : Area
 towerArea =
-    Area Area.area.width (floor (towerFieldSize * toFloat (maxTowerAreaHeight demoTowers)))
+    Area Area.area.width (floor (towerFieldSize * toFloat (maxTowerAreaHeight availableTowers)))
 
 
 towersToSelectArea : List Towers -> TowerAreaSprite -> List Renderable
@@ -221,11 +245,11 @@ towerCanvas : TowerAreaSprite -> List Renderable
 towerCanvas sprites =
     [ Canvas.shapes [ Canvas.Settings.fill Color.grey ] [ Canvas.rect ( 0, 0 ) (toFloat towerArea.width) (toFloat towerArea.height) ]
     ]
-        ++ towersToSelectArea demoTowers sprites
+        ++ towersToSelectArea availableTowers sprites
 
 
 pixelToTower : Pixel -> Maybe Towers
 pixelToTower (Pixel point) =
-    demoTowers
+    availableTowers
         |> List.drop (10 * (point.y // floor towerFieldSize) + (point.x // floor towerFieldSize))
         |> List.head

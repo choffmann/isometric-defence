@@ -52,11 +52,11 @@ topDownCanvas model =
     [ Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 34 139 34) ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
     , DrawUtils.drawCanvasGrid2d Area.area Area.fieldSize
     , Ui.Path.pathToCanvas model.path
-    , Ui.Enemy.enemiesToCanvas model.enemies model.path
-    , Ui.Tower.towersToCanvas model.towers
     , Ui.Tower.towerRadius model.inspectingTower model.gameView
     , Ui.Hud.drawWaitToStartButton model.gameState model.sprite
     ]
+        ++ Ui.Tower.towersToCanvas model.towers
+        ++ Ui.Enemy.enemiesToCanvas model.enemies model.path
         ++ (case model.placingTower of
                 Nothing ->
                     []

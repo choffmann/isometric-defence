@@ -1,6 +1,6 @@
 module Ui.Button exposing (Button, drawSpriteButton, drawUiButton, isClicked)
 
-import Area
+import Area exposing (Field)
 import Canvas exposing (Renderable)
 import Canvas.Settings as Settings
 import Canvas.Settings.Text as Text exposing (TextAlign(..), TextBaseLine(..))
@@ -27,14 +27,14 @@ drawUiButton button text =
             )
     in
     Canvas.group []
-        [ Canvas.shapes [ Settings.fill Color.gray ] [ Canvas.rect (DrawUtils.convertToCanvasPoint button.position) (button.width * toFloat Area.fieldSize) (button.height * toFloat Area.fieldSize) ]
+        [ Canvas.shapes [ Settings.fill Color.gray ] [ Canvas.rect (DrawUtils.fieldToCanvas button.position) (button.width * toFloat Area.fieldSize) (button.height * toFloat Area.fieldSize) ]
         , Canvas.text [ Text.font { size = 24, family = "Silkscreen" }, Text.align Center, Text.baseLine Middle ] textPosition text
         ]
 
 
 drawSpriteButton : Button -> Texture -> Renderable
 drawSpriteButton button texture =
-    Canvas.texture [] (DrawUtils.convertToCanvasPoint button.position) texture
+    Canvas.texture [] (DrawUtils.fieldToCanvas button.position) texture
 
 
 isClicked : Button -> Point -> Bool
