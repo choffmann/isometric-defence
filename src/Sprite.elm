@@ -35,8 +35,16 @@ type alias TowerAreaSprite =
     }
 
 
+type alias ButtonSprites =
+    { play : Texture
+    , pause : Texture
+    }
+
+
 type alias UiSprite =
-    { coin : Texture }
+    { coin : Texture
+    , buttons : ButtonSprites
+    }
 
 
 type alias Sprite =
