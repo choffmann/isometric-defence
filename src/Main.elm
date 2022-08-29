@@ -27,6 +27,7 @@ import Update.GeneratePath as GeneratePath
 import Update.Key as Key
 import Update.LeftClick as LeftClick
 import Update.MovePosition as MovePosition
+import Update.PathPointGenerate as PathPointGenerate
 import Update.RightClick as RightClick
 import Update.Texture
 import Update.Tick as Tick
@@ -177,10 +178,10 @@ update msg =
             Event.update event
 
         PathDirectionGenerate direction ->
-            GeneratePath.update (PathDirectionGenerate direction)
+            GeneratePath.update direction
 
         PathPointGenerate point ->
-            GeneratePath.update (PathPointGenerate point)
+            PathPointGenerate.update point
 
         TextureLoaded texture ->
             Update.Texture.update texture

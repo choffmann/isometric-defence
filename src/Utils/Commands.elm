@@ -1,7 +1,10 @@
-module Utils.Commands exposing (getPlayAreaCanvas, getToolAreaCanvas)
+module Utils.Commands exposing (generateRandomDirection, getPlayAreaCanvas, getToolAreaCanvas)
 
+import Area
 import Browser.Dom exposing (Element)
-import Messages exposing (GameArea(..), Msg)
+import Messages exposing (GameArea(..), Msg(..))
+import Path exposing (PathDirection(..), PathPoint)
+import Random
 import Styles
 import Task
 
@@ -50,3 +53,48 @@ getToolAreaCanvas =
                 )
         )
         (Browser.Dom.getElement "toolAreaContainer")
+
+
+generateRandomDirection : PathPoint -> Cmd Msg
+generateRandomDirection pathPoint =
+    let
+        checkDirection { direction, point } =
+            let
+                checkUp p =
+                    (p.y - 2) > 0
+
+                checkDown p =
+                    (p.y + 2) < Area.heightTiles - 1
+            in
+            case direction of
+                Right ->
+                    if checkDown point && checkUp point then
+                        [ Right, Up, Down ]
+
+                    else if checkDown point then
+                        [ Right, Down ]
+
+                    else if checkUp point then
+                        [ Right, Up ]
+
+                    else
+                        [ Right ]
+
+                Down ->
+                    if checkDown point then
+                        [ Right, Down ]
+
+                    else
+                        [ Right ]
+
+                Up ->
+                    if checkUp point then
+                        [ Right, Up ]
+
+                    else
+                        [ Right ]
+    in
+    pathPoint
+        |> checkDirection
+        |> Path.directionGenerator
+        |> Random.generate PathDirectionGenerate
