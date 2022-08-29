@@ -9,6 +9,7 @@ import Path exposing (Path)
 import Point exposing (Point)
 import Random
 import Screen exposing (Screen(..))
+import Shoot exposing (Shoot)
 import Sprite exposing (IsometricViewSprite, Sprite, TowerAreaSprite)
 import Tower exposing (Tower)
 import Ui.Animation exposing (Animation)
@@ -36,6 +37,7 @@ type alias Model =
     , money : Int
     , enemies : List Enemy
     , towers : List Tower
+    , shoots : List Shoot
     , delta : Float
     , placingTower : Maybe PlacingTower
     , inspectingTower : Maybe Tower
@@ -74,6 +76,7 @@ init _ =
       , money = 1000
       , enemies = [ Enemy.toEnemy Enemy.Soldat ] --, Enemy.toEnemy Enemy.Soldat, Enemy.toEnemy Enemy.Soldat, Enemy.toEnemy Enemy.Soldat, Enemy.toEnemy Enemy.Soldat ]
       , towers = [] --, toTower Tower.Basic ]
+      , shoots = []
       , delta = 0
       , placingTower = Just { tower = Tower.toTower Tower.Basic, canBePlaced = False }
       , inspectingTower = Nothing
