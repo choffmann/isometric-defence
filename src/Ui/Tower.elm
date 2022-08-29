@@ -43,6 +43,7 @@ towerRadius mTower gameView =
                         Isometric ->
                             towerPositionToPixel tower.position
                                 |> Area.canvasPointToIsometric Area.isometricMatrix
+                                |> Area.isometricOffset
 
                         TopDown ->
                             towerPositionToPixel tower.position
@@ -111,6 +112,7 @@ renderPlacingTowerSprite maybePlacingTower texture towerCanNotPlaced =
             if placingTower.canBePlaced then
                 [ DrawUtils.placeTile (Point (placingTower.tower.position.x - 1) (placingTower.tower.position.y - 1))
                     (selectionToSprite placingTower.tower texture)
+                , towerRadius (Just placingTower.tower) Isometric
                 ]
 
             else
@@ -154,8 +156,8 @@ towerToSprite tower texture =
             texture.tower3.tower
 
 
-demoTowers : List Towers
-demoTowers =
+availableTowers : List Towers
+availableTowers =
     [ Basic
     , Tower1
     , Tower2
@@ -190,7 +192,7 @@ maxTowerAreaHeight towers =
 
 towerArea : Area
 towerArea =
-    Area Area.area.width (floor (towerFieldSize * toFloat (maxTowerAreaHeight demoTowers)))
+    Area Area.area.width (floor (towerFieldSize * toFloat (maxTowerAreaHeight availableTowers)))
 
 
 towersToSelectArea : List Towers -> TowerAreaSprite -> List Renderable
@@ -243,11 +245,11 @@ towerCanvas : TowerAreaSprite -> List Renderable
 towerCanvas sprites =
     [ Canvas.shapes [ Canvas.Settings.fill Color.grey ] [ Canvas.rect ( 0, 0 ) (toFloat towerArea.width) (toFloat towerArea.height) ]
     ]
-        ++ towersToSelectArea demoTowers sprites
+        ++ towersToSelectArea availableTowers sprites
 
 
 pixelToTower : Pixel -> Maybe Towers
 pixelToTower (Pixel point) =
-    demoTowers
+    availableTowers
         |> List.drop (10 * (point.y // floor towerFieldSize) + (point.x // floor towerFieldSize))
         |> List.head
