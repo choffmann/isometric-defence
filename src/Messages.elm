@@ -17,6 +17,7 @@ type Key
     | ArrowDown
     | ArrowUp
     | UnknownKey
+    | Esc
 
 
 type GameArea

@@ -45,6 +45,9 @@ keyDecoder =
                 "ArrowDown" ->
                     ArrowDown
 
+                "Escape" ->
+                    Esc
+
                 _ ->
                     UnknownKey
     in

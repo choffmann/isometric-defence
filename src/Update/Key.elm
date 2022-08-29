@@ -15,6 +15,28 @@ update key model =
         Space ->
             ( case model.gameState of
                 Running ->
+                    model
+
+                Paused ->
+                    model
+
+                Won ->
+                    model
+
+                Lost ->
+                    model
+
+                GeneratePath ->
+                    model
+
+                WaitToStart ->
+                    { model | gameState = Running, screen = PlayScreen }
+            , Cmd.none
+            )
+
+        Esc ->
+            ( case model.gameState of
+                Running ->
                     { model | gameState = Paused, screen = PauseScreen }
 
                 Paused ->

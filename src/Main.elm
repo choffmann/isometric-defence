@@ -191,12 +191,7 @@ subscriptions model =
                         Browser.Events.onMouseMove (Decoder.mouseMoveDecoder model) :: running
 
             Paused ->
-                case model.placingTower of
-                    Just _ ->
-                        Browser.Events.onMouseMove (Decoder.mouseMoveDecoder model) :: paused
-
-                    Nothing ->
-                        Browser.Events.onMouseMove (Decoder.mouseMoveDecoder model) :: paused
+                paused
 
             Won ->
                 won
