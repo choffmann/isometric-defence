@@ -1,4 +1,4 @@
-module Area exposing (Area, Field(..), area, canvasPointToIsometric, fieldSize, fieldToPixel, heightTiles, isOutOfBounds, isometricOffset, isometricPixelToField, pixelToField, widthTiles)
+module Area exposing (Area, Field(..), IsometricMatrix, area, canvasPointToIsometric, fieldSize, fieldToPixel, heightTiles, isOutOfBounds, isometricMatrix, isometricOffset, isometricPixelToField, pixelToField, widthTiles)
 
 import Pixel exposing (Pixel(..))
 import Point exposing (Point)
@@ -69,8 +69,8 @@ type alias IsometricMatrix =
     }
 
 
-matrix : IsometricMatrix
-matrix =
+isometricMatrix : IsometricMatrix
+isometricMatrix =
     { x1 = 1
     , y1 = 0.5
     , x2 = -1
@@ -78,8 +78,8 @@ matrix =
     }
 
 
-canvasPointToIsometric : ( Float, Float ) -> ( Float, Float )
-canvasPointToIsometric ( x, y ) =
+canvasPointToIsometric : IsometricMatrix -> ( Float, Float ) -> ( Float, Float )
+canvasPointToIsometric matrix ( x, y ) =
     ( x * matrix.x1 * 0.5 * toFloat fieldSize + y * matrix.x2 * 0.5 * toFloat fieldSize
     , x * matrix.y1 * 0.5 * toFloat fieldSize + y * matrix.y2 * 0.5 * toFloat fieldSize
     )
@@ -111,10 +111,10 @@ isometricPixelToField (Pixel { x, y }) =
         inv : IsometricMatrix
         inv =
             invertMatrix
-                (matrix.x1 * 0.5 * toFloat fieldSize)
-                (matrix.y1 * 0.5 * toFloat fieldSize)
-                (matrix.x2 * 0.5 * toFloat fieldSize)
-                (matrix.y2 * 0.5 * toFloat fieldSize)
+                (isometricMatrix.x1 * 0.5 * toFloat fieldSize)
+                (isometricMatrix.y1 * 0.5 * toFloat fieldSize)
+                (isometricMatrix.x2 * 0.5 * toFloat fieldSize)
+                (isometricMatrix.y2 * 0.5 * toFloat fieldSize)
 
         offset : Point -> Point
         offset point =

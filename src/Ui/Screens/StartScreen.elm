@@ -61,24 +61,28 @@ canvas floorTexture mFloor =
 generateFloor : List Floor
 generateFloor =
     let
-        drawWidth : List Floor -> Int -> Int -> List Floor
-        drawWidth list i j =
+        drawWidth : List Floor -> Int -> Int -> Int -> List Floor
+        drawWidth list i j count =
             if j >= Area.widthTiles then
                 list
 
             else
-                { position = ( toFloat i * 2, toFloat j * 2 ) } :: drawWidth list i (j + 1)
+                { position = ( toFloat (i + count), toFloat (j + count) )
+                , matrix = Area.isometricMatrix
+                , elapsedTime = 0
+                }
+                    :: drawWidth list i (j + 1) (count + 1)
 
-        drawHeight : List Floor -> Int -> List Floor
-        drawHeight list index =
+        drawHeight : List Floor -> Int -> Int -> List Floor
+        drawHeight list index count =
             if index >= Area.heightTiles then
                 list
 
             else
-                drawWidth [] index 0 ++ drawHeight list (index + 1)
+                drawWidth [] index 0 (count + 1) ++ drawHeight list (index + 1) count
 
         draw : List Floor
         draw =
-            drawHeight [] 0
+            drawHeight [] 0 0
     in
     draw

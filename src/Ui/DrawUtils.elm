@@ -1,6 +1,6 @@
 module Ui.DrawUtils exposing (convertToCanvasPoint, drawCanvasGrid2d, placeTile, placeTileOnCanvas, pointToCanvas)
 
-import Area exposing (Area)
+import Area exposing (Area, IsometricMatrix)
 import Canvas exposing (PathSegment, Renderable, Shape)
 import Canvas.Settings.Line
 import Canvas.Texture exposing (Texture)
@@ -47,16 +47,16 @@ pointToCanvas point width height =
 placeTile : Point -> Texture -> Renderable
 placeTile { x, y } texture =
     Canvas.texture []
-        (Area.canvasPointToIsometric ( toFloat x, toFloat y )
+        (Area.canvasPointToIsometric Area.isometricMatrix ( toFloat x, toFloat y )
             |> Area.isometricOffset
         )
         texture
 
 
-placeTileOnCanvas : Canvas.Point -> Texture -> Renderable
-placeTileOnCanvas point texture =
+placeTileOnCanvas : Canvas.Point -> Texture -> IsometricMatrix -> Renderable
+placeTileOnCanvas point texture matrix =
     Canvas.texture []
-        (Area.canvasPointToIsometric point
+        (Area.canvasPointToIsometric matrix point
             |> Area.isometricOffset
         )
         texture

@@ -5,6 +5,7 @@ import Canvas exposing (Renderable)
 import Canvas.Settings as Settings
 import Canvas.Settings.Text as Text exposing (TextAlign(..), TextBaseLine(..))
 import Color
+import Ui.DrawUtils as DrawUtils
 
 
 text : Renderable
@@ -15,5 +16,6 @@ text =
 canvas : List Renderable
 canvas =
     [ Canvas.shapes [ Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
+    , DrawUtils.drawCanvasGrid2d Area.area Area.fieldSize
     , text
     ]
