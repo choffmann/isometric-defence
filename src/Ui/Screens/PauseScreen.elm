@@ -15,7 +15,8 @@ text =
 
 canvas : List Renderable
 canvas =
-    [ Canvas.shapes [ Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
-    , DrawUtils.drawCanvasGrid2d Area.area Area.fieldSize
+    [ Canvas.shapes [ Settings.fill (Color.rgba 50 50 50 0.5) ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
+
+    --, DrawUtils.drawCanvasGrid2d Area.area Area.fieldSize
     , text
     ]

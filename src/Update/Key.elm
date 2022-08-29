@@ -4,6 +4,7 @@ import FullScreenMode exposing (FullScreenMode(..))
 import GameView exposing (GameView(..))
 import Messages exposing (Key(..), Msg, SendingEvents(..))
 import Model exposing (GameState(..), Model)
+import Screen exposing (Screen(..))
 import Utils.Commands as Commands
 import Utils.Ports as Ports
 
@@ -14,10 +15,10 @@ update key model =
         Space ->
             ( case model.gameState of
                 Running ->
-                    { model | gameState = Paused }
+                    { model | gameState = Paused, screen = PauseScreen }
 
                 Paused ->
-                    { model | gameState = Running }
+                    { model | gameState = Running, screen = PlayScreen }
 
                 Won ->
                     model
