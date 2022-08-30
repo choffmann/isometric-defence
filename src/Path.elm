@@ -115,10 +115,9 @@ distanceToPixel path distance =
         internal ( pathPoint, ratio ) =
             let
                 generateValue main second op =
-                    ( floor (toFloat Area.fieldSize * 0.5)
-                        + floor (ratio * toFloat Area.fieldSize)
+                    ( floor (ratio * toFloat Area.fieldSize)
                         |> op (main * Area.fieldSize)
-                    , second * Area.fieldSize + floor (toFloat Area.fieldSize * 0.5)
+                    , second * Area.fieldSize
                     )
             in
             if ratio < 0 then
@@ -136,7 +135,7 @@ distanceToPixel path distance =
                                 |> tuplePositionToPixelYX
 
                         Up ->
-                            generateValue pathPoint.point.y pathPoint.point.x (\y1 -> (-) (y1 + Area.fieldSize))
+                            generateValue pathPoint.point.y pathPoint.point.x (-)
                                 |> tuplePositionToPixelYX
                     )
     in
