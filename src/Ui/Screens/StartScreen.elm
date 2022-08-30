@@ -50,7 +50,7 @@ canvas floorTexture mFloor =
                             []
 
                         Success texture ->
-                            Animation.drawFloor texture.gameView.floor floor.floor
+                            Animation.drawFloor texture.gameView.isometric.floor floor.floor
 
                         Failure ->
                             []

@@ -28,6 +28,6 @@ renderPathSprite maybePath texture =
         Just path ->
             List.map
                 (\pathPoint ->
-                    DrawUtils.placeTile pathPoint.point texture
+                    DrawUtils.placeIsometricTile (DrawUtils.pointToFloat pathPoint.point) texture
                 )
                 path

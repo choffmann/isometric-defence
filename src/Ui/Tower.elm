@@ -127,18 +127,28 @@ renderPlacingTowerSprite maybePlacingTower texture towerCanNotPlaced =
 
         Just placingTower ->
             if placingTower.canBePlaced then
-                [ DrawUtils.placeTile (Point (placingTower.tower.position.x - 1) (placingTower.tower.position.y - 1))
+                [ DrawUtils.placeIsometricTile
+                    (DrawUtils.pointToFloat (Point (placingTower.tower.position.x - 1) (placingTower.tower.position.y - 1)))
                     (selectionToSprite placingTower.tower texture)
                 , towerRadius (Just placingTower.tower) Isometric
                 ]
 
             else
-                [ DrawUtils.placeTile (Point (placingTower.tower.position.x - 1) (placingTower.tower.position.y - 1)) towerCanNotPlaced ]
+                [ DrawUtils.placeIsometricTile
+                    (DrawUtils.pointToFloat (Point (placingTower.tower.position.x - 1) (placingTower.tower.position.y - 1)))
+                    towerCanNotPlaced
+                ]
 
 
 renderTowerSprite : List Tower -> TowerTexture -> List Renderable
 renderTowerSprite towers texture =
-    List.map (\tower -> DrawUtils.placeTile (Point (tower.position.x - 1) (tower.position.y - 1)) (towerToSprite tower texture)) towers
+    List.map
+        (\tower ->
+            DrawUtils.placeIsometricTile
+                (DrawUtils.pointToFloat (Point (tower.position.x - 1) (tower.position.y - 1)))
+                (towerToSprite tower texture)
+        )
+        towers
 
 
 selectionToSprite : Tower -> TowerTexture -> Texture

@@ -3,6 +3,7 @@ module Ui.Screens.PlayScreen exposing (isometricCanvas, topDownCanvas)
 import Area
 import Canvas exposing (Renderable)
 import Canvas.Settings
+import Canvas.Settings.Text as Text exposing (TextAlign(..), TextBaseLine(..))
 import Color
 import Model exposing (Model)
 import Sprite exposing (IsometricViewSprite, Sprite)
@@ -15,36 +16,40 @@ import Ui.Tower
 import Utils.Data exposing (Load(..))
 
 
-renderSprites : Model -> List Renderable
-renderSprites model =
+renderIsoSprites : Model -> List Renderable
+renderIsoSprites model =
     case model.sprite of
         Loading ->
             [ Canvas.shapes [] [] ]
 
         Success sprites ->
-            Ui.Sprites.renderFloorSprite sprites.gameView.floor
-                ++ Ui.Path.renderPathSprite model.path sprites.gameView.path
-                ++ Ui.Tower.renderTowerSprite model.towers sprites.gameView.towers
-                ++ Ui.Enemy.renderEnemyIso model.enemies model.path sprites.gameView.enemy
-                ++ Ui.Tower.renderPlacingTowerSprite model.placingTower sprites.gameView.towers sprites.gameView.towerCanNotPlaced
+            Ui.Sprites.renderFloorSprite sprites.gameView.isometric.floor
+                ++ Ui.Path.renderPathSprite model.path sprites.gameView.isometric.path
+                ++ Ui.Tower.renderTowerSprite model.towers sprites.gameView.isometric.towers
+                ++ Ui.Enemy.renderEnemyIso model.enemies model.path sprites.gameView.isometric.enemy
+                ++ Ui.Tower.renderPlacingTowerSprite model.placingTower sprites.gameView.isometric.towers sprites.gameView.isometric.towerCanNotPlaced
 
         Failure ->
             [ Canvas.shapes [] [] ]
 
 
+renderTopDownSprites : Model -> List Renderable
+renderTopDownSprites model =
+    case model.sprite of
+        Loading ->
+            []
+
+        Success sprites ->
+            Ui.Enemy.enemiesToCanvas model.enemies sprites.gameView.topDown.enemy model.path
+
+        Failure ->
+            []
+
+
 isometricCanvas : Model -> List Renderable
 isometricCanvas model =
     Canvas.shapes [ Canvas.Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
-        :: (case model.sprite of
-                Loading ->
-                    [ Canvas.shapes [] [] ]
-
-                Success _ ->
-                    renderSprites model
-
-                Failure ->
-                    [ Canvas.shapes [] [] ]
-           )
+        :: renderIsoSprites model
 
 
 topDownCanvas : Model -> List Renderable
@@ -56,7 +61,6 @@ topDownCanvas model =
     , Ui.Hud.drawWaitToStartButton model.gameState model.sprite
     ]
         ++ Ui.Tower.towersToCanvas model.towers
-        ++ Ui.Enemy.enemiesToCanvas model.enemies model.path
         ++ (case model.placingTower of
                 Nothing ->
                     []
@@ -64,3 +68,4 @@ topDownCanvas model =
                 Just placingTower ->
                     Ui.Tower.placingTowerToCanvas placingTower
            )
+        ++ renderTopDownSprites model

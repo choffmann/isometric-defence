@@ -28,6 +28,15 @@ type alias EnemyTexture =
     }
 
 
+type alias TowerAreaSprite =
+    { deselect : Texture
+    , basic : Texture
+    , tower1 : Texture
+    , tower2 : Texture
+    , tower3 : Texture
+    }
+
+
 type alias IsometricViewSprite =
     { floor : Texture
     , path : Texture
@@ -37,13 +46,8 @@ type alias IsometricViewSprite =
     }
 
 
-type alias TowerAreaSprite =
-    { deselect : Texture
-    , basic : Texture
-    , tower1 : Texture
-    , tower2 : Texture
-    , tower3 : Texture
-    }
+type alias TopDownSprite =
+    { enemy : EnemyTexture }
 
 
 type alias ButtonSprites =
@@ -57,8 +61,14 @@ type alias UiSprite =
     }
 
 
+type alias GameViewSprite =
+    { isometric : IsometricViewSprite
+    , topDown : TopDownSprite
+    }
+
+
 type alias Sprite =
-    { gameView : IsometricViewSprite
+    { gameView : GameViewSprite
     , towerArea : TowerAreaSprite
     , ui : UiSprite
     }

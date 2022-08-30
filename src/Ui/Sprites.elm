@@ -16,7 +16,7 @@ renderFloorSprite texture =
                 list
 
             else
-                DrawUtils.placeTile (Point i j) texture :: drawWidth list i (j + 1)
+                DrawUtils.placeIsometricTile (DrawUtils.pointToFloat (Point i j)) texture :: drawWidth list i (j + 1)
 
         drawHeight : List Renderable -> Int -> List Renderable
         drawHeight list index =

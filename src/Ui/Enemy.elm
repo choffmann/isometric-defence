@@ -14,8 +14,8 @@ import Sprite exposing (EnemyTexture)
 import Ui.DrawUtils as DrawUtils
 
 
-enemiesToCanvas : List Enemy -> Maybe Path -> List Renderable
-enemiesToCanvas enemies maybePath =
+enemiesToCanvas : List Enemy -> EnemyTexture -> Maybe Path -> List Renderable
+enemiesToCanvas enemies texture maybePath =
     case maybePath of
         Nothing ->
             [ Canvas.shapes [] [] ]
@@ -27,9 +27,10 @@ enemiesToCanvas enemies maybePath =
                         Path.distanceToPixel justPath enemy.distance
                             |> Maybe.map
                                 (\(Pixel point) ->
+                                    --DrawUtils.placeTopDownTile (DrawUtils.pointToFloat point) (enemyTexture enemy texture)
                                     Canvas.group []
-                                        [ Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 50 255 50) ] [ Canvas.rect ( toFloat point.x - 10, toFloat point.y - 10 ) 20 20 ]
-                                        , DrawUtils.drawTextOverPoint (Point point.x (point.y - ((Area.fieldSize // 2) + 3))) (String.fromInt enemy.hp)
+                                        [ DrawUtils.placeTopDownTile (DrawUtils.pointToFloat point) (enemyTexture enemy texture)
+                                        , DrawUtils.drawTextOverPoint point (String.fromInt enemy.hp)
                                         ]
                                 )
                     )
@@ -49,8 +50,7 @@ renderEnemyIso enemies maybePath texture =
                         Path.distanceToPixel path enemy.distance
                             |> Maybe.map
                                 (\(Pixel point) ->
-                                    -- DrawUtils.placeTileOnCanvas ( (toFloat point.x / toFloat Area.fieldSize) - 1, (toFloat point.y / toFloat Area.fieldSize) - 1 ) (enemyTexture enemy texture) Area.isometricMatrix
-                                    DrawUtils.placeTileOnCanvas ( toFloat (point.x // Area.fieldSize) - 1, toFloat (point.y // Area.fieldSize) - 1 ) (enemyTexture enemy texture) Area.isometricMatrix
+                                    DrawUtils.placeIsometricTile ( (toFloat point.x / toFloat Area.fieldSize) - 1, (toFloat point.y / toFloat Area.fieldSize) - 1 ) (enemyTexture enemy texture)
                                 )
                     )
                 |> List.removeNothing

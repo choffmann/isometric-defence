@@ -24,7 +24,7 @@ drawFloor texture floor =
             []
 
         x :: xs ->
-            DrawUtils.placeTileOnCanvas x.position texture x.matrix :: drawFloor texture xs
+            DrawUtils.placeIsometricTileWithMatrix x.position texture x.matrix :: drawFloor texture xs
 
 
 animatedFloor : Float -> Float -> Float -> List Floor -> List Floor
