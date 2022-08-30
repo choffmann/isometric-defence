@@ -1,4 +1,4 @@
-module Model exposing (FiredShot, Flags, GameState(..), Model, PlacingTower, init, restart)
+module Model exposing (FiredShot, Flags, GameState(..), Model, PlacingTower, Round(..), init, restart)
 
 import Area exposing (Field)
 import Browser.Dom exposing (Element)
@@ -62,11 +62,22 @@ type alias Model =
     , screen : Screen
     , animation : Maybe Animation
     , shotsFired : List FiredShot
+    , round : Round
     }
 
 
 type alias Flags =
     { msg : String }
+
+
+type Round
+    = Round1
+    | Round2
+    | Round3
+    | Round4
+    | Round5
+    | Round6
+    | Round7
 
 
 restart : Model -> Flags -> ( Model, Cmd Msg )
@@ -84,10 +95,11 @@ init _ =
     ( { gameState = StartScreenAnimation
       , hp = 100
       , money = 200
-      , enemies = Enemy.enemyList
+      , round = Round1
+      , enemies = Enemy.round1
       , towers = []
       , delta = 0
-      , placingTower = Just { tower = Tower.toTower Tower.Basic, canBePlaced = False }
+      , placingTower = Nothing
       , inspectingTower = Nothing
       , playCanvas = Nothing
       , toolCanvas = Nothing

@@ -51,7 +51,8 @@ debugModel model =
         , div [] [ text "Fullscreen: ", text (Debug.toString model.fullscreen) ]
         , div [] [ text "PlacingTower: ", text (Debug.toString model.placingTower) ]
         , div [] [ text "InspectingTower: ", text (Debug.toString model.inspectingTower) ]
-        , div [] [ text "Enemies: ", text (Debug.toString model.enemies) ]
+
+        --, div [] [ text "Enemies: ", text (Debug.toString model.enemies) ]
         , div [] [ text "Towers: ", text (Debug.toString model.towers) ]
         , div [] [ text "GameView: ", text (Debug.toString model.gameView) ]
         , div [] [ text "CurrentScreen: ", text (Debug.toString model.screen) ]

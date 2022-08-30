@@ -2,7 +2,7 @@ module Update.Tick exposing (update)
 
 import Area exposing (Field(..), isOutOfBounds)
 import Enemy exposing (Enemy)
-import Model exposing (FiredShot, GameState(..), Model)
+import Model exposing (FiredShot, GameState(..), Model, Round(..))
 import Path exposing (Path)
 import Point exposing (Point)
 import Screen exposing (Screen(..))
@@ -174,10 +174,30 @@ tick model delta =
             else
                 { newModel | gameState = Lost, screen = LostScreen }
 
-        checkWin newModel =
+        checkNextRound newModel =
             case newModel.enemies of
                 [] ->
-                    { newModel | gameState = Won, screen = WonScreen }
+                    case model.round of
+                        Round1 ->
+                            { newModel | enemies = Enemy.round2, round = Round2, gameState = WaitToStart }
+
+                        Round2 ->
+                            { newModel | enemies = Enemy.round3, round = Round3, gameState = WaitToStart }
+
+                        Round3 ->
+                            { newModel | enemies = Enemy.round4, round = Round4, gameState = WaitToStart }
+
+                        Round4 ->
+                            { newModel | enemies = Enemy.round5, round = Round5, gameState = WaitToStart }
+
+                        Round5 ->
+                            { newModel | enemies = Enemy.round6, round = Round6, gameState = WaitToStart }
+
+                        Round6 ->
+                            { newModel | enemies = Enemy.round7, round = Round7, gameState = WaitToStart }
+
+                        Round7 ->
+                            { newModel | gameState = Won, screen = WonScreen }
 
                 _ ->
                     newModel
@@ -199,7 +219,7 @@ tick model delta =
                                 |> List.filter (\shot -> shot.distance < shot.range)
                             )
                         |> checkLoose
-                        |> checkWin
+                        |> checkNextRound
     in
     shoot model.towers model.enemies
         |> setState
