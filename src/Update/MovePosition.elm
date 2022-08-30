@@ -48,7 +48,7 @@ update mPixel gameArea model =
                     model
 
                 Just point ->
-                    if Button.isClicked Hud.waitToStartButton point then
+                    if Button.onButton Hud.waitToStartButton point then
                         { model | placingTower = Nothing }
 
                     else

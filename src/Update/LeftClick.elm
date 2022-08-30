@@ -81,7 +81,7 @@ update mPixel gameArea model =
                                     { model | clicked = Nothing }
 
                                 ( Just point, Nothing ) ->
-                                    if Button.isClicked Hud.waitToStartButton point then
+                                    if Button.onButton Hud.waitToStartButton point then
                                         { model | clicked = Just point, gameState = Running, inspectingTower = Nothing }
 
                                     else
@@ -91,7 +91,7 @@ update mPixel gameArea model =
                                         }
 
                                 ( Just point, Just placingTower ) ->
-                                    if Button.isClicked Hud.waitToStartButton point then
+                                    if Button.onButton Hud.waitToStartButton point then
                                         { model
                                             | clicked = Just point
                                             , placingTower = Nothing
@@ -137,7 +137,7 @@ update mPixel gameArea model =
                             ( { model | clicked = Nothing }, Cmd.none )
 
                         Just point ->
-                            if Button.isClicked StartScreen.startButton point then
+                            if Button.onButton StartScreen.startButton point then
                                 ( { model | clicked = Just point, screen = PlayScreen }, Random.generate PathPointGenerate Path.pointGenerator )
 
                             else
@@ -153,7 +153,7 @@ update mPixel gameArea model =
                             ( { model | clicked = Nothing }, Cmd.none )
 
                         Just point ->
-                            if Button.isClicked PauseScreen.resumeButton point then
+                            if Button.onButton PauseScreen.resumeButton point then
                                 ( { model | clicked = Just point, screen = PlayScreen, gameState = Running }, Cmd.none )
 
                             else
@@ -169,7 +169,7 @@ update mPixel gameArea model =
                             ( { model | clicked = Nothing }, Cmd.none )
 
                         Just point ->
-                            if Button.isClicked WonScreen.restartButton point then
+                            if Button.onButton WonScreen.restartButton point then
                                 Model.restart model { msg = "" }
 
                             else
@@ -185,7 +185,7 @@ update mPixel gameArea model =
                             ( { model | clicked = Nothing }, Cmd.none )
 
                         Just point ->
-                            if Button.isClicked LostScreen.restartButton point then
+                            if Button.onButton LostScreen.restartButton point then
                                 Model.restart model { msg = "" }
 
                             else

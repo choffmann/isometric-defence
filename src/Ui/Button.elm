@@ -1,4 +1,4 @@
-module Ui.Button exposing (Button, drawSpriteButton, drawUiButton, isClicked)
+module Ui.Button exposing (Button, drawSpriteButton, drawUiButton, onButton)
 
 import Area exposing (Field)
 import Canvas exposing (Renderable)
@@ -37,7 +37,7 @@ drawSpriteButton button texture =
     Canvas.texture [] (DrawUtils.fieldToCanvas button.position) texture
 
 
-isClicked : Button -> Point -> Bool
-isClicked button point =
+onButton : Button -> Point -> Bool
+onButton button point =
     (point.x >= button.position.x && point.x <= button.position.x + floor button.width - 1)
         && (point.y >= button.position.y && point.y <= button.position.y + floor button.height - 1)
