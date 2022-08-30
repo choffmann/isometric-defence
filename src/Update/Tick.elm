@@ -184,22 +184,22 @@ tick model delta =
                 [] ->
                     case model.round of
                         Round1 ->
-                            { newModel | enemies = Enemy.round2, round = Round2, gameState = WaitToStart, money = model.money + 200 }
+                            { newModel | enemies = Enemy.round2, round = Round2, gameState = WaitToStart, money = model.money + 200, shotsFired = [] }
 
                         Round2 ->
-                            { newModel | enemies = Enemy.round3, round = Round3, gameState = WaitToStart, money = model.money + 300 }
+                            { newModel | enemies = Enemy.round3, round = Round3, gameState = WaitToStart, money = model.money + 300, shotsFired = [] }
 
                         Round3 ->
-                            { newModel | enemies = Enemy.round4, round = Round4, gameState = WaitToStart, money = model.money + 400 }
+                            { newModel | enemies = Enemy.round4, round = Round4, gameState = WaitToStart, money = model.money + 400, shotsFired = [] }
 
                         Round4 ->
-                            { newModel | enemies = Enemy.round5, round = Round5, gameState = WaitToStart, money = model.money + 500 }
+                            { newModel | enemies = Enemy.round5, round = Round5, gameState = WaitToStart, money = model.money + 500, shotsFired = [] }
 
                         Round5 ->
-                            { newModel | enemies = Enemy.round6, round = Round6, gameState = WaitToStart, money = model.money + 600 }
+                            { newModel | enemies = Enemy.round6, round = Round6, gameState = WaitToStart, money = model.money + 600, shotsFired = [] }
 
                         Round6 ->
-                            { newModel | enemies = Enemy.round7, round = Round7, gameState = WaitToStart, money = model.money + 700 }
+                            { newModel | enemies = Enemy.round7, round = Round7, gameState = WaitToStart, money = model.money + 700, shotsFired = [] }
 
                         Round7 ->
                             { newModel | gameState = Won, screen = WonScreen }
