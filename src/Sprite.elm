@@ -14,6 +14,17 @@ type alias TowerTexture =
     , tower1 : TowerSprite
     , tower2 : TowerSprite
     , tower3 : TowerSprite
+    , tower4 : TowerSprite
+    }
+
+
+type alias EnemyTexture =
+    { cardBoardBox : Texture
+    , woodBox : Texture
+    , redBox : Texture
+    , blueBox : Texture
+    , yellowBox : Texture
+    , metalBox : Texture
     }
 
 
@@ -22,7 +33,7 @@ type alias IsometricViewSprite =
     , path : Texture
     , towerCanNotPlaced : Texture
     , towers : TowerTexture
-    , enemy : Texture
+    , enemy : EnemyTexture
     }
 
 

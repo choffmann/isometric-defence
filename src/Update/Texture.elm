@@ -44,7 +44,7 @@ update maybeTexture model =
                         { gameView =
                             { floor = sprite 0 0 gameViewWidth gameViewHeight texture
                             , path = sprite 1 0 gameViewWidth gameViewHeight texture
-                            , towerCanNotPlaced = sprite 3 0 gameViewWidth gameViewHeight texture
+                            , towerCanNotPlaced = sprite 2 3 gameViewWidth gameViewHeight texture
                             , towers =
                                 { basic =
                                     { tower = sprite 0 1 gameViewWidth gameViewHeight texture
@@ -62,21 +62,32 @@ update maybeTexture model =
                                     { tower = sprite 2 2 gameViewWidth gameViewHeight texture
                                     , selection = sprite 3 2 gameViewWidth gameViewHeight texture
                                     }
+                                , tower4 =
+                                    { tower = sprite 0 3 gameViewWidth gameViewHeight texture
+                                    , selection = sprite 1 3 gameViewWidth gameViewHeight texture
+                                    }
                                 }
-                            , enemy = sprite 2 0 gameViewWidth gameViewHeight texture
+                            , enemy =
+                                { cardBoardBox = sprite 0 4 gameViewWidth gameViewHeight texture
+                                , woodBox = sprite 3 3 gameViewWidth gameViewHeight texture
+                                , redBox = sprite 1 4 gameViewWidth gameViewHeight texture
+                                , yellowBox = sprite 2 4 gameViewWidth gameViewHeight texture
+                                , blueBox = sprite 3 4 gameViewWidth gameViewHeight texture
+                                , metalBox = sprite 0 5 gameViewWidth gameViewHeight texture
+                                }
                             }
                         , towerArea =
-                            { deselect = sprite 0 2 towerAreaWidth towerAreaHeight texture
+                            { deselect = sprite 2 3 towerAreaWidth towerAreaHeight texture
                             , basic = sprite 2 0 towerAreaWidth towerAreaHeight texture
                             , tower1 = sprite 2 1 towerAreaWidth towerAreaHeight texture
                             , tower2 = sprite 2 2 towerAreaWidth towerAreaHeight texture
                             , tower3 = sprite 2 3 towerAreaWidth towerAreaHeight texture
                             }
                         , ui =
-                            { coin = sprite 0 3 gameViewWidth gameViewHeight texture
-                            , heart = sprite 1 3 gameViewWidth gameViewHeight texture
+                            { coin = sprite 2 0 gameViewWidth gameViewHeight texture
+                            , heart = sprite 3 0 gameViewWidth gameViewHeight texture
                             , buttons =
-                                { start = sprite 0 5 128 32 texture }
+                                { start = sprite 0 7 128 32 texture }
                             }
                         }
               }
