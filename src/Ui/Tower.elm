@@ -1,7 +1,7 @@
 module Ui.Tower exposing (pixelToTower, placingTowerToCanvas, renderPlacingTowerSprite, renderTowerSprite, towerArea, towerCanvas, towerRadius, towersToCanvas)
 
 import Area exposing (Area, Field(..))
-import Canvas exposing (Renderable)
+import Canvas exposing (Renderable, Shape)
 import Canvas.Settings
 import Canvas.Settings.Advanced
 import Canvas.Settings.Line
@@ -31,6 +31,20 @@ towerRadius mTower gameView =
                 |> Pixel.pixelToPoint
                 |> centerPoint
                 |> DrawUtils.pointToFloat
+
+        centerIsoPoint : Point -> Canvas.Point
+        centerIsoPoint { x, y } =
+            ( toFloat x - 0.5, toFloat y - 0.5 )
+
+        iso : Float -> Canvas.Point -> List Shape
+        iso radius ( x, y ) =
+            [ Canvas.path (Area.isometricOffset (Area.canvasPointToIsometric Area.isometricMatrix ( x, y )))
+                [ Canvas.lineTo (Area.isometricOffset (Area.canvasPointToIsometric Area.isometricMatrix ( x, y - radius )))
+                , Canvas.lineTo (Area.isometricOffset (Area.canvasPointToIsometric Area.isometricMatrix ( x + radius, y - radius )))
+                , Canvas.lineTo (Area.isometricOffset (Area.canvasPointToIsometric Area.isometricMatrix ( x + radius, y )))
+                , Canvas.lineTo (Area.isometricOffset (Area.canvasPointToIsometric Area.isometricMatrix ( x, y )))
+                ]
+            ]
     in
     Canvas.shapes [ Canvas.Settings.stroke (Color.rgb255 0 0 0), Canvas.Settings.Line.lineWidth 2 ]
         (case mTower of
@@ -38,18 +52,18 @@ towerRadius mTower gameView =
                 []
 
             Just tower ->
-                [ Canvas.circle
-                    (case gameView of
-                        Isometric ->
-                            towerPositionToPixel tower.position
-                                |> Area.canvasPointToIsometric Area.isometricMatrix
-                                |> Area.isometricOffset
+                case gameView of
+                    TopDown ->
+                        [ Canvas.circle
+                            (towerPositionToPixel tower.position)
+                            (tower.attackRadius * toFloat Area.fieldSize)
+                        ]
 
-                        TopDown ->
-                            towerPositionToPixel tower.position
-                    )
-                    (tower.attackRadius * toFloat Area.fieldSize)
-                ]
+                    Isometric ->
+                        tower.position
+                            --|> centerIsoPoint
+                            |> DrawUtils.pointToFloat
+                            |> iso 3
         )
 
 
