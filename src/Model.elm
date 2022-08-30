@@ -1,5 +1,6 @@
-module Model exposing (Flags, GameState(..), Model, PlacingTower, init, restart)
+module Model exposing (FiredShot, Flags, GameState(..), Model, PlacingTower, init, restart)
 
+import Area exposing (Field)
 import Browser.Dom exposing (Element)
 import Enemy exposing (Enemy)
 import FullScreenMode exposing (FullScreenMode)
@@ -31,6 +32,15 @@ type alias PlacingTower =
     }
 
 
+type alias FiredShot =
+    { enemyId : Int
+    , damage : Int
+    , towerLocation : Point
+    , range : Float
+    , distance : Float
+    }
+
+
 type alias Model =
     { gameState : GameState
     , hp : Int
@@ -51,6 +61,7 @@ type alias Model =
     , movePosition : Maybe Point
     , screen : Screen
     , animation : Maybe Animation
+    , shotsFired : List FiredShot
     }
 
 
@@ -89,6 +100,7 @@ init _ =
       , movePosition = Nothing
       , screen = StartScreen
       , animation = Nothing
+      , shotsFired = []
       }
     , Cmd.none
     )

@@ -2,7 +2,7 @@ module Update.Tick exposing (update)
 
 import Area exposing (Field(..), isOutOfBounds)
 import Enemy exposing (Enemy)
-import Model exposing (GameState(..), Model)
+import Model exposing (FiredShot, GameState(..), Model)
 import Path exposing (Path)
 import Point exposing (Point)
 import Screen exposing (Screen(..))
@@ -11,63 +11,86 @@ import Ui.Animation as Animation
 import Ui.Screens.StartScreen as StartScreen
 
 
-damageEnemies : Tower -> List Enemy -> ( Tower, List Enemy )
-damageEnemies =
+shootEnemy : Tower -> List Enemy -> ( Tower, Maybe FiredShot )
+shootEnemy tower enemies =
+    case enemies of
+        [] ->
+            ( tower, Nothing )
+
+        enemy :: hs ->
+            if tower.lastShot > tower.attackSpeed && inRange tower.position tower.attackRadius enemy.position then
+                ( { tower | lastShot = 0 }, Just (FiredShot enemy.id tower.damage tower.position (range tower.position enemy.position) 0) )
+
+            else
+                shootEnemy tower hs
+
+
+shoot : List Tower -> List Enemy -> ( List Tower, List FiredShot )
+shoot =
     let
-        internal : List Enemy -> Tower -> List Enemy -> ( Tower, List Enemy )
-        internal acc tower enemyList =
-            case enemyList of
-                [] ->
-                    ( tower
-                    , acc
-                        |> List.sortBy (\enemy -> enemy.distance)
-                    )
-
-                enemy :: hs ->
-                    if tower.lastShot > tower.attackSpeed && inRange tower.position tower.attackRadius enemy.position then
-                        internal (({ enemy | hp = enemy.hp - tower.damage } :: acc) ++ hs) { tower | lastShot = 0 } []
-
-                    else
-                        internal (enemy :: acc) tower hs
-    in
-    internal []
-
-
-dealingDamage : List Tower -> List Enemy -> ( List Tower, List Enemy )
-dealingDamage =
-    let
-        rec newTowers oldTowers ( tower, enemies ) =
-            internal (tower :: newTowers) oldTowers enemies
-
-        internal : List Tower -> List Tower -> List Enemy -> ( List Tower, List Enemy )
-        internal acc towers enemies =
+        internal : List Tower -> List FiredShot -> List Tower -> List Enemy -> ( List Tower, List FiredShot )
+        internal acc acc2 towers enemies =
             case towers of
                 [] ->
-                    ( acc, enemies )
+                    ( acc, acc2 )
 
                 tower :: hs ->
                     if tower.lastShot > tower.attackSpeed then
-                        damageEnemies tower enemies
-                            |> rec acc hs
+                        case shootEnemy tower enemies of
+                            ( newTower, Nothing ) ->
+                                internal (newTower :: acc) acc2 hs enemies
+
+                            ( newTower, Just firedshot ) ->
+                                internal (newTower :: acc) (firedshot :: acc2) hs enemies
 
                     else
-                        internal (tower :: acc) hs enemies
+                        internal (tower :: acc) acc2 hs enemies
+    in
+    internal [] []
+
+
+damageEnemies : FiredShot -> List Enemy -> List Enemy
+damageEnemies shot =
+    let
+        internal acc enemies =
+            case enemies of
+                [] ->
+                    acc
+
+                h :: hs ->
+                    if h.id == shot.enemyId then
+                        internal ({ h | hp = h.hp - shot.damage } :: acc ++ hs) []
+
+                    else
+                        internal (h :: acc) hs
     in
     internal []
 
 
-inRange : Point -> Float -> Field -> Bool
-inRange point1 radius (Field point2) =
-    let
-        _ =
-            Debug.log "" { point1 = point1, radius = radius, point2 = point2, range = sqrt (pointToQuadrat point1.x point2.x + pointToQuadrat point1.y point2.y) }
+dealingDamage : List FiredShot -> List Enemy -> List Enemy
+dealingDamage shotsFired enemies =
+    case shotsFired of
+        [] ->
+            enemies
 
+        h :: hs ->
+            dealingDamage hs (damageEnemies h enemies)
+
+
+range : Point -> Field -> Float
+range point1 (Field point2) =
+    let
         pointToQuadrat first second =
             abs (first - second)
                 ^ 2
                 |> toFloat
     in
     sqrt (pointToQuadrat point1.x point2.x + pointToQuadrat point1.y point2.y)
+
+
+inRange : Point -> Float -> Field -> Bool
+inRange point radius field =
+    range point field
         |> (>=) radius
 
 
@@ -121,7 +144,7 @@ tick model delta =
             List.filter
                 (\enemy -> internal enemy.position)
 
-        changeModel towers newEnemies =
+        changeModel towers firedshots newEnemies =
             { model
                 | towers = cooldownTowers model.speedMulti delta towers
                 , enemies =
@@ -138,6 +161,9 @@ tick model delta =
                             |> filterFinishedEnemiesByOp (>=)
                             |> damageFromFinishedEnemies
                           )
+                , shotsFired =
+                    firedshots
+                        |> List.map (\shot -> { shot | distance = shot.distance + (delta * model.speedMulti / 250) })
                 , delta = delta
             }
 
@@ -156,19 +182,26 @@ tick model delta =
                 _ ->
                     newModel
 
-        setState ( towers, enemies ) =
+        setState ( towers, firedshots ) =
             case model.path of
                 Nothing ->
                     model
 
                 Just path ->
-                    enemies
+                    model.enemies
                         |> moveEnemies model.speedMulti delta path
+                        |> dealingDamage
+                            ((firedshots ++ model.shotsFired)
+                                |> List.filter (\shot -> shot.distance >= shot.range)
+                            )
                         |> changeModel towers
+                            ((firedshots ++ model.shotsFired)
+                                |> List.filter (\shot -> shot.distance < shot.range)
+                            )
                         |> checkLoose
                         |> checkWin
     in
-    dealingDamage model.towers model.enemies
+    shoot model.towers model.enemies
         |> setState
 
 

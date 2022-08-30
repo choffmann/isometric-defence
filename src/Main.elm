@@ -55,6 +55,7 @@ debugModel model =
         , div [] [ text "Towers: ", text (Debug.toString model.towers) ]
         , div [] [ text "GameView: ", text (Debug.toString model.gameView) ]
         , div [] [ text "CurrentScreen: ", text (Debug.toString model.screen) ]
+        , div [] [ text "FiredShots: ", text (Debug.toString model.shotsFired) ]
 
         --, div [] [ text "Animation: ", text (Debug.toString model.animation) ]
         --, div [] [ text "TowerAreaSprite: ", text (Debug.toString model.sprite) ]
