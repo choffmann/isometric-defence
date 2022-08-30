@@ -8,6 +8,7 @@ type Towers
     | Tower1
     | Tower2
     | Tower3
+    | Tower4
 
 
 type alias Tower =
@@ -23,15 +24,22 @@ type alias Tower =
 
 toTower : Towers -> Tower
 toTower towers =
+    let
+        tower price damage attackRadius attackSpeed =
+            Tower (Point -9999 -9999) price damage attackRadius attackSpeed 0 towers
+    in
     case towers of
         Basic ->
-            Tower (Point 3 3) 100 1 3 100 100 Basic
+            tower 100 1 3 800
 
         Tower1 ->
-            Tower (Point 3 3) 200 0 3 100 100 Tower1
+            tower 200 1 4 400
 
         Tower2 ->
-            Tower (Point 3 3) 300 0 3 100 100 Tower2
+            tower 300 20 5 1000
 
         Tower3 ->
-            Tower (Point 3 3) 400 0 3 100 100 Tower3
+            tower 400 3 5 500
+
+        Tower4 ->
+            tower 500 1 10 200

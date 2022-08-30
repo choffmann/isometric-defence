@@ -68,6 +68,9 @@ towerColor tower =
         Tower3 ->
             Canvas.Settings.fill (Color.rgb255 3 3 67)
 
+        Tower4 ->
+            Canvas.Settings.fill (Color.rgb255 3 3 67)
+
 
 towersToCanvas : List Tower -> List Renderable
 towersToCanvas towers =
@@ -139,6 +142,9 @@ selectionToSprite tower texture =
         Tower3 ->
             texture.tower3.selection
 
+        Tower4 ->
+            texture.tower3.selection
+
 
 towerToSprite : Tower -> TowerTexture -> Texture
 towerToSprite tower texture =
@@ -155,6 +161,9 @@ towerToSprite tower texture =
         Tower3 ->
             texture.tower3.tower
 
+        Tower4 ->
+            texture.tower3.tower
+
 
 availableTowers : List Towers
 availableTowers =
@@ -162,6 +171,7 @@ availableTowers =
     , Tower1
     , Tower2
     , Tower3
+    , Tower4
     ]
 
 
@@ -220,6 +230,9 @@ towersToSelectArea towers texture =
                             texture.tower2
 
                         Tower3 ->
+                            texture.tower3
+
+                        Tower4 ->
                             texture.tower3
                     )
                 , Canvas.text [ Canvas.Settings.Text.font { size = 12, family = "Silkscreen" } ] ( toFloat i * towerFieldSize + 3, (toFloat (currentHeight j) * towerFieldSize) + towerFieldSize - 3 ) (String.fromInt (Tower.toTower tower).price)

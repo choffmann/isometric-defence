@@ -82,10 +82,10 @@ restart model flags =
 init : Flags -> ( Model, Cmd Msg )
 init _ =
     ( { gameState = StartScreenAnimation
-      , hp = 1000
-      , money = 1000
-      , enemies = [ Enemy.toEnemy Enemy.Soldat ] --, Enemy.toEnemy Enemy.Soldat, Enemy.toEnemy Enemy.Soldat, Enemy.toEnemy Enemy.Soldat, Enemy.toEnemy Enemy.Soldat ]
-      , towers = [] --, toTower Tower.Basic ]
+      , hp = 100
+      , money = 200
+      , enemies = Enemy.enemyList
+      , towers = []
       , delta = 0
       , placingTower = Just { tower = Tower.toTower Tower.Basic, canBePlaced = False }
       , inspectingTower = Nothing
