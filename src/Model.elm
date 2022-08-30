@@ -34,8 +34,7 @@ type alias PlacingTower =
 
 type alias FiredShot =
     { enemyId : Int
-    , damage : Int
-    , towerLocation : Point
+    , towerId : Int
     , range : Float
     , distance : Float
     }
@@ -48,6 +47,7 @@ type alias Model =
     , enemies : List Enemy
     , towers : List Tower
     , delta : Float
+    , nextTowerId : Int
     , placingTower : Maybe PlacingTower
     , inspectingTower : Maybe Tower
     , playCanvas : Maybe Element
@@ -98,6 +98,7 @@ init _ =
       , round = Round1
       , enemies = Enemy.round1
       , towers = []
+      , nextTowerId = 1
       , delta = 0
       , placingTower = Nothing
       , inspectingTower = Nothing

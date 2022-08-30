@@ -1,4 +1,4 @@
-module Tower exposing (Tower, Towers(..), toTower)
+module Tower exposing (Tower, Towers(..), findTowerById, toTower)
 
 import Point exposing (Point)
 
@@ -12,7 +12,8 @@ type Towers
 
 
 type alias Tower =
-    { position : Point
+    { id : Int
+    , position : Point
     , price : Int
     , damage : Int
     , attackRadius : Float
@@ -22,11 +23,11 @@ type alias Tower =
     }
 
 
-toTower : Towers -> Tower
-toTower towers =
+toTower : Int -> Towers -> Tower
+toTower id towers =
     let
         tower price damage attackRadius attackSpeed =
-            Tower (Point -9999 -9999) price damage attackRadius attackSpeed 0 towers
+            Tower id (Point -9999 -9999) price damage attackRadius attackSpeed 0 towers
     in
     case towers of
         Basic ->
@@ -43,3 +44,17 @@ toTower towers =
 
         Tower4 ->
             tower 500 1 10 200
+
+
+findTowerById : Int -> List Tower -> Maybe Tower
+findTowerById id towers =
+    case towers of
+        [] ->
+            Nothing
+
+        h :: hs ->
+            if id == h.id then
+                Just h
+
+            else
+                findTowerById id hs

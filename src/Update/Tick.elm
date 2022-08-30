@@ -19,7 +19,7 @@ shootEnemy tower enemies =
 
         enemy :: hs ->
             if tower.lastShot > tower.attackSpeed && inRange tower.position tower.attackRadius enemy.position then
-                ( { tower | lastShot = 0 }, Just (FiredShot enemy.id tower.damage tower.position (range tower.position enemy.position) 0) )
+                ( { tower | lastShot = 0 }, Just (FiredShot enemy.id tower.id (range tower.position enemy.position) 0) )
 
             else
                 shootEnemy tower hs
@@ -49,8 +49,8 @@ shoot =
     internal [] []
 
 
-damageEnemies : FiredShot -> List Enemy -> List Enemy
-damageEnemies shot =
+damageEnemies : FiredShot -> List Tower -> List Enemy -> List Enemy
+damageEnemies shot towers =
     let
         internal acc enemies =
             case enemies of
@@ -59,7 +59,12 @@ damageEnemies shot =
 
                 h :: hs ->
                     if h.id == shot.enemyId then
-                        internal ({ h | hp = h.hp - shot.damage } :: acc ++ hs) []
+                        case Tower.findTowerById shot.towerId towers of
+                            Nothing ->
+                                internal (h :: acc ++ hs) []
+
+                            Just tower ->
+                                internal ({ h | hp = h.hp - tower.damage } :: acc ++ hs) []
 
                     else
                         internal (h :: acc) hs
@@ -67,14 +72,14 @@ damageEnemies shot =
     internal []
 
 
-dealingDamage : List FiredShot -> List Enemy -> List Enemy
-dealingDamage shotsFired enemies =
+dealingDamage : List FiredShot -> List Tower -> List Enemy -> List Enemy
+dealingDamage shotsFired towers enemies =
     case shotsFired of
         [] ->
             enemies
 
         h :: hs ->
-            dealingDamage hs (damageEnemies h enemies)
+            dealingDamage hs towers (damageEnemies h towers enemies)
 
 
 range : Point -> Field -> Float
@@ -214,6 +219,7 @@ tick model delta =
                             ((firedshots ++ model.shotsFired)
                                 |> List.filter (\shot -> shot.distance >= shot.range)
                             )
+                            model.towers
                         |> changeModel towers
                             ((firedshots ++ model.shotsFired)
                                 |> List.filter (\shot -> shot.distance < shot.range)

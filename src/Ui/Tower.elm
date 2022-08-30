@@ -249,7 +249,7 @@ towersToSelectArea towers texture =
                         Tower4 ->
                             texture.tower3
                     )
-                , Canvas.text [ Canvas.Settings.Text.font { size = 12, family = "Silkscreen" } ] ( toFloat i * towerFieldSize + 3, (toFloat (currentHeight j) * towerFieldSize) + towerFieldSize - 3 ) (String.fromInt (Tower.toTower tower).price)
+                , Canvas.text [ Canvas.Settings.Text.font { size = 12, family = "Silkscreen" } ] ( toFloat i * towerFieldSize + 3, (toFloat (currentHeight j) * towerFieldSize) + towerFieldSize - 3 ) (String.fromInt (Tower.toTower 0 tower).price)
                 ]
 
         draw : Int -> Int -> List Towers -> List Renderable -> List Renderable

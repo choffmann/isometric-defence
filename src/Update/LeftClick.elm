@@ -60,6 +60,7 @@ update mPixel gameArea model =
                                             | clicked = Just point
                                             , placingTower = Nothing
                                             , towers = placingTower.tower :: model.towers
+                                            , nextTowerId = model.nextTowerId + 1
                                             , money = model.money - placingTower.tower.price
                                         }
 
@@ -102,6 +103,7 @@ update mPixel gameArea model =
                                             | clicked = Just point
                                             , placingTower = Nothing
                                             , towers = placingTower.tower :: model.towers
+                                            , nextTowerId = model.nextTowerId + 1
                                             , money = model.money - placingTower.tower.price
                                         }
 
@@ -199,7 +201,7 @@ update mPixel gameArea model =
                         | clicked = Nothing
                         , placingTower =
                             pixelToTower pixel
-                                |> Maybe.map (\tower -> PlacingTower (Tower.toTower tower) False)
+                                |> Maybe.map (\tower -> PlacingTower (Tower.toTower model.nextTowerId tower) False)
                     }
             , Cmd.none
             )
