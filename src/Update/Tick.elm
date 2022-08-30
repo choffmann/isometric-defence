@@ -179,7 +179,7 @@ startScreenAnimation model delta =
             { model | animation = Just { floor = StartScreen.generateFloor }, delta = delta }
 
         Just animation ->
-            { model | animation = Just { floor = Animation.animatedFloor animation.floor delta 0 0 }, delta = delta }
+            { model | animation = Just { floor = Animation.animatedFloor delta 0 0 animation.floor }, delta = delta }
 
 
 update : Float -> Model -> ( Model, Cmd msg )
