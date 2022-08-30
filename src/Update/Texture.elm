@@ -50,6 +50,11 @@ update maybeTexture model =
                                     , yellowBox = sprite 3 5 gameViewWidth gameViewHeight texture
                                     , blueBox = sprite 0 6 gameViewWidth gameViewHeight texture
                                     , metalBox = sprite 2 6 gameViewWidth gameViewHeight texture
+                                    , palette =
+                                        { state1 = sprite 0 7 gameViewWidth gameViewHeight texture
+                                        , state2 = sprite 1 7 gameViewWidth gameViewHeight texture
+                                        , state3 = sprite 2 7 gameViewWidth gameViewHeight texture
+                                        }
                                     }
                                 }
                             , isometric =
@@ -85,6 +90,11 @@ update maybeTexture model =
                                     , yellowBox = sprite 2 4 gameViewWidth gameViewHeight texture
                                     , blueBox = sprite 3 4 gameViewWidth gameViewHeight texture
                                     , metalBox = sprite 0 5 gameViewWidth gameViewHeight texture
+                                    , palette =
+                                        { state1 = sprite 0 7 gameViewWidth gameViewHeight texture
+                                        , state2 = sprite 1 7 gameViewWidth gameViewHeight texture
+                                        , state3 = sprite 2 7 gameViewWidth gameViewHeight texture
+                                        }
                                     }
                                 }
                             }
@@ -99,7 +109,7 @@ update maybeTexture model =
                             { coin = sprite 2 0 gameViewWidth gameViewHeight texture
                             , heart = sprite 3 0 gameViewWidth gameViewHeight texture
                             , buttons =
-                                { start = sprite 0 7 128 32 texture }
+                                { start = sprite 0 9 128 32 texture }
                             }
                         }
               }

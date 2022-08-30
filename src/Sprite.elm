@@ -25,6 +25,11 @@ type alias EnemyTexture =
     , blueBox : Texture
     , yellowBox : Texture
     , metalBox : Texture
+    , palette :
+        { state1 : Texture
+        , state2 : Texture
+        , state3 : Texture
+        }
     }
 
 

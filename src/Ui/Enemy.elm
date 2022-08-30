@@ -85,4 +85,11 @@ enemyTexture enemy texture =
             texture.metalBox
 
         Palette ->
-            texture.metalBox
+            if enemy.hp <= 1000 && enemy.hp >= 750 then
+                texture.palette.state1
+
+            else if enemy.hp < 750 && enemy.hp > 250 then
+                texture.palette.state2
+
+            else
+                texture.palette.state3

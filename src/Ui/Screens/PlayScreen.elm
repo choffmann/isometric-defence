@@ -25,8 +25,8 @@ renderIsoSprites model =
         Success sprites ->
             Ui.Sprites.renderFloorSprite sprites.gameView.isometric.floor
                 ++ Ui.Path.renderPathSprite model.path sprites.gameView.isometric.path
-                ++ Ui.Tower.renderTowerSprite model.towers sprites.gameView.isometric.towers
                 ++ Ui.Enemy.renderEnemyIso model.enemies model.path sprites.gameView.isometric.enemy
+                ++ Ui.Tower.renderTowerSprite model.towers sprites.gameView.isometric.towers
                 ++ Ui.Tower.renderPlacingTowerSprite model.placingTower sprites.gameView.isometric.towers sprites.gameView.isometric.towerCanNotPlaced
 
         Failure ->
