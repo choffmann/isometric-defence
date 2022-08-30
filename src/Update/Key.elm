@@ -84,10 +84,10 @@ update key model =
             )
 
         ArrowDown ->
-            ( { model | speedMulti = model.speedMulti - 0.2 }, Cmd.none )
+            ( { model | speedMulti = max 0 (model.speedMulti - 0.5) }, Cmd.none )
 
         ArrowUp ->
-            ( { model | speedMulti = model.speedMulti + 0.2 }, Cmd.none )
+            ( { model | speedMulti = min 4 (model.speedMulti + 0.5) }, Cmd.none )
 
         UnknownKey ->
             ( model, Cmd.none )
