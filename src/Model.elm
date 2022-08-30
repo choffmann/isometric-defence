@@ -22,6 +22,7 @@ type GameState
     | Lost
     | GeneratePath
     | WaitToStart
+    | StartScreenAnimation
 
 
 type alias PlacingTower =
@@ -69,7 +70,7 @@ restart model flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init _ =
-    ( { gameState = GeneratePath
+    ( { gameState = StartScreenAnimation
       , hp = 1000
       , money = 1000
       , enemies = [ Enemy.toEnemy Enemy.Soldat ] --, Enemy.toEnemy Enemy.Soldat, Enemy.toEnemy Enemy.Soldat, Enemy.toEnemy Enemy.Soldat, Enemy.toEnemy Enemy.Soldat ]
@@ -89,5 +90,5 @@ init _ =
       , screen = StartScreen
       , animation = Nothing
       }
-    , Random.generate PathPointGenerate Path.pointGenerator
+    , Cmd.none
     )

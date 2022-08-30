@@ -27,23 +27,25 @@ drawFloor texture floor =
             DrawUtils.placeTileOnCanvas x.position texture x.matrix :: drawFloor texture xs
 
 
-animatedFloor : List Floor -> Float -> List Floor
-animatedFloor floor delta =
+animatedFloor : List Floor -> Float -> Float -> Float -> List Floor
+animatedFloor floor delta offsetY1 offsetY2 =
     let
         updateMatrix : Float -> IsometricMatrix -> IsometricMatrix
         updateMatrix time matrix =
             let
                 speed : Float
                 speed =
-                    0.005
+                    0.001
 
                 amplitude : Float
                 amplitude =
-                    0.25
+                    0.2
             in
             { matrix
-                | y1 = amplitude * (matrix.y1 + sin (time * speed)) --+ 0.1
-                , y2 = amplitude * (matrix.y2 + sin (time * speed)) --+ 0.1
+                | y1 = amplitude * (matrix.y1 - sin (time * speed + offsetY1)) --+ 0.1
+                , y2 = amplitude * (matrix.y2 - sin (time * speed + offsetY2)) --+ 0.1
+                , x1 = 0.75
+                , x2 = -0.75
             }
 
         updatePoint : Float -> Canvas.Point -> Canvas.Point
@@ -51,7 +53,7 @@ animatedFloor floor delta =
             let
                 speed : Float
                 speed =
-                    0.01
+                    0.005
 
                 amplitude : Float
                 amplitude =
@@ -66,14 +68,16 @@ animatedFloor floor delta =
             []
 
         x :: xs ->
-            {- { position = updatePoint x.elapsedTime x.position
+            {-
+               { position = updatePoint x.elapsedTime x.position
                , elapsedTime = x.elapsedTime + delta
                , matrix = Area.isometricMatrix
                }
                    :: animatedFloor xs delta
+
             -}
             { x
                 | matrix = updateMatrix x.elapsedTime x.matrix
                 , elapsedTime = x.elapsedTime + delta
             }
-                :: animatedFloor xs delta
+                :: animatedFloor xs delta (offsetY1 + 0.002) (offsetY2 + 0.007)

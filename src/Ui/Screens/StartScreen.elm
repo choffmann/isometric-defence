@@ -36,8 +36,8 @@ startButton =
 canvas : Load Sprite -> Maybe Animation -> List Renderable
 canvas floorTexture mFloor =
     [ Canvas.shapes [ Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
-    , DrawUtils.drawCanvasGrid2d Area.area Area.fieldSize
-    , title
+
+    --, DrawUtils.drawCanvasGrid2d Area.area Area.fieldSize
     , Button.drawUiButton startButton "Start"
     ]
         ++ (case mFloor of
@@ -55,30 +55,31 @@ canvas floorTexture mFloor =
                         Failure ->
                             []
            )
+        ++ [ title ]
 
 
 generateFloor : List Floor
 generateFloor =
     let
-        drawWidth : List Floor -> Int -> Int -> Int -> List Floor
-        drawWidth list i j count =
+        drawWidth : List Floor -> Int -> Int -> Float -> List Floor
+        drawWidth list i j offset =
             if j >= Area.widthTiles then
                 list
 
             else
-                { position = ( toFloat (i + count), toFloat (j + count) )
+                { position = ( toFloat i, toFloat j )
                 , matrix = Area.isometricMatrix
                 , elapsedTime = 0
                 }
-                    :: drawWidth list i (j + 1) (count + 1)
+                    :: drawWidth list i (j + 1) (offset + 0.25)
 
-        drawHeight : List Floor -> Int -> Int -> List Floor
-        drawHeight list index count =
+        drawHeight : List Floor -> Int -> Float -> List Floor
+        drawHeight list index offset =
             if index >= Area.heightTiles then
                 list
 
             else
-                drawWidth [] index 0 (count + 1) ++ drawHeight list (index + 1) count
+                drawWidth [] index 0 (offset + 0.25) ++ drawHeight list (index + 1) offset
 
         draw : List Floor
         draw =

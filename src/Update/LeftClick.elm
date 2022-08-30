@@ -1,9 +1,11 @@
 module Update.LeftClick exposing (update)
 
 import Area exposing (Field(..))
-import Messages exposing (GameArea(..), Msg)
+import Messages exposing (GameArea(..), Msg(..))
 import Model exposing (GameState(..), Model, PlacingTower)
+import Path
 import Pixel exposing (Pixel)
+import Random
 import Screen exposing (Screen(..))
 import Tower exposing (Towers(..))
 import Ui.Button as Button
@@ -120,6 +122,9 @@ update mPixel gameArea model =
                         Paused ->
                             ( model, Cmd.none )
 
+                        StartScreenAnimation ->
+                            ( model, Cmd.none )
+
                 StartScreen ->
                     case
                         mPixel
@@ -131,7 +136,7 @@ update mPixel gameArea model =
 
                         Just point ->
                             if Button.isClicked StartScreen.startButton point then
-                                ( { model | clicked = Just point, screen = PlayScreen }, Cmd.none )
+                                ( { model | clicked = Just point, screen = PlayScreen }, Random.generate PathPointGenerate Path.pointGenerator )
 
                             else
                                 ( { model | clicked = Just point }, Cmd.none )
