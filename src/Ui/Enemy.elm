@@ -27,10 +27,9 @@ enemiesToCanvas enemies texture maybePath =
                         Path.distanceToPixel justPath enemy.distance
                             |> Maybe.map
                                 (\(Pixel point) ->
-                                    --DrawUtils.placeTopDownTile (DrawUtils.pointToFloat point) (enemyTexture enemy texture)
                                     Canvas.group []
                                         [ DrawUtils.placeTopDownTile (DrawUtils.pointToFloat point) (enemyTexture enemy texture)
-                                        , DrawUtils.drawTextOverPoint point (String.fromInt enemy.hp)
+                                        , DrawUtils.drawTextOverPoint (DrawUtils.pointToFloat point) (String.fromInt enemy.hp)
                                         ]
                                 )
                     )
@@ -50,7 +49,15 @@ renderEnemyIso enemies maybePath texture =
                         Path.distanceToPixel path enemy.distance
                             |> Maybe.map
                                 (\(Pixel point) ->
-                                    DrawUtils.placeIsometricTile ( (toFloat point.x / toFloat Area.fieldSize) - 1, (toFloat point.y / toFloat Area.fieldSize) - 1 ) (enemyTexture enemy texture)
+                                    Canvas.group []
+                                        [ DrawUtils.placeIsometricTile ( (toFloat point.x / toFloat Area.fieldSize) - 1, (toFloat point.y / toFloat Area.fieldSize) - 1 ) (enemyTexture enemy texture)
+                                        , DrawUtils.drawTextOverPoint
+                                            (( (toFloat point.x / toFloat Area.fieldSize) - 1, (toFloat point.y / toFloat Area.fieldSize) - 1 )
+                                                |> Area.canvasPointToIsometric Area.isometricMatrix
+                                                |> Area.isometricOffset
+                                            )
+                                            (String.fromInt enemy.hp)
+                                        ]
                                 )
                     )
                 |> List.removeNothing

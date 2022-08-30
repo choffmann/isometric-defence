@@ -80,6 +80,6 @@ pointToFloat { x, y } =
     ( toFloat x, toFloat y )
 
 
-drawTextOverPoint : Point -> String -> Renderable
+drawTextOverPoint : Canvas.Point -> String -> Renderable
 drawTextOverPoint point text =
-    Canvas.text [ Text.font { size = 12, family = "Silkscreen" }, Text.align Center, Text.baseLine Middle, Settings.fill Color.gray ] (pointToFloat point) text
+    Canvas.text [ Text.font { size = 12, family = "Silkscreen" }, Text.align Center, Text.baseLine Middle, Settings.fill Color.gray ] point text
