@@ -34,7 +34,7 @@ update key model =
             , Cmd.none
             )
 
-        Esc ->
+        P ->
             ( case model.gameState of
                 Running ->
                     { model | gameState = Paused, screen = PauseScreen }

@@ -39,14 +39,17 @@ keyDecoder =
                 "I" ->
                     I
 
+                "p" ->
+                    P
+
+                "P" ->
+                    P
+
                 "ArrowUp" ->
                     ArrowUp
 
                 "ArrowDown" ->
                     ArrowDown
-
-                "Escape" ->
-                    Esc
 
                 _ ->
                     UnknownKey

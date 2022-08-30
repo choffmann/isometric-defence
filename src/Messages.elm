@@ -14,10 +14,10 @@ type Key
     | F
     | R
     | I
+    | P
     | ArrowDown
     | ArrowUp
     | UnknownKey
-    | Esc
 
 
 type GameArea
