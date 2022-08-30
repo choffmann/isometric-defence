@@ -124,3 +124,6 @@ drawWaitToStartButton gameState loadSprite =
 
                 Lost ->
                     Canvas.shapes [] []
+
+                StartScreenAnimation ->
+                    Canvas.shapes [] []

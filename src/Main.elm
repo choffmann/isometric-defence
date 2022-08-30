@@ -156,6 +156,12 @@ subscriptions model =
         generatePath =
             always
 
+        startScreenAnimation =
+            always
+                ++ [ Browser.Events.onClick (Decoder.leftClickDecoder model)
+                   , Browser.Events.onAnimationFrameDelta Tick
+                   ]
+
         won =
             always
                 ++ [ Browser.Events.onKeyDown Decoder.keyDecoder
@@ -216,6 +222,9 @@ subscriptions model =
 
                     Nothing ->
                         Browser.Events.onMouseMove (Decoder.mouseMoveDecoder model) :: waitToStart
+
+            StartScreenAnimation ->
+                startScreenAnimation
         )
 
 

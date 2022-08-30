@@ -61,6 +61,9 @@ canvas model =
                 GeneratePath ->
                     []
 
+                StartScreenAnimation ->
+                    []
+
         PauseScreen ->
             case model.gameView of
                 Isometric ->

@@ -93,16 +93,6 @@ cooldownTowers globalSpeedMulti delta =
     List.map (\tower -> { tower | lastShot = tower.lastShot + delta * globalSpeedMulti * 0.5 })
 
 
-startScreenAnimation : Model -> Float -> Model
-startScreenAnimation model delta =
-    case model.animation of
-        Nothing ->
-            model
-
-        Just animation ->
-            { model | animation = Just { floor = Animation.animatedFloor animation.floor delta }, delta = delta }
-
-
 tick : Model -> Float -> Model
 tick model delta =
     let
@@ -166,14 +156,6 @@ tick model delta =
                 _ ->
                     newModel
 
-        animatedFloor newModel =
-            case model.animation of
-                Nothing ->
-                    { newModel | animation = Just { floor = StartScreen.generateFloor }, delta = delta }
-
-                Just animation ->
-                    { newModel | animation = Just { floor = Animation.animatedFloor animation.floor delta }, delta = delta }
-
         setState ( towers, enemies ) =
             case model.path of
                 Nothing ->
@@ -185,10 +167,19 @@ tick model delta =
                         |> changeModel towers
                         |> checkLoose
                         |> checkWin
-                        |> animatedFloor
     in
     dealingDamage model.towers model.enemies
         |> setState
+
+
+startScreenAnimation : Model -> Float -> Model
+startScreenAnimation model delta =
+    case model.animation of
+        Nothing ->
+            { model | animation = Just { floor = StartScreen.generateFloor }, delta = delta }
+
+        Just animation ->
+            { model | animation = Just { floor = Animation.animatedFloor delta 0 0 animation.floor }, delta = delta }
 
 
 update : Float -> Model -> ( Model, Cmd msg )
@@ -211,5 +202,8 @@ update delta model =
 
         WaitToStart ->
             { model | delta = delta }
+
+        StartScreenAnimation ->
+            startScreenAnimation model delta
     , Cmd.none
     )

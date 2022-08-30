@@ -29,6 +29,9 @@ update key model =
                 GeneratePath ->
                     model
 
+                StartScreenAnimation ->
+                    model
+
                 WaitToStart ->
                     { model | gameState = Running, screen = PlayScreen }
             , Cmd.none
@@ -52,6 +55,9 @@ update key model =
                     model
 
                 WaitToStart ->
+                    model
+
+                StartScreenAnimation ->
                     model
             , Cmd.none
             )
