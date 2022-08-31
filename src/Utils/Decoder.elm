@@ -59,8 +59,8 @@ keyDecoder =
         |> Decode.map Messages.Key
 
 
-clearToCanvas : Model -> Point -> ( Maybe Pixel, GameArea )
-clearToCanvas model point =
+clearToCanvas : Model -> Pixel -> ( Maybe Pixel, GameArea )
+clearToCanvas model (Pixel point) =
     let
         newCoordsToCanvas x y canvas =
             if x > round canvas.element.width || x < 0 || y > round canvas.element.height || y < 0 then
@@ -99,6 +99,7 @@ coordinateDecoder model =
     Decode.succeed Point
         |> apply (Decode.field "pageX" Decode.int)
         |> apply (Decode.field "pageY" Decode.int)
+        |> Decode.map Pixel
         |> Decode.map (clearToCanvas model)
 
 

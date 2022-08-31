@@ -1,4 +1,4 @@
-module Model exposing (FiredShot, Flags, GameState(..), Model, PlacingTower, Round(..), init, restart)
+module Model exposing (FiredShot, GameState(..), Model, PlacingTower, Round(..), init, restart)
 
 import Area exposing (Field)
 import Browser.Dom exposing (Element)
@@ -8,9 +8,8 @@ import GameView exposing (GameView(..))
 import Messages exposing (Msg(..))
 import Path exposing (Path)
 import Point exposing (Point)
-import Random
 import Screen exposing (Screen(..))
-import Sprite exposing (IsometricViewSprite, Sprite, TowerAreaSprite)
+import Sprite exposing (Sprite)
 import Tower exposing (Tower)
 import Ui.Animation exposing (Animation)
 import Utils.Data exposing (Load(..))
@@ -52,22 +51,18 @@ type alias Model =
     , inspectingTower : Maybe Tower
     , playCanvas : Maybe Element
     , toolCanvas : Maybe Element
-    , clicked : Maybe Point
+    , clicked : Maybe Field
     , fullscreen : FullScreenMode
     , speedMulti : Float
     , path : Maybe Path
     , sprite : Load Sprite
     , gameView : GameView
-    , movePosition : Maybe Point
+    , movePosition : Maybe Field
     , screen : Screen
     , animation : Maybe Animation
     , shotsFired : List FiredShot
     , round : Round
     }
-
-
-type alias Flags =
-    { msg : String }
 
 
 type Round
@@ -80,18 +75,18 @@ type Round
     | Round7
 
 
-restart : Model -> Flags -> ( Model, Cmd Msg )
-restart model flags =
+restart : Model -> ( Model, Cmd Msg )
+restart model =
     let
         newModel ( initModel, command ) =
             ( { initModel | playCanvas = model.playCanvas, toolCanvas = model.toolCanvas, fullscreen = model.fullscreen, speedMulti = model.speedMulti }, command )
     in
-    init flags
+    init
         |> newModel
 
 
-init : Flags -> ( Model, Cmd Msg )
-init _ =
+init : ( Model, Cmd Msg )
+init =
     ( { gameState = StartScreenAnimation
       , hp = 100
       , money = 200
@@ -107,7 +102,7 @@ init _ =
       , clicked = Nothing
       , fullscreen = FullScreenMode.Close
       , speedMulti = 1.0
-      , path = Just Path.testPath
+      , path = Nothing
       , sprite = Loading
       , gameView = TopDown
       , movePosition = Nothing

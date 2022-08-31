@@ -71,7 +71,7 @@ update key model =
                     ( model, Ports.changeFullScreen (ChangeFullScreen Open) )
 
         R ->
-            Model.restart model { msg = "" }
+            Model.restart model
 
         I ->
             ( case model.gameView of

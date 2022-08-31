@@ -1,6 +1,6 @@
 module Messages exposing (GameArea(..), Key(..), Msg(..), ReceivingEvents(..), SendingEvents(..))
 
-import Area exposing (Pixel)
+import Area exposing (Field, Pixel)
 import Browser.Dom exposing (Element)
 import Canvas.Texture as Canvas
 import FullScreenMode exposing (FullScreenMode)
@@ -44,6 +44,6 @@ type Msg
     | EnterCanvas
     | Event ReceivingEvents
     | PathDirectionGenerate PathDirection
-    | PathPointGenerate Point
+    | PathPointGenerate Field
     | TextureLoaded (Maybe Canvas.Texture)
     | ChangeScreen Screen

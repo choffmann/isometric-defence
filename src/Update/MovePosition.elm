@@ -9,7 +9,7 @@ import Ui.Button as Button
 import Ui.Hud as Hud
 
 
-canTowerBePlaced : Point -> Int -> Model -> Bool
+canTowerBePlaced : Field -> Int -> Model -> Bool
 canTowerBePlaced towerPoint price model =
     let
         notOnPath mPath =
@@ -33,13 +33,12 @@ update mPixel gameArea model =
                 mPixel
                     |> Maybe.map (Area.pixelToField model.gameView)
                     |> Area.isOutOfBounds
-                    |> Maybe.map (\(Field point) -> point)
               of
                 Nothing ->
                     model
 
-                Just point ->
-                    if Button.onButton Hud.waitToStartButton point then
+                Just field ->
+                    if Button.onButton Hud.waitToStartButton field then
                         { model | placingTower = Nothing }
 
                     else
@@ -48,8 +47,8 @@ update mPixel gameArea model =
                                 model.placingTower
                                     |> Maybe.map
                                         (\{ tower } ->
-                                            { tower = { tower | position = point }
-                                            , canBePlaced = canTowerBePlaced point tower.price model
+                                            { tower = { tower | position = field }
+                                            , canBePlaced = canTowerBePlaced field tower.price model
                                             }
                                         )
                         }

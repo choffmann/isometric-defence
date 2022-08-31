@@ -3,15 +3,14 @@ module Main exposing (main)
 import Area
 import Browser
 import Browser.Events
-import Canvas exposing (Renderable)
+import Canvas
 import Canvas.Texture as Texture
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (id)
 import Html.Events exposing (onMouseEnter)
 import Messages exposing (Msg(..))
-import Model exposing (Flags, GameState(..), Model)
+import Model exposing (GameState(..), Model)
 import Screen exposing (Screen(..))
-import Sprite exposing (IsometricViewSprite)
 import Styles
 import Ui.Canvas
 import Ui.Tower
@@ -60,7 +59,7 @@ debugModel model =
 
         --, div [] [ text "Animation: ", text (Debug.toString model.animation) ]
         --, div [] [ text "TowerAreaSprite: ", text (Debug.toString model.sprite) ]
-        --, div [] [ text "Path: ", text (Debug.toString model.path) ]
+        , div [] [ text "Path: ", text (Debug.toString model.path) ]
         ]
 
 
@@ -139,8 +138,8 @@ update msg =
         PathDirectionGenerate direction ->
             GeneratePath.update direction
 
-        PathPointGenerate point ->
-            PathPointGenerate.update point
+        PathPointGenerate field ->
+            PathPointGenerate.update field
 
         TextureLoaded texture ->
             Update.Texture.update texture
@@ -230,10 +229,10 @@ subscriptions model =
         )
 
 
-main : Program Flags Model Msg
+main : Program () Model Msg
 main =
     Browser.element
-        { init = Model.init
+        { init = \_ -> Model.init
         , view = view
         , update = update
         , subscriptions = subscriptions

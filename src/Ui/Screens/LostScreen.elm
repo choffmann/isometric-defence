@@ -22,7 +22,7 @@ text =
 
 restartButton : Button
 restartButton =
-    { position = Point 8 16
+    { position = Field (Point 8 16)
     , width = 4
     , height = 2
     }

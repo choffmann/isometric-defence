@@ -19,16 +19,17 @@ import Ui.DrawUtils as DrawUtils
 towerRadius : Maybe Tower -> GameView -> Renderable
 towerRadius mTower gameView =
     let
-        centerPoint : Point -> Point
-        centerPoint { x, y } =
+        centerPoint : Pixel -> Pixel
+        centerPoint (Pixel { x, y }) =
             Point (x + (Area.fieldSize // 2)) (y + (Area.fieldSize // 2))
+                |> Pixel
 
-        towerPositionToPixel : Point -> Canvas.Point
-        towerPositionToPixel point =
-            Field point
+        towerPositionToPixel : Field -> Canvas.Point
+        towerPositionToPixel field =
+            field
                 |> Area.fieldToPixel
-                |> Area.pixelToPoint
                 |> centerPoint
+                |> Area.pixelToPoint
                 |> DrawUtils.pointToFloat
 
         centerIsoPoint : Point -> Canvas.Point
@@ -60,6 +61,7 @@ towerRadius mTower gameView =
 
                     Isometric ->
                         tower.position
+                            |> Area.fieldToPoint
                             --|> centerIsoPoint
                             |> DrawUtils.pointToFloat
                             |> iso 3
@@ -120,6 +122,11 @@ placingTowerToCanvas placingTower =
 
 renderPlacingTowerSprite : Maybe PlacingTower -> TowerTexture -> Texture -> List Renderable
 renderPlacingTowerSprite maybePlacingTower texture towerCanNotPlaced =
+    let
+        towerPositionToCanvasPoint (Field { x, y }) =
+            Point (x - 1) (y - 1)
+                |> DrawUtils.pointToFloat
+    in
     case maybePlacingTower of
         Nothing ->
             []
@@ -127,24 +134,33 @@ renderPlacingTowerSprite maybePlacingTower texture towerCanNotPlaced =
         Just placingTower ->
             if placingTower.canBePlaced then
                 [ DrawUtils.placeIsometricTile
-                    (DrawUtils.pointToFloat (Point (placingTower.tower.position.x - 1) (placingTower.tower.position.y - 1)))
+                    (placingTower.tower.position
+                        |> towerPositionToCanvasPoint
+                    )
                     (selectionToSprite placingTower.tower texture)
                 , towerRadius (Just placingTower.tower) Isometric
                 ]
 
             else
                 [ DrawUtils.placeIsometricTile
-                    (DrawUtils.pointToFloat (Point (placingTower.tower.position.x - 1) (placingTower.tower.position.y - 1)))
+                    (placingTower.tower.position
+                        |> towerPositionToCanvasPoint
+                    )
                     towerCanNotPlaced
                 ]
 
 
 renderTowerSprite : List Tower -> TowerTexture -> List Renderable
 renderTowerSprite towers texture =
+    let
+        towerPositionToCanvasPoint (Field { x, y }) =
+            Point (x - 1) (y - 1)
+                |> DrawUtils.pointToFloat
+    in
     List.map
         (\tower ->
             DrawUtils.placeIsometricTile
-                (DrawUtils.pointToFloat (Point (tower.position.x - 1) (tower.position.y - 1)))
+                (towerPositionToCanvasPoint tower.position)
                 (towerToSprite tower texture)
         )
         towers

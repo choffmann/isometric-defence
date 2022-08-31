@@ -1,6 +1,6 @@
 module Ui.Screens.StartScreen exposing (canvas, generateFloor, startButton)
 
-import Area
+import Area exposing (Field(..))
 import Canvas exposing (Renderable)
 import Canvas.Settings as Settings
 import Canvas.Settings.Text as Text exposing (TextAlign(..), TextBaseLine(..))
@@ -27,7 +27,7 @@ title =
 
 startButton : Button
 startButton =
-    { position = Point 8 16
+    { position = Field (Point 8 16)
     , width = 4
     , height = 2
     }

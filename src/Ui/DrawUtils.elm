@@ -1,6 +1,6 @@
 module Ui.DrawUtils exposing (drawCanvasGrid2d, drawTextOverPoint, fieldToCanvas, placeIsometricTile, placeIsometricTileWithMatrix, placeTopDownTile, pointToCanvas, pointToFloat)
 
-import Area exposing (Area, IsometricMatrix)
+import Area exposing (Area, Field(..), IsometricMatrix, Pixel(..))
 import Canvas exposing (PathSegment, Renderable, Shape)
 import Canvas.Settings as Settings
 import Canvas.Settings.Line
@@ -42,9 +42,9 @@ drawCanvasGrid2d area fieldSize =
     Canvas.shapes [ Canvas.Settings.Line.lineWidth 1, Canvas.Settings.Line.lineDash [ 4 ] ] [ Canvas.path ( 0, 0 ) draw ]
 
 
-pointToCanvas : Point -> Float -> Float -> Shape
-pointToCanvas point width height =
-    Canvas.rect ( toFloat (point.x * Area.fieldSize), toFloat (point.y * Area.fieldSize) ) width height
+pointToCanvas : Field -> Float -> Float -> Shape
+pointToCanvas (Field { x, y }) width height =
+    Canvas.rect ( toFloat (x * Area.fieldSize), toFloat (y * Area.fieldSize) ) width height
 
 
 placeTopDownTile : Canvas.Point -> Texture -> Renderable
@@ -70,8 +70,8 @@ placeIsometricTileWithMatrix point texture matrix =
         texture
 
 
-fieldToCanvas : Point -> Canvas.Point
-fieldToCanvas { x, y } =
+fieldToCanvas : Field -> Canvas.Point
+fieldToCanvas (Field { x, y }) =
     ( toFloat (x * Area.fieldSize), toFloat (y * Area.fieldSize) )
 
 

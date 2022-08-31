@@ -48,16 +48,16 @@ update mPixel gameArea model =
                                 ( Nothing, _ ) ->
                                     { model | clicked = Nothing }
 
-                                ( Just (Field point), Nothing ) ->
+                                ( Just field, Nothing ) ->
                                     { model
-                                        | clicked = Just point
-                                        , inspectingTower = checkInspectTower point model.towers
+                                        | clicked = Just field
+                                        , inspectingTower = checkInspectTower field model.towers
                                     }
 
-                                ( Just (Field point), Just placingTower ) ->
+                                ( Just field, Just placingTower ) ->
                                     if placingTower.canBePlaced then
                                         { model
-                                            | clicked = Just point
+                                            | clicked = Just field
                                             , placingTower = Nothing
                                             , towers = placingTower.tower :: model.towers
                                             , nextTowerId = model.nextTowerId + 1
@@ -65,7 +65,7 @@ update mPixel gameArea model =
                                         }
 
                                     else
-                                        { model | clicked = Just point }
+                                        { model | clicked = Just field }
                             , Cmd.none
                             )
 
@@ -74,34 +74,33 @@ update mPixel gameArea model =
                                 ( mPixel
                                     |> Maybe.map (Area.pixelToField model.gameView)
                                     |> Area.isOutOfBounds
-                                    |> Maybe.map (\(Field point) -> point)
                                 , model.placingTower
                                 )
                               of
                                 ( Nothing, _ ) ->
                                     { model | clicked = Nothing }
 
-                                ( Just point, Nothing ) ->
-                                    if Button.onButton Hud.waitToStartButton point then
-                                        { model | clicked = Just point, gameState = Running, inspectingTower = Nothing }
+                                ( Just field, Nothing ) ->
+                                    if Button.onButton Hud.waitToStartButton field then
+                                        { model | clicked = Just field, gameState = Running, inspectingTower = Nothing }
 
                                     else
                                         { model
-                                            | clicked = Just point
-                                            , inspectingTower = checkInspectTower point model.towers
+                                            | clicked = Just field
+                                            , inspectingTower = checkInspectTower field model.towers
                                         }
 
-                                ( Just point, Just placingTower ) ->
-                                    if Button.onButton Hud.waitToStartButton point then
+                                ( Just field, Just placingTower ) ->
+                                    if Button.onButton Hud.waitToStartButton field then
                                         { model
-                                            | clicked = Just point
+                                            | clicked = Just field
                                             , placingTower = Nothing
                                             , gameState = Running
                                         }
 
                                     else if placingTower.canBePlaced then
                                         { model
-                                            | clicked = Just point
+                                            | clicked = Just field
                                             , placingTower = Nothing
                                             , towers = placingTower.tower :: model.towers
                                             , nextTowerId = model.nextTowerId + 1
@@ -109,7 +108,7 @@ update mPixel gameArea model =
                                         }
 
                                     else
-                                        { model | clicked = Just point }
+                                        { model | clicked = Just field }
                             , Cmd.none
                             )
 
@@ -132,65 +131,61 @@ update mPixel gameArea model =
                     case
                         mPixel
                             |> Maybe.map (Area.pixelToField TopDown)
-                            |> Maybe.map (\(Field point) -> point)
                     of
                         Nothing ->
                             ( { model | clicked = Nothing }, Cmd.none )
 
-                        Just point ->
-                            if Button.onButton StartScreen.startButton point then
-                                ( { model | clicked = Just point, screen = PlayScreen }, Random.generate PathPointGenerate Path.pointGenerator )
+                        Just field ->
+                            if Button.onButton StartScreen.startButton field then
+                                ( { model | clicked = Just field, screen = PlayScreen }, Random.generate PathPointGenerate Path.pointGenerator )
 
                             else
-                                ( { model | clicked = Just point }, Cmd.none )
+                                ( { model | clicked = Just field }, Cmd.none )
 
                 PauseScreen ->
                     case
                         mPixel
                             |> Maybe.map (Area.pixelToField TopDown)
-                            |> Maybe.map (\(Field point) -> point)
                     of
                         Nothing ->
                             ( { model | clicked = Nothing }, Cmd.none )
 
-                        Just point ->
-                            if Button.onButton PauseScreen.resumeButton point then
-                                ( { model | clicked = Just point, screen = PlayScreen, gameState = Running }, Cmd.none )
+                        Just field ->
+                            if Button.onButton PauseScreen.resumeButton field then
+                                ( { model | clicked = Just field, screen = PlayScreen, gameState = Running }, Cmd.none )
 
                             else
-                                ( { model | clicked = Just point }, Cmd.none )
+                                ( { model | clicked = Just field }, Cmd.none )
 
                 WonScreen ->
                     case
                         mPixel
                             |> Maybe.map (Area.pixelToField TopDown)
-                            |> Maybe.map (\(Field point) -> point)
                     of
                         Nothing ->
                             ( { model | clicked = Nothing }, Cmd.none )
 
-                        Just point ->
-                            if Button.onButton WonScreen.restartButton point then
-                                Model.restart model { msg = "" }
+                        Just field ->
+                            if Button.onButton WonScreen.restartButton field then
+                                Model.restart model
 
                             else
-                                ( { model | clicked = Just point }, Cmd.none )
+                                ( { model | clicked = Just field }, Cmd.none )
 
                 LostScreen ->
                     case
                         mPixel
                             |> Maybe.map (Area.pixelToField TopDown)
-                            |> Maybe.map (\(Field point) -> point)
                     of
                         Nothing ->
                             ( { model | clicked = Nothing }, Cmd.none )
 
-                        Just point ->
-                            if Button.onButton LostScreen.restartButton point then
-                                Model.restart model { msg = "" }
+                        Just field ->
+                            if Button.onButton LostScreen.restartButton field then
+                                Model.restart model
 
                             else
-                                ( { model | clicked = Just point }, Cmd.none )
+                                ( { model | clicked = Just field }, Cmd.none )
 
         ToolArea ->
             ( case mPixel of
