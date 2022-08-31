@@ -1,15 +1,11 @@
 module Ui.Enemy exposing (enemiesToCanvas, renderEnemyIso)
 
-import Area
+import Area exposing (Pixel(..))
 import Canvas exposing (Renderable)
-import Canvas.Settings
 import Canvas.Texture exposing (Texture)
-import Color
 import Enemy exposing (Enemies(..), Enemy)
 import List.Extra as List
 import Path exposing (Path)
-import Pixel exposing (Pixel(..))
-import Point exposing (Point)
 import Sprite exposing (EnemyTexture)
 import Ui.DrawUtils as DrawUtils
 

@@ -1,10 +1,9 @@
 module Update.Tick exposing (update)
 
-import Area exposing (Field(..), isOutOfBounds)
+import Area exposing (Field(..))
 import Enemy exposing (Enemy)
 import Model exposing (FiredShot, GameState(..), Model, Round(..))
 import Path exposing (Path)
-import Point exposing (Point)
 import Screen exposing (Screen(..))
 import Tower exposing (Tower)
 import Ui.Animation as Animation
@@ -82,8 +81,8 @@ dealingDamage shotsFired towers enemies =
             dealingDamage hs towers (damageEnemies h towers enemies)
 
 
-range : Point -> Field -> Float
-range point1 (Field point2) =
+range : Field -> Field -> Float
+range (Field point1) (Field point2) =
     let
         pointToQuadrat first second =
             abs (first - second)
@@ -93,27 +92,29 @@ range point1 (Field point2) =
     sqrt (pointToQuadrat point1.x point2.x + pointToQuadrat point1.y point2.y)
 
 
-inRange : Point -> Float -> Field -> Bool
-inRange point radius field =
-    range point field
+inRange : Field -> Float -> Field -> Bool
+inRange field1 radius field2 =
+    range field1 field2
         |> (>=) radius
 
 
 moveEnemies : Float -> Float -> Path -> List Enemy -> List Enemy
-moveEnemies globalSpeedMulti delta path =
+moveEnemies globalSpeedMulti delta path enemies =
     let
         moveAmount distance speed =
             distance + (speed * 0.025 * delta * globalSpeedMulti)
     in
-    List.map
-        (\enemy ->
-            { enemy
-                | distance = moveAmount enemy.distance enemy.speed
-                , position =
-                    moveAmount enemy.distance enemy.speed
-                        |> Path.distanceToPathPoint path
-            }
-        )
+    enemies
+        |> List.map
+            (\enemy ->
+                { enemy
+                    | distance = moveAmount enemy.distance enemy.speed
+                    , position =
+                        moveAmount enemy.distance enemy.speed
+                            |> Path.distanceToPathPoint path
+                }
+            )
+        |> List.sortBy (\enemy -> enemy.distance)
 
 
 cooldownTowers : Float -> Float -> List Tower -> List Tower

@@ -1,4 +1,4 @@
-module Ui.Animation exposing (..)
+module Ui.Animation exposing (Animation, Floor, animatedFloor, drawFloor)
 
 import Area exposing (IsometricMatrix)
 import Canvas exposing (Renderable)
@@ -24,7 +24,7 @@ drawFloor texture floor =
             []
 
         x :: xs ->
-            DrawUtils.placeIsometricTileWithMatrix x.position texture x.matrix :: drawFloor texture xs
+            DrawUtils.placeIsometricTileWithMatrix x.position x.matrix texture :: drawFloor texture xs
 
 
 animatedFloor : Float -> Float -> Float -> List Floor -> List Floor

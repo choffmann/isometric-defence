@@ -1,6 +1,6 @@
-module Ui.Hud exposing (..)
+module Ui.Hud exposing (drawBackground, drawWaitToStartButton, hud, renderSprite, renderText, waitToStartButton)
 
-import Area
+import Area exposing (Field(..))
 import Canvas exposing (Renderable, Shape)
 import Canvas.Settings as Settings
 import Canvas.Settings.Text as Text exposing (TextAlign(..), TextBaseLine(..))
@@ -8,57 +8,65 @@ import Canvas.Texture exposing (Texture)
 import Color
 import Model exposing (GameState(..))
 import Point exposing (Point)
-import Sprite exposing (ButtonSprites, Sprite)
+import Sprite exposing (Sprite)
 import Ui.Button as Button exposing (Button)
 import Ui.DrawUtils as DrawUtils
 import Utils.Data exposing (Load(..))
 
 
-renderSprite : Point -> Texture -> Renderable
-renderSprite point texture =
-    Canvas.texture [] (DrawUtils.fieldToCanvas point) texture
+renderSprite : Field -> Texture -> Renderable
+renderSprite field =
+    Canvas.texture [] (DrawUtils.fieldToCanvas field)
 
 
-drawBackground : Point -> Float -> Shape
-drawBackground fromPoint width =
-    Canvas.rect (DrawUtils.fieldToCanvas fromPoint) width (toFloat Area.fieldSize)
+drawBackground : Field -> Float -> Shape
+drawBackground fromField width =
+    Canvas.rect (DrawUtils.fieldToCanvas fromField) width (toFloat Area.fieldSize)
 
 
-renderText : Point -> String -> Renderable
-renderText point text =
+renderText : Field -> String -> Renderable
+renderText (Field { x, y }) =
     Canvas.text
         [ Text.font { size = 24, family = "Silkscreen" }, Text.align Left, Text.baseLine Middle ]
-        ( toFloat ((point.x + 1) * Area.fieldSize), toFloat (point.y * Area.fieldSize) + (toFloat Area.fieldSize / 2) )
-        text
+        ( toFloat ((x + 1) * Area.fieldSize), toFloat (y * Area.fieldSize) + (toFloat Area.fieldSize / 2) )
+
+
+position : Int -> Field
+position index =
+    Point (Area.widthTiles - ceiling (toFloat Area.widthTiles / 4)) index
+        |> Field
+
+
+backGroundWidth : Field -> Float
+backGroundWidth (Field { x }) =
+    toFloat ((Area.widthTiles - x) * Area.fieldSize)
+
+
+drawInternal : Int -> Int -> Texture -> Renderable
+drawInternal index amount texture =
+    let
+        internal field =
+            Canvas.group []
+                [ Canvas.shapes [ Settings.fill (Color.rgba 50 50 50 0.5) ]
+                    [ backGroundWidth field
+                        |> drawBackground field
+                    ]
+                , renderText field (String.fromInt amount)
+                , renderSprite field texture
+                ]
+    in
+    position index
+        |> internal
 
 
 drawHp : Int -> Texture -> Renderable
-drawHp hp texture =
-    let
-        position : Point
-        position =
-            Point (Area.widthTiles - ceiling (toFloat Area.widthTiles / 4)) 1
-    in
-    Canvas.group []
-        [ Canvas.shapes [ Settings.fill (Color.rgba 50 50 50 0.5) ] [ drawBackground position (toFloat ((Area.widthTiles - position.x) * Area.fieldSize)) ]
-        , renderText position (String.fromInt hp)
-        , renderSprite position texture
-        ]
+drawHp =
+    drawInternal 1
 
 
 drawCoin : Int -> Texture -> Renderable
-drawCoin amount texture =
-    let
-        position : Point
-        position =
-            Point (Area.widthTiles - ceiling (toFloat Area.widthTiles / 4)) 0
-    in
-    Canvas.group []
-        [ Canvas.shapes [ Settings.fill (Color.rgba 50 50 50 0.5) ]
-            [ drawBackground position (toFloat ((Area.widthTiles - position.x) * Area.fieldSize)) ]
-        , renderText position (String.fromInt amount)
-        , renderSprite position texture
-        ]
+drawCoin =
+    drawInternal 0
 
 
 hud : Int -> Int -> Load Sprite -> Renderable
@@ -84,9 +92,10 @@ waitToStartButton =
         spriteWidth =
             4
 
-        calcPoint : Point
+        calcPoint : Field
         calcPoint =
             Point (ceiling (toFloat Area.widthTiles / 2) - (spriteWidth // 2)) 0
+                |> Field
     in
     { position = calcPoint
     , width = toFloat spriteWidth

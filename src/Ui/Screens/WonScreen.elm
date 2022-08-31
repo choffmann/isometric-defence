@@ -1,6 +1,6 @@
-module Ui.Screens.WonScreen exposing (..)
+module Ui.Screens.WonScreen exposing (canvas, restartButton)
 
-import Area
+import Area exposing (Field(..))
 import Canvas exposing (Renderable)
 import Canvas.Settings as Settings
 import Canvas.Settings.Text as Text exposing (TextAlign(..), TextBaseLine(..))
@@ -22,7 +22,7 @@ text =
 
 restartButton : Button
 restartButton =
-    { position = Point 8 16
+    { position = Field (Point 8 16)
     , width = 4
     , height = 2
     }
@@ -31,7 +31,7 @@ restartButton =
 canvas : List Renderable
 canvas =
     [ Canvas.shapes [ Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
-    , DrawUtils.drawCanvasGrid2d Area.area Area.fieldSize
+    , DrawUtils.drawCanvasGrid2D Area.area Area.fieldSize
     , Button.drawUiButton restartButton "Restart"
     , text
     ]

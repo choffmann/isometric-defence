@@ -1,21 +1,20 @@
-module Update.Texture exposing (..)
+module Update.Texture exposing (update)
 
 import Area
 import Canvas.Texture as Texture exposing (Texture)
-import Messages exposing (Msg(..))
+import Messages exposing (Msg)
 import Model exposing (Model)
 import Utils.Data exposing (Load(..))
 
 
 sprite : Float -> Float -> Float -> Float -> Texture -> Texture
-sprite x y w h texture =
+sprite x y w h =
     Texture.sprite
         { x = x * w
         , y = y * h
         , width = w
         , height = h
         }
-        texture
 
 
 update : Maybe Texture -> Model -> ( Model, Cmd Msg )

@@ -1,6 +1,6 @@
-module Ui.DrawUtils exposing (drawCanvasGrid2d, drawTextOverPoint, fieldToCanvas, placeIsometricTile, placeIsometricTileWithMatrix, placeTopDownTile, pointToCanvas, pointToFloat)
+module Ui.DrawUtils exposing (drawCanvasGrid2D, drawTextOverPoint, fieldToCanvas, placeIsometricTile, placeIsometricTileWithMatrix, placeTopDownTile, pointToCanvas, pointToFloat)
 
-import Area exposing (Area, IsometricMatrix)
+import Area exposing (Area, Field(..), IsometricMatrix)
 import Canvas exposing (PathSegment, Renderable, Shape)
 import Canvas.Settings as Settings
 import Canvas.Settings.Line
@@ -10,8 +10,8 @@ import Color
 import Point exposing (Point)
 
 
-drawCanvasGrid2d : Area -> Int -> Renderable
-drawCanvasGrid2d area fieldSize =
+drawCanvasGrid2D : Area -> Int -> Renderable
+drawCanvasGrid2D area fieldSize =
     let
         drawLine : Float -> Float -> Float -> Float -> List PathSegment
         drawLine fromX fromY toX toY =
@@ -42,36 +42,34 @@ drawCanvasGrid2d area fieldSize =
     Canvas.shapes [ Canvas.Settings.Line.lineWidth 1, Canvas.Settings.Line.lineDash [ 4 ] ] [ Canvas.path ( 0, 0 ) draw ]
 
 
-pointToCanvas : Point -> Float -> Float -> Shape
-pointToCanvas point width height =
-    Canvas.rect ( toFloat (point.x * Area.fieldSize), toFloat (point.y * Area.fieldSize) ) width height
+pointToCanvas : Field -> Float -> Float -> Shape
+pointToCanvas (Field { x, y }) =
+    Canvas.rect ( toFloat (x * Area.fieldSize), toFloat (y * Area.fieldSize) )
 
 
 placeTopDownTile : Canvas.Point -> Texture -> Renderable
-placeTopDownTile point texture =
-    Canvas.texture [] point texture
+placeTopDownTile =
+    Canvas.texture []
 
 
 placeIsometricTile : Canvas.Point -> Texture -> Renderable
-placeIsometricTile point texture =
+placeIsometricTile point =
     Canvas.texture []
         (Area.canvasPointToIsometric Area.isometricMatrix point
             |> Area.isometricOffset
         )
-        texture
 
 
-placeIsometricTileWithMatrix : Canvas.Point -> Texture -> IsometricMatrix -> Renderable
-placeIsometricTileWithMatrix point texture matrix =
+placeIsometricTileWithMatrix : Canvas.Point -> IsometricMatrix -> Texture -> Renderable
+placeIsometricTileWithMatrix point matrix =
     Canvas.texture []
         (Area.canvasPointToIsometric matrix point
             |> Area.isometricOffset
         )
-        texture
 
 
-fieldToCanvas : Point -> Canvas.Point
-fieldToCanvas { x, y } =
+fieldToCanvas : Field -> Canvas.Point
+fieldToCanvas (Field { x, y }) =
     ( toFloat (x * Area.fieldSize), toFloat (y * Area.fieldSize) )
 
 
@@ -81,5 +79,5 @@ pointToFloat { x, y } =
 
 
 drawTextOverPoint : Canvas.Point -> String -> Renderable
-drawTextOverPoint point text =
-    Canvas.text [ Text.font { size = 12, family = "Silkscreen" }, Text.align Center, Text.baseLine Middle, Settings.fill Color.gray ] point text
+drawTextOverPoint =
+    Canvas.text [ Text.font { size = 12, family = "Silkscreen" }, Text.align Center, Text.baseLine Middle, Settings.fill Color.gray ]

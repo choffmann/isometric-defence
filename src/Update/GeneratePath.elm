@@ -1,16 +1,20 @@
 module Update.GeneratePath exposing (update)
 
-import Area
-import List.Extra as List
-import Messages exposing (Msg(..))
+import Area exposing (Field(..))
+import Messages exposing (Msg)
 import Model exposing (GameState(..), Model)
 import Path exposing (PathDirection(..), PathPoint)
 import Point exposing (Point)
 import Utils.Commands as Commands
 
 
-update : PathDirection -> Model -> ( Model, Cmd Messages.Msg )
+update : PathDirection -> Model -> ( Model, Cmd Msg )
 update direction model =
+    let
+        oldFieldToNewField (Field { x, y }) offsetX offsetY =
+            Point (x + offsetX) (y + offsetY)
+                |> Field
+    in
     case model.path of
         Nothing ->
             ( model, Cmd.none )
@@ -23,8 +27,8 @@ update direction model =
                 h :: hs ->
                     case direction of
                         Right ->
-                            if h.point.x + 1 >= Area.widthTiles - 1 then
-                                if h.point.x >= Area.widthTiles - 1 then
+                            if (Area.fieldToPoint h.point).x + 1 >= Area.widthTiles - 1 then
+                                if (Area.fieldToPoint h.point).x >= Area.widthTiles - 1 then
                                     ( { model | gameState = WaitToStart, path = Just (List.reverse ({ h | direction = direction } :: hs)) }, Cmd.none )
 
                                 else
@@ -33,7 +37,7 @@ update direction model =
                                         , path =
                                             Just
                                                 (List.reverse
-                                                    (PathPoint (Point (h.point.x + 1) h.point.y) direction
+                                                    (PathPoint (oldFieldToNewField h.point 1 0) direction
                                                         :: { h | direction = direction }
                                                         :: hs
                                                     )
@@ -46,37 +50,37 @@ update direction model =
                                 ( { model
                                     | path =
                                         Just
-                                            (PathPoint (Point (h.point.x + 2) h.point.y) direction
-                                                :: PathPoint (Point (h.point.x + 1) h.point.y) direction
+                                            (PathPoint (oldFieldToNewField h.point 2 0) direction
+                                                :: PathPoint (oldFieldToNewField h.point 1 0) direction
                                                 :: { h | direction = direction }
                                                 :: hs
                                             )
                                   }
-                                , Commands.generateRandomDirection (PathPoint (Point (h.point.x + 2) h.point.y) direction)
+                                , Commands.generateRandomDirection (PathPoint (oldFieldToNewField h.point 2 0) direction)
                                 )
 
                         Up ->
                             ( { model
                                 | path =
                                     Just
-                                        (PathPoint (Point h.point.x (h.point.y - 2)) direction
-                                            :: PathPoint (Point h.point.x (h.point.y - 1)) direction
+                                        (PathPoint (oldFieldToNewField h.point 0 -2) direction
+                                            :: PathPoint (oldFieldToNewField h.point 0 -1) direction
                                             :: { h | direction = direction }
                                             :: hs
                                         )
                               }
-                            , Commands.generateRandomDirection (PathPoint (Point h.point.x (h.point.y - 2)) direction)
+                            , Commands.generateRandomDirection (PathPoint (oldFieldToNewField h.point 0 -2) direction)
                             )
 
                         Down ->
                             ( { model
                                 | path =
                                     Just
-                                        (PathPoint (Point h.point.x (h.point.y + 2)) direction
-                                            :: PathPoint (Point h.point.x (h.point.y + 1)) direction
+                                        (PathPoint (oldFieldToNewField h.point 0 2) direction
+                                            :: PathPoint (oldFieldToNewField h.point 0 1) direction
                                             :: { h | direction = direction }
                                             :: hs
                                         )
                               }
-                            , Commands.generateRandomDirection (PathPoint (Point h.point.x (h.point.y + 2)) direction)
+                            , Commands.generateRandomDirection (PathPoint (oldFieldToNewField h.point 0 2) direction)
                             )

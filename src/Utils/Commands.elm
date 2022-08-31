@@ -1,6 +1,6 @@
 module Utils.Commands exposing (generateRandomDirection, getPlayAreaCanvas, getToolAreaCanvas)
 
-import Area
+import Area exposing (Field(..))
 import Browser.Dom exposing (Element)
 import Messages exposing (GameArea(..), Msg(..))
 import Path exposing (PathDirection(..), PathPoint)
@@ -55,45 +55,46 @@ getToolAreaCanvas =
         (Browser.Dom.getElement "toolAreaContainer")
 
 
+checkDirection : PathPoint -> List PathDirection
+checkDirection { direction, point } =
+    let
+        checkUp (Field { y }) =
+            (y - 2) > 0
+
+        checkDown (Field { y }) =
+            (y + 2) < Area.heightTiles - 1
+    in
+    case direction of
+        Right ->
+            if checkDown point && checkUp point then
+                [ Right, Up, Down ]
+
+            else if checkDown point then
+                [ Right, Down ]
+
+            else if checkUp point then
+                [ Right, Up ]
+
+            else
+                [ Right ]
+
+        Down ->
+            if checkDown point then
+                [ Right, Down ]
+
+            else
+                [ Right ]
+
+        Up ->
+            if checkUp point then
+                [ Right, Up ]
+
+            else
+                [ Right ]
+
+
 generateRandomDirection : PathPoint -> Cmd Msg
 generateRandomDirection pathPoint =
-    let
-        checkDirection { direction, point } =
-            let
-                checkUp p =
-                    (p.y - 2) > 0
-
-                checkDown p =
-                    (p.y + 2) < Area.heightTiles - 1
-            in
-            case direction of
-                Right ->
-                    if checkDown point && checkUp point then
-                        [ Right, Up, Down ]
-
-                    else if checkDown point then
-                        [ Right, Down ]
-
-                    else if checkUp point then
-                        [ Right, Up ]
-
-                    else
-                        [ Right ]
-
-                Down ->
-                    if checkDown point then
-                        [ Right, Down ]
-
-                    else
-                        [ Right ]
-
-                Up ->
-                    if checkUp point then
-                        [ Right, Up ]
-
-                    else
-                        [ Right ]
-    in
     pathPoint
         |> checkDirection
         |> Path.directionGenerator

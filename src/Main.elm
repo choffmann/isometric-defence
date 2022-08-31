@@ -3,15 +3,14 @@ module Main exposing (main)
 import Area
 import Browser
 import Browser.Events
-import Canvas exposing (Renderable)
+import Canvas
 import Canvas.Texture as Texture
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (id)
 import Html.Events exposing (onMouseEnter)
 import Messages exposing (Msg(..))
-import Model exposing (Flags, GameState(..), Model)
+import Model exposing (GameState(..), Model)
 import Screen exposing (Screen(..))
-import Sprite exposing (IsometricViewSprite)
 import Styles
 import Ui.Canvas
 import Ui.Tower
@@ -24,7 +23,6 @@ import Update.LeftClick as LeftClick
 import Update.MovePosition as MovePosition
 import Update.PathPointGenerate as PathPointGenerate
 import Update.RightClick as RightClick
-import Update.Screen
 import Update.Texture
 import Update.Tick as Tick
 import Utils.Data exposing (Load(..))
@@ -60,7 +58,7 @@ debugModel model =
 
         --, div [] [ text "Animation: ", text (Debug.toString model.animation) ]
         --, div [] [ text "TowerAreaSprite: ", text (Debug.toString model.sprite) ]
-        --, div [] [ text "Path: ", text (Debug.toString model.path) ]
+        , div [] [ text "Path: ", text (Debug.toString model.path) ]
         ]
 
 
@@ -103,7 +101,16 @@ view model =
                         ]
                     ]
 
-                _ ->
+                PauseScreen ->
+                    []
+
+                StartScreen ->
+                    []
+
+                WonScreen ->
+                    []
+
+                LostScreen ->
                     []
             )
         ]
@@ -139,14 +146,11 @@ update msg =
         PathDirectionGenerate direction ->
             GeneratePath.update direction
 
-        PathPointGenerate point ->
-            PathPointGenerate.update point
+        PathPointGenerate field ->
+            PathPointGenerate.update field
 
         TextureLoaded texture ->
             Update.Texture.update texture
-
-        ChangeScreen screen ->
-            Update.Screen.update screen
 
 
 subscriptions : Model -> Sub Msg
@@ -203,7 +207,7 @@ subscriptions model =
                         Browser.Events.onMouseMove (Decoder.mouseMoveDecoder model) :: running
 
                     Nothing ->
-                        Browser.Events.onMouseMove (Decoder.mouseMoveDecoder model) :: running
+                        running
 
             Paused ->
                 paused
@@ -223,17 +227,17 @@ subscriptions model =
                         Browser.Events.onMouseMove (Decoder.mouseMoveDecoder model) :: waitToStart
 
                     Nothing ->
-                        Browser.Events.onMouseMove (Decoder.mouseMoveDecoder model) :: waitToStart
+                        waitToStart
 
             StartScreenAnimation ->
                 startScreenAnimation
         )
 
 
-main : Program Flags Model Msg
+main : Program () Model Msg
 main =
     Browser.element
-        { init = Model.init
+        { init = \_ -> Model.init
         , view = view
         , update = update
         , subscriptions = subscriptions

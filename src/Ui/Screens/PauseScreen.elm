@@ -1,22 +1,20 @@
-module Ui.Screens.PauseScreen exposing (..)
+module Ui.Screens.PauseScreen exposing (canvas, drawGameStats, resumeButton)
 
-import Area
+import Area exposing (Field(..))
 import Canvas exposing (Renderable)
 import Canvas.Settings as Settings
 import Canvas.Settings.Text as Text exposing (TextAlign(..), TextBaseLine(..))
-import Canvas.Texture exposing (Texture)
 import Color
 import Point exposing (Point)
 import Sprite exposing (Sprite)
 import Ui.Button as Button exposing (Button)
-import Ui.DrawUtils as DrawUtils
 import Ui.Hud as Hud
 import Utils.Data exposing (Load(..))
 
 
 resumeButton : Button
 resumeButton =
-    { position = Point 8 16
+    { position = Field (Point 8 16)
     , width = 4
     , height = 2
     }
@@ -29,13 +27,17 @@ drawGameStats money hp texture =
         width =
             Area.widthTiles // 3
 
-        pos1 : Point
         pos1 =
             Point ((Area.widthTiles // 2) - width // 2) (Area.heightTiles // 2 - 2)
 
-        pos2 : Point
+        pos1Field =
+            Field pos1
+
         pos2 =
             Point pos1.x (pos1.y + 1)
+
+        pos2Field =
+            Field pos2
     in
     case texture of
         Loading ->
@@ -43,12 +45,12 @@ drawGameStats money hp texture =
 
         Success sprite ->
             Canvas.group []
-                [ Canvas.shapes [ Settings.fill Color.gray ] [ Hud.drawBackground pos1 (toFloat (width * Area.fieldSize)) ]
-                , Canvas.shapes [ Settings.fill Color.gray ] [ Hud.drawBackground pos2 (toFloat (width * Area.fieldSize)) ]
-                , Hud.renderSprite pos1 sprite.ui.coin
-                , Hud.renderSprite pos2 sprite.ui.heart
-                , Hud.renderText pos1 (String.fromInt money)
-                , Hud.renderText pos2 (String.fromInt hp)
+                [ Canvas.shapes [ Settings.fill Color.gray ] [ Hud.drawBackground pos1Field (toFloat (width * Area.fieldSize)) ]
+                , Canvas.shapes [ Settings.fill Color.gray ] [ Hud.drawBackground pos2Field (toFloat (width * Area.fieldSize)) ]
+                , Hud.renderSprite pos1Field sprite.ui.coin
+                , Hud.renderSprite pos2Field sprite.ui.heart
+                , Hud.renderText pos1Field (String.fromInt money)
+                , Hud.renderText pos2Field (String.fromInt hp)
                 ]
 
         Failure ->

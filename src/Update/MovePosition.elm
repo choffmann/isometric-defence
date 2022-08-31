@@ -1,17 +1,13 @@
 module Update.MovePosition exposing (update)
 
-import Area exposing (Field(..))
-import GameView exposing (GameView(..))
+import Area exposing (Field, Pixel)
 import Messages exposing (GameArea(..), Msg)
 import Model exposing (Model)
-import Path exposing (Path)
-import Pixel exposing (Pixel)
-import Point exposing (Point)
 import Ui.Button as Button
 import Ui.Hud as Hud
 
 
-canTowerBePlaced : Point -> Int -> Model -> Bool
+canTowerBePlaced : Field -> Int -> Model -> Bool
 canTowerBePlaced towerPoint price model =
     let
         notOnPath mPath =
@@ -33,22 +29,14 @@ update mPixel gameArea model =
         PlayArea ->
             ( case
                 mPixel
-                    |> Maybe.map
-                        (case model.gameView of
-                            TopDown ->
-                                Area.pixelToField
-
-                            Isometric ->
-                                Area.isometricPixelToField
-                        )
+                    |> Maybe.map (Area.pixelToField model.gameView)
                     |> Area.isOutOfBounds
-                    |> Maybe.map (\(Field point) -> point)
               of
                 Nothing ->
                     model
 
-                Just point ->
-                    if Button.onButton Hud.waitToStartButton point then
+                Just field ->
+                    if Button.onButton Hud.waitToStartButton field then
                         { model | placingTower = Nothing }
 
                     else
@@ -57,8 +45,8 @@ update mPixel gameArea model =
                                 model.placingTower
                                     |> Maybe.map
                                         (\{ tower } ->
-                                            { tower = { tower | position = point }
-                                            , canBePlaced = canTowerBePlaced point tower.price model
+                                            { tower = { tower | position = field }
+                                            , canBePlaced = canTowerBePlaced field tower.price model
                                             }
                                         )
                         }

@@ -16,7 +16,13 @@ pathToCanvas path =
             Canvas.shapes [] []
 
         Just justPath ->
-            Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 194 27 29) ] (List.map (\pathPoint -> DrawUtils.pointToCanvas pathPoint.point (toFloat Area.fieldSize) (toFloat Area.fieldSize)) justPath)
+            Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 194 27 29) ]
+                (List.map
+                    (\pathPoint ->
+                        DrawUtils.pointToCanvas pathPoint.point (toFloat Area.fieldSize) (toFloat Area.fieldSize)
+                    )
+                    justPath
+                )
 
 
 renderPathSprite : Maybe Path -> Texture -> List Renderable
@@ -28,6 +34,11 @@ renderPathSprite maybePath texture =
         Just path ->
             List.map
                 (\pathPoint ->
-                    DrawUtils.placeIsometricTile (DrawUtils.pointToFloat pathPoint.point) texture
+                    DrawUtils.placeIsometricTile
+                        (pathPoint.point
+                            |> Area.fieldToPoint
+                            |> DrawUtils.pointToFloat
+                        )
+                        texture
                 )
                 path

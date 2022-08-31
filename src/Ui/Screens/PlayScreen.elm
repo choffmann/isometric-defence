@@ -5,7 +5,6 @@ import Canvas exposing (Renderable)
 import Canvas.Settings
 import Color
 import Model exposing (Model)
-import Sprite exposing (IsometricViewSprite, Sprite)
 import Ui.DrawUtils as DrawUtils
 import Ui.Enemy
 import Ui.FiredShot as FiredShot
@@ -55,7 +54,7 @@ isometricCanvas model =
 topDownCanvas : Model -> List Renderable
 topDownCanvas model =
     [ Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 34 139 34) ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
-    , DrawUtils.drawCanvasGrid2d Area.area Area.fieldSize
+    , DrawUtils.drawCanvasGrid2D Area.area Area.fieldSize
     , Ui.Path.pathToCanvas model.path
     , Ui.Tower.towerRadius model.inspectingTower model.gameView
     , Ui.Hud.drawWaitToStartButton model.gameState model.sprite

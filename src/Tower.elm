@@ -1,5 +1,6 @@
 module Tower exposing (Tower, Towers(..), findTowerById, toTower)
 
+import Area exposing (Field(..))
 import Point exposing (Point)
 
 
@@ -13,7 +14,7 @@ type Towers
 
 type alias Tower =
     { id : Int
-    , position : Point
+    , position : Field
     , price : Int
     , damage : Int
     , attackRadius : Float
@@ -27,7 +28,7 @@ toTower : Int -> Towers -> Tower
 toTower id towers =
     let
         tower price damage attackRadius attackSpeed =
-            Tower id (Point -9999 -9999) price damage attackRadius attackSpeed 0 towers
+            Tower id (Field (Point -9999 -9999)) price damage attackRadius attackSpeed 0 towers
     in
     case towers of
         Basic ->

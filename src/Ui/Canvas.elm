@@ -1,4 +1,4 @@
-module Ui.Canvas exposing (..)
+module Ui.Canvas exposing (canvas)
 
 import Canvas exposing (Renderable)
 import GameView exposing (GameView(..))
@@ -24,13 +24,15 @@ canvas model =
                     case model.gameView of
                         Isometric ->
                             PlayScreen.isometricCanvas model
-                                ++ [ Hud.hud model.money model.hp model.sprite ]
-                                ++ [ Hud.drawWaitToStartButton model.gameState model.sprite ]
+                                ++ [ Hud.hud model.money model.hp model.sprite
+                                   , Hud.drawWaitToStartButton model.gameState model.sprite
+                                   ]
 
                         TopDown ->
                             PlayScreen.topDownCanvas model
-                                ++ [ Hud.hud model.money model.hp model.sprite ]
-                                ++ [ Hud.drawWaitToStartButton model.gameState model.sprite ]
+                                ++ [ Hud.hud model.money model.hp model.sprite
+                                   , Hud.drawWaitToStartButton model.gameState model.sprite
+                                   ]
 
                 Paused ->
                     case model.gameView of
@@ -50,13 +52,15 @@ canvas model =
                     case model.gameView of
                         Isometric ->
                             PlayScreen.isometricCanvas model
-                                ++ [ Hud.hud model.money model.hp model.sprite ]
-                                ++ [ Hud.drawWaitToStartButton model.gameState model.sprite ]
+                                ++ [ Hud.hud model.money model.hp model.sprite
+                                   , Hud.drawWaitToStartButton model.gameState model.sprite
+                                   ]
 
                         TopDown ->
                             PlayScreen.topDownCanvas model
-                                ++ [ Hud.hud model.money model.hp model.sprite ]
-                                ++ [ Hud.drawWaitToStartButton model.gameState model.sprite ]
+                                ++ [ Hud.hud model.money model.hp model.sprite
+                                   , Hud.drawWaitToStartButton model.gameState model.sprite
+                                   ]
 
                 GeneratePath ->
                     []

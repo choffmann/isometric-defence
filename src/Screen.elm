@@ -1,4 +1,4 @@
-module Screen exposing (..)
+module Screen exposing (Screen(..))
 
 
 type Screen
