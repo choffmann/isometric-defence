@@ -13,20 +13,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout current repository
-      uses: actions/checkout@v3
+      - name: Checkout current repository
+        uses: actions/checkout@v2
 
-    - name: Sparse-Checkout review repository with script
-      run: ./.github/elm-review-pltp.sh
+      - name: Sparse-Checkout review repository with script
+        run: ./.github/elm-review-pltp.sh
 
-    - run: yarn --frozen-lockfile
+      - uses: jorelali/setup-elm@v3
+        with:
+          elm-version: 0.19.1
 
-    - name: Add elm tools to PATH
-      run: yarn global bin >> $GITHUB_PATH
-
-    - name: Run elm-review
-      uses: sparksp/elm-review-action@v1.0.6
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        elm_review: elm-review
+      - name: Run elm-review
+        uses: sparksp/elm-review-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          elm_review: elm-review
