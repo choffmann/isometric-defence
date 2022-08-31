@@ -27,7 +27,7 @@ drawUiButton button text =
     in
     Canvas.group []
         [ Canvas.shapes [ Settings.fill Color.gray ] [ Canvas.rect (DrawUtils.fieldToCanvas button.position) (button.width * toFloat Area.fieldSize) (button.height * toFloat Area.fieldSize) ]
-        , Canvas.text [ Text.font { size = 24, family = "Silkscreen" }, Text.align Center, Text.baseLine Middle ] (textPosition button.position) text
+        , Canvas.text [ Text.font { size = 24, family = "JetBrains Mono" }, Text.align Center, Text.baseLine Middle ] (textPosition button.position) text
         ]
 
 

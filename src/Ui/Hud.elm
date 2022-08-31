@@ -27,7 +27,7 @@ drawBackground fromField width =
 renderText : Field -> String -> Renderable
 renderText (Field { x, y }) =
     Canvas.text
-        [ Text.font { size = 24, family = "Silkscreen" }, Text.align Left, Text.baseLine Middle ]
+        [ Text.font { size = 24, family = "JetBrains Mono" }, Text.align Left, Text.baseLine Middle ]
         ( toFloat ((x + 1) * Area.fieldSize), toFloat (y * Area.fieldSize) + (toFloat Area.fieldSize / 2) )
 
 

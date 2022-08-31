@@ -19,7 +19,7 @@ gameTitle =
 
 title : Renderable
 title =
-    Canvas.text [ Text.font { size = 50, family = "Silkscreen" }, Text.align Center, Text.baseLine Middle ] ( toFloat Area.area.width / 2, 70 ) gameTitle
+    Canvas.text [ Text.font { size = 50, family = "JetBrains Mono" }, Text.align Center, Text.baseLine Middle ] ( toFloat Area.area.width / 2, 70 ) gameTitle
 
 
 startButton : Button

@@ -17,7 +17,7 @@ helpTitle =
 
 text : Renderable
 text =
-    Canvas.text [ Text.font { size = 50, family = "Silkscreen" }, Text.align Center, Text.baseLine Middle ] ( toFloat Area.area.width / 2, 70 ) helpTitle
+    Canvas.text [ Text.font { size = 50, family = "JetBrains Mono" }, Text.align Center, Text.baseLine Middle ] ( toFloat Area.area.width / 2, 70 ) helpTitle
 
 
 helpText : Renderable
@@ -31,13 +31,13 @@ helpText =
             in
             List.indexedMap
                 (\i ->
-                    Canvas.text [ Text.font { size = 24, family = "Silkscreen" }, Text.align Left ]
+                    Canvas.text [ Text.font { size = 22, family = "JetBrains Mono" }, Text.align Left ]
                         (DrawUtils.pointToFloat (Point Area.fieldSize ((offset + i) * Area.fieldSize)))
                 )
     in
     Canvas.group []
         (drawText
-            [ "Place Tower to defense the evil boxes"
+            [ "Place Tower to defend against evil boxes"
             , ""
             , "Key Mapping:"
             , "Space        -> Start Game"

@@ -16,7 +16,7 @@ wonText =
 
 text : Renderable
 text =
-    Canvas.text [ Text.font { size = 50, family = "Silkscreen" }, Text.align Center, Text.baseLine Middle ] ( toFloat Area.area.width / 2, 70 ) wonText
+    Canvas.text [ Text.font { size = 50, family = "JetBrains Mono" }, Text.align Center, Text.baseLine Middle ] ( toFloat Area.area.width / 2, 70 ) wonText
 
 
 restartButton : Button
