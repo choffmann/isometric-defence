@@ -33,7 +33,7 @@ import UseConstantsForStyle
 import UseEtaReductions
 import UseInvertedOperators
 import UseLogicalOperators
--- import UseNamingConventions
+import UseNamingConventions
 
 
 config : List Rule
@@ -81,7 +81,7 @@ config =
     , NoNegationOfBooleanOperator.rule
     , UseConstantsForStyle.rule
     , UseInvertedOperators.rule
-    -- , UseNamingConventions.rule
+    , UseNamingConventions.rule
     , UseLogicalOperators.rule
     , UseEtaReductions.rule UseEtaReductions.LocatedError
     ]

@@ -1,4 +1,4 @@
-module Utils.Commands exposing (generateRandomDirection, getPlayAreaCanvas, getToolAreaCanvas)
+module Utils.Commands exposing (generateRandomDirection, playAreaCanvas, toolAreaCanvas)
 
 import Area exposing (Field(..))
 import Browser.Dom exposing (Element)
@@ -23,8 +23,8 @@ correctToCanvas e =
     { e | element = correctElement e.element }
 
 
-getPlayAreaCanvas : Cmd Msg
-getPlayAreaCanvas =
+playAreaCanvas : Cmd Msg
+playAreaCanvas =
     Task.attempt
         (\result ->
             Messages.Canvas PlayArea
@@ -39,8 +39,8 @@ getPlayAreaCanvas =
         (Browser.Dom.getElement "playAreaContainer")
 
 
-getToolAreaCanvas : Cmd Msg
-getToolAreaCanvas =
+toolAreaCanvas : Cmd Msg
+toolAreaCanvas =
     Task.attempt
         (\result ->
             Messages.Canvas ToolArea

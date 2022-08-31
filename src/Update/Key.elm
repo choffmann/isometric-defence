@@ -80,7 +80,7 @@ update key model =
 
                 Isometric ->
                     { model | gameView = TopDown }
-            , Cmd.batch [ Commands.getPlayAreaCanvas, Commands.getToolAreaCanvas ]
+            , Cmd.batch [ Commands.playAreaCanvas, Commands.toolAreaCanvas ]
             )
 
         ArrowDown ->
