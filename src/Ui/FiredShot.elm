@@ -1,6 +1,6 @@
 module Ui.FiredShot exposing (drawShot)
 
-import Area exposing (Field(..))
+import Area
 import Canvas exposing (Renderable)
 import Canvas.Settings as Settings
 import Canvas.Settings.Line as Line
