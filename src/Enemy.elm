@@ -1,4 +1,4 @@
-module Enemy exposing (Enemies(..), Enemy, round1, round2, round3, round4, round5, round6, round7)
+module Enemy exposing (Enemies(..), Enemy, findEnemyById, round1, round2, round3, round4, round5, round6, round7)
 
 import Area exposing (Field(..))
 import Point exposing (Point)
@@ -153,8 +153,7 @@ round6 =
 
 round7 : List Enemy
 round7 =
-    [ toEnemy Palette 701 -10
-    ]
+    [ toEnemy Palette 701 -10 ]
 
 
 toEnemy : Enemies -> Int -> Float -> Enemy
@@ -184,3 +183,17 @@ toEnemy enemies id distance =
 
         Palette ->
             enemy 1000 1 1000 1000
+
+
+findEnemyById : Int -> List Enemy -> Maybe Enemy
+findEnemyById id enemies =
+    case enemies of
+        [] ->
+            Nothing
+
+        h :: hs ->
+            if id == h.id then
+                Just h
+
+            else
+                findEnemyById id hs
