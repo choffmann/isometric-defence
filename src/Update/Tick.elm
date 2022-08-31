@@ -1,10 +1,9 @@
 module Update.Tick exposing (update)
 
-import Area exposing (Field(..), isOutOfBounds)
+import Area exposing (Field(..))
 import Enemy exposing (Enemy)
 import Model exposing (FiredShot, GameState(..), Model, Round(..))
 import Path exposing (Path)
-import Point exposing (Point)
 import Screen exposing (Screen(..))
 import Tower exposing (Tower)
 import Ui.Animation as Animation
@@ -100,20 +99,22 @@ inRange field1 radius field2 =
 
 
 moveEnemies : Float -> Float -> Path -> List Enemy -> List Enemy
-moveEnemies globalSpeedMulti delta path =
+moveEnemies globalSpeedMulti delta path enemies =
     let
         moveAmount distance speed =
             distance + (speed * 0.025 * delta * globalSpeedMulti)
     in
-    List.map
-        (\enemy ->
-            { enemy
-                | distance = moveAmount enemy.distance enemy.speed
-                , position =
-                    moveAmount enemy.distance enemy.speed
-                        |> Path.distanceToPathPoint path
-            }
-        )
+    enemies
+        |> List.map
+            (\enemy ->
+                { enemy
+                    | distance = moveAmount enemy.distance enemy.speed
+                    , position =
+                        moveAmount enemy.distance enemy.speed
+                            |> Path.distanceToPathPoint path
+                }
+            )
+        |> List.sortBy (\enemy -> enemy.distance)
 
 
 cooldownTowers : Float -> Float -> List Tower -> List Tower
