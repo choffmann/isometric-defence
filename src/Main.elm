@@ -4,7 +4,9 @@ import Area
 import Browser
 import Browser.Events
 import Canvas
+import Canvas.Settings
 import Canvas.Texture as Texture
+import Color
 import Html exposing (Html, div)
 import Html.Attributes exposing (id)
 import Html.Events exposing (onMouseEnter)
@@ -58,7 +60,7 @@ view model =
                     [ div
                         (onMouseEnter Messages.EnterCanvas :: id "toolAreaContainer" :: Styles.canvasStyles Ui.Tower.towerArea)
                         [ Canvas.toHtmlWith
-                            { width = Area.area.width, height = Area.area.height, textures = textures }
+                            { width = Ui.Tower.towerArea.width, height = Ui.Tower.towerArea.height, textures = textures }
                             []
                             (case model.sprite of
                                 Loading ->
@@ -74,19 +76,54 @@ view model =
                     ]
 
                 PauseScreen ->
-                    []
+                    [ div
+                        (onMouseEnter Messages.EnterCanvas :: id "toolAreaContainer" :: Styles.canvasStyles Ui.Tower.towerArea)
+                        [ Canvas.toHtml
+                            ( Ui.Tower.towerArea.width, Ui.Tower.towerArea.height )
+                            []
+                            [ Canvas.shapes [ Canvas.Settings.fill Color.grey ] [ Canvas.rect ( 0, 0 ) (toFloat Ui.Tower.towerArea.width) (toFloat Ui.Tower.towerArea.height) ] ]
+                        ]
+                    ]
 
                 StartScreen ->
-                    []
+                    [ div
+                        (onMouseEnter Messages.EnterCanvas :: id "toolAreaContainer" :: Styles.canvasStyles Ui.Tower.towerArea)
+                        [ Canvas.toHtml
+                            ( Ui.Tower.towerArea.width, Ui.Tower.towerArea.height )
+                            []
+                            [ Canvas.shapes [ Canvas.Settings.fill Color.grey ] [ Canvas.rect ( 0, 0 ) (toFloat Ui.Tower.towerArea.width) (toFloat Ui.Tower.towerArea.height) ] ]
+                        ]
+                    ]
 
                 WonScreen ->
-                    []
+                    [ div
+                        (onMouseEnter Messages.EnterCanvas :: id "toolAreaContainer" :: Styles.canvasStyles Ui.Tower.towerArea)
+                        [ Canvas.toHtml
+                            ( Ui.Tower.towerArea.width, Ui.Tower.towerArea.height )
+                            []
+                            [ Canvas.shapes [ Canvas.Settings.fill Color.grey ] [ Canvas.rect ( 0, 0 ) (toFloat Ui.Tower.towerArea.width) (toFloat Ui.Tower.towerArea.height) ] ]
+                        ]
+                    ]
 
                 LostScreen ->
-                    []
+                    [ div
+                        (onMouseEnter Messages.EnterCanvas :: id "toolAreaContainer" :: Styles.canvasStyles Ui.Tower.towerArea)
+                        [ Canvas.toHtml
+                            ( Ui.Tower.towerArea.width, Ui.Tower.towerArea.height )
+                            []
+                            [ Canvas.shapes [ Canvas.Settings.fill Color.grey ] [ Canvas.rect ( 0, 0 ) (toFloat Ui.Tower.towerArea.width) (toFloat Ui.Tower.towerArea.height) ] ]
+                        ]
+                    ]
 
                 HelpScreen ->
-                    []
+                    [ div
+                        (onMouseEnter Messages.EnterCanvas :: id "toolAreaContainer" :: Styles.canvasStyles Ui.Tower.towerArea)
+                        [ Canvas.toHtml
+                            ( Ui.Tower.towerArea.width, Ui.Tower.towerArea.height )
+                            []
+                            [ Canvas.shapes [ Canvas.Settings.fill Color.grey ] [ Canvas.rect ( 0, 0 ) (toFloat Ui.Tower.towerArea.width) (toFloat Ui.Tower.towerArea.height) ] ]
+                        ]
+                    ]
             )
         ]
 
