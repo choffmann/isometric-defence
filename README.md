@@ -1,11 +1,10 @@
 # Isometric-Defence
 in cooperation with [@akatranlp](https://github.com/akatranlp)
 
-| TopDown                               | Isometric                                 |
-|---------------------------------------|-------------------------------------------|
-| ![TopDown](docs/img/topdown-view.png) | ![Isometric](docs/img/isometric-view.png) |
+<p align="center">
+  <img src="docs/img/title-animation-transparent.gif" />
+</p>
 
-Tower-Defence Game developed in Elm. You can switch between TopDown- and Isometric View
 
 ## Get started
 To run the game, build the `src/Main.elm` file into `public/elm.js`, like
@@ -24,3 +23,11 @@ python3 -m http.server
 Now you can open the game over `http://localhost:8000` 
 
 Or open the game over GitHub-Pages on https://choffmann.github.io/isometric-defence/
+
+## The Game
+
+| TopDown                               | Isometric                                 |
+|---------------------------------------|-------------------------------------------|
+| ![TopDown](docs/img/topdown-view.png) | ![Isometric](docs/img/isometric-view.png) |
+
+Tower-Defence Game developed in Elm. You can switch between TopDown- and Isometric View
