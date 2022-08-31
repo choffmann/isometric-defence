@@ -41,7 +41,7 @@ update mPixel gameArea model =
                         Running ->
                             ( case
                                 ( mPixel
-                                    |> Maybe.map (Area.pixelToField model.gameView)
+                                    |> Maybe.map (Area.pixelToField TopDown)
                                     |> Area.isOutOfBounds
                                 , model.placingTower
                                 )
@@ -73,7 +73,7 @@ update mPixel gameArea model =
                         WaitToStart ->
                             ( case
                                 ( mPixel
-                                    |> Maybe.map (Area.pixelToField model.gameView)
+                                    |> Maybe.map (Area.pixelToField TopDown)
                                     |> Area.isOutOfBounds
                                 , model.placingTower
                                 )

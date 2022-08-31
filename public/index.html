@@ -3,7 +3,7 @@
 
 <head>
 	<meta charset="UTF-8">
-	<title>Main</title>
+	<title>Isometric Defense</title>
 	<link rel="preconnect" href="https://fonts.gstatic.com">
 	<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400&display=swap" rel="stylesheet">
 	<style>
@@ -21,8 +21,8 @@
 			display: flex;
 			flex-direction: column;
 			align-items: center;
+			justify-content: center;
 		}
-
 	</style>
 	<script src="https://unpkg.com/elm-canvas@2.2/elm-canvas.js"></script>
 	<script src="elm.js"></script>
@@ -44,8 +44,7 @@
 				}
 			});
 			var app = Elm.Main.init({
-				node: document.getElementById("elm"),
-				flags: { "msg": "Hello World!!!" }
+				node: document.getElementById("elm")
 			});
 
 			app.ports.sendEventMessage.subscribe((e) => {
@@ -73,14 +72,14 @@
 						}
 					}
 				}
-			})
+			});
 
 			document.addEventListener("fullscreenchange", (e) => {
 				app.ports.eventMessageReceiver.send({
 					event: "fullScreenChanged",
 					message: document.fullscreenElement ? "opened" : "closed"
 				})
-			})
+			});
 		}
 		catch (e) {
 			// display initialization errors (e.g. bad flags, infinite recursion)
