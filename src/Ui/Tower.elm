@@ -182,7 +182,7 @@ selectionToSprite tower texture =
             texture.tower3.selection
 
         Tower4 ->
-            texture.tower3.selection
+            texture.tower4.selection
 
 
 towerToSprite : Tower -> TowerTexture -> Texture
@@ -201,7 +201,7 @@ towerToSprite tower texture =
             texture.tower3.tower
 
         Tower4 ->
-            texture.tower3.tower
+            texture.tower4.tower
 
 
 availableTowers : List Towers

@@ -1,4 +1,4 @@
-module Model exposing (FiredShot, GameState(..), Model, PlacingTower, Round(..), init, restart)
+module Model exposing (FiredShot, GameState(..), Model, PlacingTower, init, restart)
 
 import Area exposing (Field)
 import Browser.Dom exposing (Element)
@@ -7,6 +7,7 @@ import FullScreenMode exposing (FullScreenMode)
 import GameView exposing (GameView(..))
 import Messages exposing (Msg)
 import Path exposing (Path)
+import Round exposing (Round(..))
 import Screen exposing (Screen(..))
 import Sprite exposing (Sprite)
 import Tower exposing (Tower)
@@ -62,16 +63,6 @@ type alias Model =
     , shotsFired : List FiredShot
     , round : Round
     }
-
-
-type Round
-    = Round1
-    | Round2
-    | Round3
-    | Round4
-    | Round5
-    | Round6
-    | Round7
 
 
 restart : Model -> ( Model, Cmd Msg )

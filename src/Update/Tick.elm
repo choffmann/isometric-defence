@@ -2,8 +2,9 @@ module Update.Tick exposing (update)
 
 import Area exposing (Field(..))
 import Enemy exposing (Enemy)
-import Model exposing (FiredShot, GameState(..), Model, Round(..))
+import Model exposing (FiredShot, GameState(..), Model)
 import Path exposing (Path)
+import Round exposing (Round(..))
 import Screen exposing (Screen(..))
 import Tower exposing (Tower)
 import Ui.Animation as Animation

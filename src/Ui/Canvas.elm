@@ -3,6 +3,7 @@ module Ui.Canvas exposing (canvas)
 import Canvas exposing (Renderable)
 import GameView exposing (GameView(..))
 import Model exposing (GameState(..), Model)
+import Round
 import Screen exposing (Screen(..))
 import Ui.Hud as Hud
 import Ui.Screens.LostScreen as LostScreen
@@ -24,13 +25,13 @@ canvas model =
                     case model.gameView of
                         Isometric ->
                             PlayScreen.isometricCanvas model
-                                ++ [ Hud.hud model.money model.hp model.sprite
+                                ++ [ Hud.hud model.money model.hp (Round.roundToInt model.round) model.sprite
                                    , Hud.drawWaitToStartButton model.gameState model.sprite
                                    ]
 
                         TopDown ->
                             PlayScreen.topDownCanvas model
-                                ++ [ Hud.hud model.money model.hp model.sprite
+                                ++ [ Hud.hud model.money model.hp (Round.roundToInt model.round) model.sprite
                                    , Hud.drawWaitToStartButton model.gameState model.sprite
                                    ]
 
@@ -52,13 +53,13 @@ canvas model =
                     case model.gameView of
                         Isometric ->
                             PlayScreen.isometricCanvas model
-                                ++ [ Hud.hud model.money model.hp model.sprite
+                                ++ [ Hud.hud model.money model.hp (Round.roundToInt model.round) model.sprite
                                    , Hud.drawWaitToStartButton model.gameState model.sprite
                                    ]
 
                         TopDown ->
                             PlayScreen.topDownCanvas model
-                                ++ [ Hud.hud model.money model.hp model.sprite
+                                ++ [ Hud.hud model.money model.hp (Round.roundToInt model.round) model.sprite
                                    , Hud.drawWaitToStartButton model.gameState model.sprite
                                    ]
 

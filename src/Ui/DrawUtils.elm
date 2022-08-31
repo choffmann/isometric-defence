@@ -1,4 +1,4 @@
-module Ui.DrawUtils exposing (drawCanvasGrid2D, drawTextOverPoint, fieldToCanvas, placeIsometricTile, placeIsometricTileWithMatrix, placeTopDownTile, pointToCanvas, pointToFloat)
+module Ui.DrawUtils exposing (centerPoint, drawCanvasGrid2D, drawTextOverPoint, fieldToCanvas, placeIsometricTile, placeIsometricTileWithMatrix, placeTopDownTile, pointToCanvas, pointToFloat)
 
 import Area exposing (Area, Field(..), IsometricMatrix)
 import Canvas exposing (PathSegment, Renderable, Shape)
@@ -7,6 +7,7 @@ import Canvas.Settings.Line
 import Canvas.Settings.Text as Text exposing (TextAlign(..), TextBaseLine(..))
 import Canvas.Texture exposing (Texture)
 import Color
+import GameView exposing (GameView(..))
 import Point exposing (Point)
 
 
@@ -40,6 +41,16 @@ drawCanvasGrid2D area fieldSize =
             drawHeight [] 0
     in
     Canvas.shapes [ Canvas.Settings.Line.lineWidth 1, Canvas.Settings.Line.lineDash [ 4 ] ] [ Canvas.path ( 0, 0 ) draw ]
+
+
+centerPoint : GameView -> Point -> Canvas.Point
+centerPoint gameView { x, y } =
+    case gameView of
+        Isometric ->
+            ( toFloat x + 0.5, toFloat y - 0.75 )
+
+        TopDown ->
+            ( toFloat x + 0.5, toFloat y + 0.5 )
 
 
 pointToCanvas : Field -> Float -> Float -> Shape

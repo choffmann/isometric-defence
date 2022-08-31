@@ -69,8 +69,33 @@ drawCoin =
     drawInternal 0
 
 
-hud : Int -> Int -> Load Sprite -> Renderable
-hud money hp loadTexture =
+drawRound : Int -> Renderable
+drawRound round =
+    let
+        width : Field -> Float
+        width (Field { x }) =
+            toFloat (x + (6 * Area.fieldSize))
+
+        textFieldPostion : Field -> Field
+        textFieldPostion (Field { x, y }) =
+            Field (Point (x - 1) y)
+
+        internal : Field -> Renderable
+        internal field =
+            Canvas.group []
+                [ Canvas.shapes [ Settings.fill (Color.rgba 50 50 50 0.5) ]
+                    [ drawBackground field (width field)
+                    ]
+                , renderText (textFieldPostion field) ("Round: " ++ String.fromInt round ++ "/7")
+                ]
+    in
+    Point 0 0
+        |> Field
+        |> internal
+
+
+hud : Int -> Int -> Int -> Load Sprite -> Renderable
+hud money hp round loadTexture =
     case loadTexture of
         Loading ->
             Canvas.shapes [] []
@@ -79,6 +104,7 @@ hud money hp loadTexture =
             Canvas.group []
                 [ drawCoin money sprite.ui.coin
                 , drawHp hp sprite.ui.heart
+                , drawRound round
                 ]
 
         Failure ->

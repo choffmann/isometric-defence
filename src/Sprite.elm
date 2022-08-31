@@ -39,6 +39,7 @@ type alias TowerAreaSprite =
     , tower1 : Texture
     , tower2 : Texture
     , tower3 : Texture
+    , tower4 : Texture
     }
 
 
