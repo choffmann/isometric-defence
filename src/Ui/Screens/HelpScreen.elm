@@ -40,13 +40,13 @@ helpText =
             [ "Place Tower to defend against evil boxes"
             , ""
             , "Key Mapping:"
-            , "Space        -> Start Game"
-            , "F            -> Enter/Exit FullScreen"
-            , "R            -> Restart Game"
-            , "I            -> Change GameView"
-            , "P            -> Pause Game"
-            , "ArrowUp      -> Speed Up Game"
-            , "ArrowDown    -> Speed Down Game"
+            , "Space       ->    Start Game"
+            , "F           ->    Enter/Exit FullScreen"
+            , "R           ->    Restart Game"
+            , "I           ->    Change GameView"
+            , "P           ->    Pause Game"
+            , "ArrowUp     ->    Speed Up Game"
+            , "ArrowDown   ->    Speed Down Game"
             ]
         )
 
