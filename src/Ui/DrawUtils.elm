@@ -1,6 +1,6 @@
 module Ui.DrawUtils exposing (centerField, centerPixel, drawCanvasGrid2D, drawTextOverPoint, fieldToCanvas, placeIsometricTile, placeIsometricTileWithMatrix, placeTopDownTile, pointToCanvas, pointToFloat)
 
-import Area exposing (Area, Field(..), IsometricMatrix, Pixel(..))
+import Area exposing (Field(..), IsometricMatrix, Pixel(..))
 import Canvas exposing (PathSegment, Renderable, Shape)
 import Canvas.Settings as Settings
 import Canvas.Settings.Line
@@ -8,7 +8,6 @@ import Canvas.Settings.Text as Text exposing (TextAlign(..), TextBaseLine(..))
 import Canvas.Texture exposing (Texture)
 import Color
 import GameView exposing (GameView(..))
-import Path exposing (Path)
 import Point exposing (Point)
 
 
