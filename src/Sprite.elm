@@ -11,10 +11,10 @@ type alias TowerSprite =
 
 type alias TowerTexture =
     { basic : TowerSprite
-    , tower1 : TowerSprite
-    , tower2 : TowerSprite
-    , tower3 : TowerSprite
-    , tower4 : TowerSprite
+    , gun : TowerSprite
+    , cannon : TowerSprite
+    , sniper : TowerSprite
+    , minigun : TowerSprite
     }
 
 
@@ -36,10 +36,10 @@ type alias EnemyTexture =
 type alias TowerAreaSprite =
     { deselect : Texture
     , basic : Texture
-    , tower1 : Texture
-    , tower2 : Texture
-    , tower3 : Texture
-    , tower4 : Texture
+    , gun : Texture
+    , cannon : Texture
+    , sniper : Texture
+    , minigun : Texture
     }
 
 

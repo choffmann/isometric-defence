@@ -69,7 +69,15 @@ restart : Model -> ( Model, Cmd Msg )
 restart model =
     let
         newModel ( initModel, command ) =
-            ( { initModel | playCanvas = model.playCanvas, toolCanvas = model.toolCanvas, fullscreen = model.fullscreen, speedMulti = model.speedMulti }, command )
+            ( { initModel
+                | playCanvas = model.playCanvas
+                , toolCanvas = model.toolCanvas
+                , fullscreen = model.fullscreen
+                , speedMulti = model.speedMulti
+                , gameView = model.gameView
+              }
+            , command
+            )
     in
     init
         |> newModel

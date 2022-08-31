@@ -43,22 +43,18 @@ drawShot gameView towerList enemyList =
 
         calcPosition : Float -> Float -> Maybe Enemy -> Maybe Tower -> Maybe ( Canvas.Point, Canvas.Point )
         calcPosition distance range maybeEnemy maybeTower =
-            case maybeTower of
-                Nothing ->
-                    Nothing
-
-                Just tower ->
-                    case maybeEnemy of
-                        Nothing ->
-                            Nothing
-
-                        Just enemy ->
-                            Just
-                                (createPointFromDistance distance
-                                    |> calcRatio range
-                                    |> addToVector (createVector ( tower.position |> DrawUtils.centerField gameView, enemy.position |> DrawUtils.centerField gameView ))
-                                    |> addTowerPosition (tower.position |> DrawUtils.centerField gameView)
+            maybeTower
+                |> Maybe.andThen
+                    (\tower ->
+                        maybeEnemy
+                            |> Maybe.map
+                                (\enemy ->
+                                    createPointFromDistance distance
+                                        |> calcRatio range
+                                        |> addToVector (createVector ( tower.position |> DrawUtils.centerField gameView, enemy.position |> DrawUtils.centerField gameView ))
+                                        |> addTowerPosition (tower.position |> DrawUtils.centerField gameView)
                                 )
+                    )
 
         toTopDown : Canvas.Point -> Canvas.Point
         toTopDown ( x, y ) =

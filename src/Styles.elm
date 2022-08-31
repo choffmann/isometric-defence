@@ -33,4 +33,10 @@ canvasStyles area =
 
 appContainer : List (Attribute msg)
 appContainer =
-    [ style "background-color" "white" ]
+    [ style "background-color" "white"
+    , style "flex-grow" "1"
+    , style "display" "flex"
+    , style "align-items" "center"
+    , style "justify-content" "center"
+    , style "flex-direction" "column"
+    ]
