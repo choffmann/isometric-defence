@@ -14,7 +14,7 @@ jobs:
 
     steps:
     - name: Checkout current repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Sparse-Checkout review repository with script
       run: ./.github/elm-review-pltp.sh
@@ -25,7 +25,7 @@ jobs:
       run: yarn global bin >> $GITHUB_PATH
 
     - name: Run elm-review
-      uses: sparksp/elm-review-action@v1
+      uses: sparksp/elm-review-action@v1.0.6
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
