@@ -22,7 +22,7 @@ concurrency:
 
 jobs:
   elm-format_validate:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout current repository
@@ -37,7 +37,7 @@ jobs:
       run: elm-format --validate src/ | jq 'map("::error file=" + .path + "::" + .message) | length > 0 and error("\n" + join("\n"))'
 
   elm-review_lint:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout current repository
