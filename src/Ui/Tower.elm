@@ -3,7 +3,6 @@ module Ui.Tower exposing (pixelToTower, placingTowerToCanvas, renderPlacingTower
 import Area exposing (Area, Field(..), Pixel(..))
 import Canvas exposing (Renderable, Shape)
 import Canvas.Settings
-import Canvas.Settings.Advanced
 import Canvas.Settings.Line
 import Canvas.Settings.Text
 import Canvas.Texture exposing (Texture)
@@ -118,10 +117,6 @@ towersToCanvas towers =
                     [ towerColor tower.towerType ]
                     [ DrawUtils.pointToCanvas tower.position (toFloat Area.fieldSize) (toFloat Area.fieldSize) ]
             )
-
-
-
---Canvas.shapes [ Canvas.Settings.fill (Color.rgb255 49 162 242) ]
 
 
 placingTowerToCanvas : PlacingTower -> List Renderable
@@ -277,8 +272,7 @@ towersToSelectArea towers texture =
         canvasShape i j tower =
             Canvas.group []
                 [ Canvas.texture
-                    [ Canvas.Settings.Advanced.transform [] ]
-                    -- Center Sprite in Tower Area Field
+                    []
                     ( toFloat i * towerFieldSize + ((towerFieldSize - towerSpriteWidth) / 2), toFloat (currentHeight j) * towerFieldSize + 3 )
                     (case tower of
                         Basic ->
