@@ -8,7 +8,6 @@ import Color
 import Enemy exposing (Enemy)
 import GameView exposing (GameView(..))
 import Model exposing (FiredShot)
-import Point exposing (Point)
 import Tower exposing (Tower)
 import Ui.DrawUtils as DrawUtils
 
@@ -16,7 +15,7 @@ import Ui.DrawUtils as DrawUtils
 drawShot : GameView -> List Tower -> List Enemy -> List FiredShot -> List Renderable
 drawShot gameView towerList enemyList =
     let
-        createVector : ( Canvas.Point, Canvas.Point ) -> ( Float, Float )
+        createVector : ( ( Float, Float ), ( Float, Float ) ) -> ( Float, Float )
         createVector ( ( ex, ey ), ( tx, ty ) ) =
             ( tx - ex, ty - ey )
 
@@ -57,13 +56,9 @@ drawShot gameView towerList enemyList =
                             Just
                                 (createPointFromDistance distance
                                     |> calcRatio range
-                                    |> addToVector (createVector ( fieldToPoint tower.position |> DrawUtils.centerPoint gameView, fieldToPoint enemy.position |> DrawUtils.centerPoint gameView ))
-                                    |> addTowerPosition (fieldToPoint tower.position |> DrawUtils.centerPoint gameView)
+                                    |> addToVector (createVector ( tower.position |> DrawUtils.centerField gameView, enemy.position |> DrawUtils.centerField gameView ))
+                                    |> addTowerPosition (tower.position |> DrawUtils.centerField gameView)
                                 )
-
-        fieldToPoint : Field -> Point
-        fieldToPoint (Field point) =
-            point
 
         toTopDown : Canvas.Point -> Canvas.Point
         toTopDown ( x, y ) =

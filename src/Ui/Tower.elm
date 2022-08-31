@@ -19,30 +19,54 @@ import Ui.DrawUtils as DrawUtils
 towerRadius : Maybe Tower -> GameView -> Renderable
 towerRadius mTower gameView =
     let
-        centerPoint : Pixel -> Pixel
-        centerPoint (Pixel { x, y }) =
-            Point (x + (Area.fieldSize // 2)) (y + (Area.fieldSize // 2))
-                |> Pixel
-
         towerPositionToPixel : Field -> Canvas.Point
         towerPositionToPixel field =
             field
                 |> Area.fieldToPixel
-                |> centerPoint
+                |> DrawUtils.centerPixel
                 |> Area.pixelToPoint
                 |> DrawUtils.pointToFloat
 
-        centerIsoPoint : Point -> Canvas.Point
-        centerIsoPoint { x, y } =
-            ( toFloat x - 0.5, toFloat y - 0.5 )
+        isoTowerRadius : Float -> Canvas.Point -> List Shape
+        isoTowerRadius radius ( x, y ) =
+            let
+                s1 =
+                    ( x - radius, y + radius )
 
-        iso : Float -> Canvas.Point -> List Shape
-        iso radius ( x, y ) =
-            [ Canvas.path (Area.isometricOffset (Area.canvasPointToIsometric Area.isometricMatrix ( x, y )))
-                [ Canvas.lineTo (Area.isometricOffset (Area.canvasPointToIsometric Area.isometricMatrix ( x, y - radius )))
-                , Canvas.lineTo (Area.isometricOffset (Area.canvasPointToIsometric Area.isometricMatrix ( x + radius, y - radius )))
-                , Canvas.lineTo (Area.isometricOffset (Area.canvasPointToIsometric Area.isometricMatrix ( x + radius, y )))
-                , Canvas.lineTo (Area.isometricOffset (Area.canvasPointToIsometric Area.isometricMatrix ( x, y )))
+                s2 =
+                    ( x + radius, y - radius )
+
+                s3 =
+                    ( x - radius, y - radius )
+
+                s4 =
+                    ( x + radius, y + radius )
+
+                p1 =
+                    ( x, y + radius )
+
+                p2 =
+                    ( x + radius, y )
+
+                p3 =
+                    ( x - radius, y )
+
+                p4 =
+                    ( x, y - radius )
+
+                toIsometric : Canvas.Point -> Canvas.Point
+                toIsometric point =
+                    Area.isometricOffset (Area.canvasPointToIsometric Area.isometricMatrix point)
+            in
+            [ Canvas.path
+                (toIsometric p1)
+                [ Canvas.quadraticCurveTo (toIsometric s1) (toIsometric p3)
+                , Canvas.moveTo (toIsometric p2)
+                , Canvas.quadraticCurveTo (toIsometric s2) (toIsometric p4)
+                , Canvas.moveTo (toIsometric p3)
+                , Canvas.quadraticCurveTo (toIsometric s3) (toIsometric p4)
+                , Canvas.moveTo (toIsometric p1)
+                , Canvas.quadraticCurveTo (toIsometric s4) (toIsometric p2)
                 ]
             ]
     in
@@ -61,10 +85,8 @@ towerRadius mTower gameView =
 
                     Isometric ->
                         tower.position
-                            |> Area.fieldToPoint
-                            --|> centerIsoPoint
-                            |> DrawUtils.pointToFloat
-                            |> iso 3
+                            |> DrawUtils.centerField Isometric
+                            |> isoTowerRadius tower.attackRadius
         )
 
 
