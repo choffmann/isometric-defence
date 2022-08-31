@@ -164,22 +164,22 @@ toEnemy enemies id distance =
     in
     case enemies of
         CardBoardBox ->
-            enemy 1 10 1 0
+            enemy 1 10 1 1
 
         WoodenBox ->
-            enemy 2 8 2 0
+            enemy 2 8 2 2
 
         RedBox ->
-            enemy 3 3 3 0
+            enemy 3 3 3 3
 
         BlueBox ->
-            enemy 4 4 4 0
+            enemy 4 4 4 4
 
         YellowBox ->
-            enemy 5 5 5 0
+            enemy 5 5 5 5
 
         MetalBox ->
-            enemy 20 2 10 0
+            enemy 20 2 10 20
 
         Palette ->
             enemy 1000 1 1000 1000
