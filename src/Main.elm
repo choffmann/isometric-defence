@@ -140,6 +140,7 @@ subscriptions model =
         startScreenAnimation =
             always
                 ++ [ Browser.Events.onClick (Decoder.leftClickDecoder model)
+                   , Browser.Events.onKeyDown Decoder.keyDecoder
                    , Browser.Events.onAnimationFrameDelta Tick
                    ]
 

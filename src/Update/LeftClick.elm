@@ -201,7 +201,7 @@ update mPixel gameArea model =
 
                         Just field ->
                             if Button.onButton HelpScreen.backButton field then
-                                ( { model | clicked = Just field, screen = StartScreen }, Cmd.none )
+                                ( { model | clicked = Just field, screen = StartScreen, gameState = StartScreenAnimation }, Cmd.none )
 
                             else
                                 ( { model | clicked = Just field }, Cmd.none )
