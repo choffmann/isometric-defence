@@ -50,6 +50,7 @@ isometricCanvas model =
     Canvas.shapes [ Canvas.Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
         :: renderIsoSprites model
         ++ FiredShot.drawShot model.gameView model.towers model.enemies model.shotsFired
+        ++ [ Ui.Tower.towerRadius model.inspectingTower model.gameView ]
 
 
 topDownCanvas : Model -> List Renderable
