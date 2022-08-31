@@ -30,8 +30,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         
-      - name: Setup Elm
-        uses: justgook/setup-elm@1.2.0
+      - run: yarn --frozen-lockfile
+
+      - name: Add elm tools to PATH
+        run: yarn global bin >> $GITHUB_PATH
         
       - name: Deploy elm.js
         run: elm make .\src\Main.elm --output=public\elm.js
