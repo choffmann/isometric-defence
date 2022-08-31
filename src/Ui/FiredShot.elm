@@ -60,8 +60,8 @@ drawShot gameView towerList enemyList =
                             Just
                                 (createPointFromDistance distance
                                     |> calcRatio range
-                                    |> addToVector (createVector ( centerPoint tower.position, fieldToPoint enemy.position |> centerPoint ))
-                                    |> addTowerPosition (centerPoint tower.position)
+                                    |> addToVector (createVector ( fieldToPoint tower.position |> centerPoint, fieldToPoint enemy.position |> centerPoint ))
+                                    |> addTowerPosition (fieldToPoint tower.position |> centerPoint)
                                 )
 
         fieldToPoint : Field -> Point
