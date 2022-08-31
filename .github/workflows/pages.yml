@@ -24,7 +24,7 @@ jobs:
 
   deploy:
     environment:
-      name: github-pages
+      name: Isometric-Defence
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
