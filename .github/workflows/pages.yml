@@ -21,45 +21,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  elm-format_validate:
-    runs-on: ubuntu-latest
 
-    steps:
-    - name: Checkout current repository
-      uses: actions/checkout@v3
-
-    - run: yarn --frozen-lockfile
-
-    - name: Add elm tools to PATH
-      run: yarn global bin >> $GITHUB_PATH
-
-    - name: Run elm-format
-      run: elm-format --validate src/ | jq 'map("::error file=" + .path + "::" + .message) | length > 0 and error("\n" + join("\n"))'
-
-  elm-review_lint:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout current repository
-      uses: actions/checkout@v3
-
-    - name: Sparse-Checkout review repository with script
-      run: ./.github/elm-review-pltp.sh
-
-    - run: yarn --frozen-lockfile
-
-    - name: Add elm tools to PATH
-      run: yarn global bin >> $GITHUB_PATH
-
-    - name: Run elm-review
-      uses: sparksp/elm-review-action@v1.0.6
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        elm_review: elm-review
-        
   deploy:
-    needs: [elm-review_lint, elm-format_validate]
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -68,10 +31,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         
-      - run: yarn --frozen-lockfile
-
-      - name: Add elm tools to PATH
-        run: yarn global bin >> $GITHUB_PATH
+      - uses: jorelali/setup-elm@v3
+        with:
+          elm-version: 0.19.1
         
       - name: Deploy elm.js
         run: elm make .\src\Main.elm --output=public\elm.js
