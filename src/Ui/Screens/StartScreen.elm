@@ -65,13 +65,16 @@ canvas floorTexture mFloor =
 generateFloor : List Floor
 generateFloor =
     let
+        offset =
+            -5
+
         drawWidth : List Floor -> Int -> Int -> List Floor
         drawWidth list i j =
             if j >= Area.widthTiles then
                 list
 
             else
-                { position = ( toFloat i, toFloat j )
+                { position = ( toFloat i + offset, toFloat j + offset )
                 , matrix = Area.isometricMatrix
                 , elapsedTime = 0
                 }

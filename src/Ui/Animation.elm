@@ -35,14 +35,14 @@ animatedFloor delta offsetY1 offsetY2 floor =
             let
                 speed : Float
                 speed =
-                    0.0015
+                    0.002
 
                 amplitude : Float
                 amplitude =
-                    0.2
+                    0.15
             in
-            { y1 = amplitude * (matrix.y1 - sin (time * speed + offsetY1)) --+ 0.1
-            , y2 = amplitude * (matrix.y2 - sin (time * speed + offsetY2)) --+ 0.1-}
+            { y1 = amplitude * (matrix.y1 + sin (time * speed + offsetY1))
+            , y2 = amplitude * (matrix.y2 + sin (time * speed + offsetY2))
             , x1 = 0.9
             , x2 = -0.9
             }
@@ -56,4 +56,4 @@ animatedFloor delta offsetY1 offsetY2 floor =
                 | matrix = updateMatrix x.elapsedTime x.matrix
                 , elapsedTime = x.elapsedTime + delta
             }
-                :: animatedFloor delta (offsetY1 + 0.008) (offsetY2 + 0.007) xs
+                :: animatedFloor delta (offsetY1 + 0.008) (offsetY2 + 0.02) xs
