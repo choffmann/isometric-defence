@@ -8,37 +8,40 @@ import Canvas.Settings.Text as Text exposing (TextAlign(..), TextBaseLine(..))
 import Canvas.Texture exposing (Texture)
 import Color
 import GameView exposing (GameView(..))
+import Path exposing (Path)
 import Point exposing (Point)
 
 
-drawCanvasGrid2D : Area -> Int -> Renderable
-drawCanvasGrid2D area fieldSize =
+drawCanvasGrid2D : Renderable
+drawCanvasGrid2D =
     let
-        drawLine : Float -> Float -> Float -> Float -> List PathSegment
+        drawLine : Float -> Float -> Float -> Float -> ( PathSegment, PathSegment )
         drawLine fromX fromY toX toY =
-            [ Canvas.moveTo ( fromX, fromY ), Canvas.lineTo ( toX, toY ) ]
+            ( Canvas.moveTo ( fromX, fromY ), Canvas.lineTo ( toX, toY ) )
 
-        drawWidth : List PathSegment -> Int -> List PathSegment
-        drawWidth list index =
-            if index == area.height then
-                list
-
-            else
-                drawLine (toFloat (index * fieldSize)) 0 (toFloat (index * fieldSize)) (toFloat area.height)
-                    |> List.append (drawWidth list (index + 1))
-
-        drawHeight : List PathSegment -> Int -> List PathSegment
-        drawHeight list index =
-            if index == area.width then
-                drawWidth list 0
+        drawWidth : Int -> List PathSegment -> List PathSegment
+        drawWidth index acc =
+            if index == Area.area.height then
+                acc
 
             else
-                drawLine 0 (toFloat (index * fieldSize)) (toFloat area.width) (toFloat (index * fieldSize))
-                    |> List.append (drawHeight list (index + 1))
+                drawLine (toFloat (index * Area.fieldSize)) 0 (toFloat (index * Area.fieldSize)) (toFloat Area.area.height)
+                    |> (\( p1, p2 ) -> p1 :: p2 :: acc)
+                    |> drawWidth (index + 1)
+
+        drawHeight : Int -> List PathSegment -> List PathSegment
+        drawHeight index acc =
+            if index == Area.area.width then
+                drawWidth 0 acc
+
+            else
+                drawLine 0 (toFloat (index * Area.fieldSize)) (toFloat Area.area.width) (toFloat (index * Area.fieldSize))
+                    |> (\( p1, p2 ) -> p1 :: p2 :: acc)
+                    |> drawHeight (index + 1)
 
         draw : List PathSegment
         draw =
-            drawHeight [] 0
+            drawHeight 0 []
     in
     Canvas.shapes [ Canvas.Settings.Line.lineWidth 1, Canvas.Settings.Line.lineDash [ 4 ] ] [ Canvas.path ( 0, 0 ) draw ]
 
