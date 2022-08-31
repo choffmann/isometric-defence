@@ -3,12 +3,12 @@ module Ui.Screens.PlayScreen exposing (isometricCanvas, topDownCanvas)
 import Area
 import Canvas exposing (Renderable)
 import Canvas.Settings
-import Canvas.Settings.Text as Text exposing (TextAlign(..), TextBaseLine(..))
 import Color
 import Model exposing (Model)
 import Sprite exposing (IsometricViewSprite, Sprite)
 import Ui.DrawUtils as DrawUtils
 import Ui.Enemy
+import Ui.FiredShot as FiredShot
 import Ui.Hud
 import Ui.Path
 import Ui.Sprites
@@ -69,3 +69,4 @@ topDownCanvas model =
                     Ui.Tower.placingTowerToCanvas placingTower
            )
         ++ renderTopDownSprites model
+        ++ FiredShot.drawShot model.towers model.enemies model.shotsFired
