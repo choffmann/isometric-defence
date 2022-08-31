@@ -21,7 +21,73 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  elm-format_validate:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout current repository
+      uses: actions/checkout@v2
+
+    - run: yarn --frozen-lockfile
+
+    - name: Add elm tools to PATH
+      run: yarn global bin >> $GITHUB_PATH
+
+    - name: Run elm-format
+      run: elm-format --validate src/ | jq 'map("::error file=" + .path + "::" + .message) | length > 0 and error("\n" + join("\n"))'
+
+  elm-review_lint:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout current repository
+      uses: actions/checkout@v2
+
+    - name: Sparse-Checkout review repository with script
+      run: ./.github/elm-review-pltp.sh
+
+    - run: yarn --frozen-lockfile
+
+    - name: Add elm tools to PATH
+      run: yarn global bin >> $GITHUB_PATH
+
+    - name: Run elm-review
+      uses: sparksp/elm-review-action@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        elm_review: elm-review
+        
+  publish-elm-package:
+    needs: [elm-review_lint, elm-format_validate]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 15
+      - uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - uses: actions/cache@v1
+        id: elm-cache
+        with:
+          path: ~/.elm
+          key: ${{ runner.os }}-elm--home-${{ hashFiles('**/elm.json') }}
+      - run: npm ci
+      - run: npx --no-install elm make --output /dev/null && cd examples && npx --no-install elm make src/*.elm --output /dev/null && cd ..
+      - uses: dillonkearns/elm-publish-action@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-elm: ./node_modules/.bin/elm
+          
   deploy:
+    needs: [publish-elm-package]
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -29,11 +95,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        
-      - run: yarn --frozen-lockfile
-
-      - name: Add elm tools to PATH
-        run: yarn global bin >> $GITHUB_PATH
         
       - name: Deploy elm.js
         run: elm make .\src\Main.elm --output=public\elm.js
