@@ -7,7 +7,6 @@ import Canvas.Settings.Text as Text exposing (TextAlign(..), TextBaseLine(..))
 import Color
 import Point exposing (Point)
 import Ui.Button as Button exposing (Button)
-import Ui.DrawUtils as DrawUtils
 
 
 lostText : String
@@ -31,7 +30,6 @@ restartButton =
 canvas : List Renderable
 canvas =
     [ Canvas.shapes [ Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
-    , DrawUtils.drawCanvasGrid2D Area.area Area.fieldSize
     , Button.drawUiButton restartButton "Restart"
     , text
     ]

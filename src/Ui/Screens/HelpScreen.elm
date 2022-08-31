@@ -20,30 +20,33 @@ text =
     Canvas.text [ Text.font { size = 50, family = "Silkscreen" }, Text.align Center, Text.baseLine Middle ] ( toFloat Area.area.width / 2, 70 ) helpTitle
 
 
-helptext : Renderable
-helptext =
+helpText : Renderable
+helpText =
     let
         drawText : List String -> List Renderable
         drawText =
             let
                 offset =
-                    6
+                    5
             in
             List.indexedMap
                 (\i ->
-                    Canvas.text [ Text.font { size = 24, family = "Silkscreen" } ]
+                    Canvas.text [ Text.font { size = 24, family = "Silkscreen" }, Text.align Left ]
                         (DrawUtils.pointToFloat (Point Area.fieldSize ((offset + i) * Area.fieldSize)))
                 )
     in
     Canvas.group []
         (drawText
-            [ "Space     -> Start Game"
-            , "F         -> Enter/Exit FullScreen"
-            , "R         -> Restart Game"
-            , "I         -> Change GameView"
-            , "P         -> Pause Game"
-            , "ArrowUp -> Speed Up Game"
-            , "ArrowDown -> Speed Down Game"
+            [ "Place Tower to defense the evil boxes"
+            , ""
+            , "Key Mapping:"
+            , "Space        -> Start Game"
+            , "F            -> Enter/Exit FullScreen"
+            , "R            -> Restart Game"
+            , "I            -> Change GameView"
+            , "P            -> Pause Game"
+            , "ArrowUp      -> Speed Up Game"
+            , "ArrowDown    -> Speed Down Game"
             ]
         )
 
@@ -61,5 +64,5 @@ canvas =
     [ Canvas.shapes [ Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
     , Button.drawUiButton backButton "Back"
     , text
-    , helptext
+    , helpText
     ]
