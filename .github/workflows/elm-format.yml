@@ -10,7 +10,7 @@ on:
   
 jobs:
   elm-format_validate:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout current repository
