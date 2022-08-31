@@ -65,19 +65,19 @@ update maybeTexture model =
                                         { tower = sprite 0 1 gameViewWidth gameViewHeight texture
                                         , selection = sprite 1 1 gameViewWidth gameViewHeight texture
                                         }
-                                    , tower1 =
+                                    , gun =
                                         { tower = sprite 2 1 gameViewWidth gameViewHeight texture
                                         , selection = sprite 3 1 gameViewWidth gameViewHeight texture
                                         }
-                                    , tower2 =
+                                    , cannon =
                                         { tower = sprite 0 2 gameViewWidth gameViewHeight texture
                                         , selection = sprite 1 2 gameViewWidth gameViewHeight texture
                                         }
-                                    , tower3 =
+                                    , sniper =
                                         { tower = sprite 2 2 gameViewWidth gameViewHeight texture
                                         , selection = sprite 3 2 gameViewWidth gameViewHeight texture
                                         }
-                                    , tower4 =
+                                    , minigun =
                                         { tower = sprite 0 3 gameViewWidth gameViewHeight texture
                                         , selection = sprite 1 3 gameViewWidth gameViewHeight texture
                                         }
@@ -100,10 +100,10 @@ update maybeTexture model =
                         , towerArea =
                             { deselect = sprite 2 3 towerAreaWidth towerAreaHeight texture
                             , basic = sprite 2 0 towerAreaWidth towerAreaHeight texture
-                            , tower1 = sprite 2 1 towerAreaWidth towerAreaHeight texture
-                            , tower2 = sprite 2 2 towerAreaWidth towerAreaHeight texture
-                            , tower3 = sprite 2 3 towerAreaWidth towerAreaHeight texture
-                            , tower4 = sprite 2 4 towerAreaWidth towerAreaHeight texture
+                            , gun = sprite 2 1 towerAreaWidth towerAreaHeight texture
+                            , cannon = sprite 2 2 towerAreaWidth towerAreaHeight texture
+                            , sniper = sprite 2 3 towerAreaWidth towerAreaHeight texture
+                            , minigun = sprite 2 4 towerAreaWidth towerAreaHeight texture
                             }
                         , ui =
                             { coin = sprite 2 0 gameViewWidth gameViewHeight texture

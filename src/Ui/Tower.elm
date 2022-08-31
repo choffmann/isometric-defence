@@ -96,17 +96,17 @@ towerColor tower =
         Basic ->
             Canvas.Settings.fill (Color.rgb255 49 162 242)
 
-        Tower1 ->
+        Gun ->
             Canvas.Settings.fill (Color.rgb255 253 200 75)
 
-        Tower2 ->
+        Cannon ->
             Canvas.Settings.fill (Color.rgb255 158 117 85)
 
-        Tower3 ->
+        Sniper ->
             Canvas.Settings.fill (Color.rgb255 3 3 67)
 
-        Tower4 ->
-            Canvas.Settings.fill (Color.rgb255 3 3 67)
+        Minigun ->
+            Canvas.Settings.fill (Color.rgb255 47 72 78)
 
 
 towersToCanvas : List Tower -> List Renderable
@@ -194,17 +194,17 @@ selectionToSprite tower texture =
         Basic ->
             texture.basic.selection
 
-        Tower1 ->
-            texture.tower1.selection
+        Gun ->
+            texture.gun.selection
 
-        Tower2 ->
-            texture.tower2.selection
+        Cannon ->
+            texture.cannon.selection
 
-        Tower3 ->
-            texture.tower3.selection
+        Sniper ->
+            texture.sniper.selection
 
-        Tower4 ->
-            texture.tower4.selection
+        Minigun ->
+            texture.minigun.selection
 
 
 towerToSprite : Tower -> TowerTexture -> Texture
@@ -213,26 +213,26 @@ towerToSprite tower texture =
         Basic ->
             texture.basic.tower
 
-        Tower1 ->
-            texture.tower1.tower
+        Gun ->
+            texture.gun.tower
 
-        Tower2 ->
-            texture.tower2.tower
+        Cannon ->
+            texture.cannon.tower
 
-        Tower3 ->
-            texture.tower3.tower
+        Sniper ->
+            texture.sniper.tower
 
-        Tower4 ->
-            texture.tower4.tower
+        Minigun ->
+            texture.minigun.tower
 
 
 availableTowers : List Towers
 availableTowers =
     [ Basic
-    , Tower1
-    , Tower2
-    , Tower3
-    , Tower4
+    , Gun
+    , Cannon
+    , Sniper
+    , Minigun
     ]
 
 
@@ -284,17 +284,17 @@ towersToSelectArea towers texture =
                         Basic ->
                             texture.basic
 
-                        Tower1 ->
-                            texture.tower1
+                        Gun ->
+                            texture.gun
 
-                        Tower2 ->
-                            texture.tower2
+                        Cannon ->
+                            texture.cannon
 
-                        Tower3 ->
-                            texture.tower3
+                        Sniper ->
+                            texture.sniper
 
-                        Tower4 ->
-                            texture.tower3
+                        Minigun ->
+                            texture.minigun
                     )
                 , Canvas.text [ Canvas.Settings.Text.font { size = 12, family = "Silkscreen" } ] ( toFloat i * towerFieldSize + 3, (toFloat (currentHeight j) * towerFieldSize) + towerFieldSize - 3 ) (String.fromInt (Tower.toTower 0 tower).price)
                 ]

@@ -6,10 +6,10 @@ import Point exposing (Point)
 
 type Towers
     = Basic
-    | Tower1
-    | Tower2
-    | Tower3
-    | Tower4
+    | Gun
+    | Cannon
+    | Sniper
+    | Minigun
 
 
 type alias Tower =
@@ -34,16 +34,16 @@ toTower id towers =
         Basic ->
             tower 100 1 3 800
 
-        Tower1 ->
+        Gun ->
             tower 200 1 4 400
 
-        Tower2 ->
+        Cannon ->
             tower 300 20 5 1000
 
-        Tower3 ->
+        Sniper ->
             tower 400 3 5 500
 
-        Tower4 ->
+        Minigun ->
             tower 500 1 10 200
 
 
