@@ -36,7 +36,7 @@ jobs:
           elm-version: 0.19.1
         
       - name: Deploy elm.js
-        run: elm make .\src\Main.elm --output=public\elm.js
+        run: elm make ./src/Main.elm --output=public/elm.js
       
       - name: Setup Pages
         uses: actions/configure-pages@v2
