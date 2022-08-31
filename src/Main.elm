@@ -58,7 +58,7 @@ debugModel model =
 
         --, div [] [ text "Animation: ", text (Debug.toString model.animation) ]
         --, div [] [ text "TowerAreaSprite: ", text (Debug.toString model.sprite) ]
-        , div [] [ text "Path: ", text (Debug.toString model.path) ]
+        --, div [] [ text "Path: ", text (Debug.toString model.path) ]
         ]
 
 

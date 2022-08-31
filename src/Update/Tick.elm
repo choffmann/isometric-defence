@@ -114,7 +114,17 @@ moveEnemies globalSpeedMulti delta path enemies =
                             |> Path.distanceToPathPoint path
                 }
             )
-        |> List.sortBy (\enemy -> enemy.distance)
+        |> List.sortWith
+            (\e1 e2 ->
+                if e1.distance > e2.distance then
+                    LT
+
+                else if e1.distance < e2.distance then
+                    GT
+
+                else
+                    EQ
+            )
 
 
 cooldownTowers : Float -> Float -> List Tower -> List Tower
