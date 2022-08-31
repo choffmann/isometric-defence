@@ -19,9 +19,10 @@ jobs:
       - name: Sparse-Checkout review repository with script
         run: ./.github/elm-review-pltp.sh
 
-      - uses: jorelali/setup-elm@v3
-        with:
-          elm-version: 0.19.1
+      - run: yarn --frozen-lockfile
+
+      - name: Add elm tools to PATH
+        run: yarn global bin >> $GITHUB_PATH
 
       - name: Run elm-review
         uses: sparksp/elm-review-action@v1
