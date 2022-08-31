@@ -1,4 +1,4 @@
-module Sprite exposing (..)
+module Sprite exposing (ButtonSprites, EnemyTexture, GameViewSprite, IsometricViewSprite, Sprite, TopDownSprite, TowerAreaSprite, TowerSprite, TowerTexture, UiSprite)
 
 import Canvas.Texture exposing (Texture)
 

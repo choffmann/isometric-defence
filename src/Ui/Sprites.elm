@@ -25,9 +25,5 @@ renderFloorSprite texture =
 
             else
                 drawWidth [] index 0 ++ drawHeight list (index + 1)
-
-        draw : List Renderable
-        draw =
-            drawHeight [] 0
     in
-    draw
+    drawHeight [] 0

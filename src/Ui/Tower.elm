@@ -295,9 +295,8 @@ towersToSelectArea towers texture =
 
 towerCanvas : TowerAreaSprite -> List Renderable
 towerCanvas sprites =
-    [ Canvas.shapes [ Canvas.Settings.fill Color.grey ] [ Canvas.rect ( 0, 0 ) (toFloat towerArea.width) (toFloat towerArea.height) ]
-    ]
-        ++ towersToSelectArea availableTowers sprites
+    Canvas.shapes [ Canvas.Settings.fill Color.grey ] [ Canvas.rect ( 0, 0 ) (toFloat towerArea.width) (toFloat towerArea.height) ]
+        :: towersToSelectArea availableTowers sprites
 
 
 pixelToTower : Pixel -> Maybe Towers

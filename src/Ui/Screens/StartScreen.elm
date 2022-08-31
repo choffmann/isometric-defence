@@ -4,14 +4,11 @@ import Area exposing (Field(..))
 import Canvas exposing (Renderable)
 import Canvas.Settings as Settings
 import Canvas.Settings.Text as Text exposing (TextAlign(..), TextBaseLine(..))
-import Canvas.Texture exposing (Texture)
 import Color
 import Point exposing (Point)
 import Sprite exposing (Sprite)
 import Ui.Animation as Animation exposing (Animation, Floor)
 import Ui.Button as Button exposing (Button)
-import Ui.DrawUtils as DrawUtils
-import Ui.Sprites as Sprites
 import Utils.Data exposing (Load(..))
 
 
@@ -61,8 +58,8 @@ canvas floorTexture mFloor =
 generateFloor : List Floor
 generateFloor =
     let
-        drawWidth : List Floor -> Int -> Int -> Float -> List Floor
-        drawWidth list i j offset =
+        drawWidth : List Floor -> Int -> Int -> List Floor
+        drawWidth list i j =
             if j >= Area.widthTiles then
                 list
 
@@ -71,18 +68,14 @@ generateFloor =
                 , matrix = Area.isometricMatrix
                 , elapsedTime = 0
                 }
-                    :: drawWidth list i (j + 1) (offset + 0.25)
+                    :: drawWidth list i (j + 1)
 
-        drawHeight : List Floor -> Int -> Float -> List Floor
-        drawHeight list index offset =
+        drawHeight : List Floor -> Int -> List Floor
+        drawHeight list index =
             if index >= Area.heightTiles then
                 list
 
             else
-                drawWidth [] index 0 (offset + 0.25) ++ drawHeight list (index + 1) offset
-
-        draw : List Floor
-        draw =
-            drawHeight [] 0 0
+                drawWidth [] index 0 ++ drawHeight list (index + 1)
     in
-    draw
+    drawHeight [] 0

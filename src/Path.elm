@@ -1,6 +1,6 @@
-module Path exposing (Path, PathDirection(..), PathPoint, addPathPoint, directionGenerator, distanceToPathPoint, distanceToPixel, pointGenerator)
+module Path exposing (Path, PathDirection(..), PathPoint, directionGenerator, distanceToPathPoint, distanceToPixel, pointGenerator)
 
-import Area exposing (Field(..), Pixel(..), heightTiles)
+import Area exposing (Field(..), Pixel(..))
 import Point exposing (Point)
 import Random
 
@@ -19,14 +19,9 @@ type PathDirection
     | Right
 
 
-addPathPoint : PathPoint -> Path -> Path
-addPathPoint point path =
-    path ++ [ point ]
-
-
 pointGenerator : Random.Generator Field
 pointGenerator =
-    Random.map (Point 0) (Random.int 0 (heightTiles - 1))
+    Random.map (Point 0) (Random.int 0 (Area.heightTiles - 1))
         |> Random.map Field
 
 

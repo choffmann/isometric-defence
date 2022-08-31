@@ -1,20 +1,20 @@
 module Update.LeftClick exposing (update)
 
-import Area exposing (Field(..), Pixel)
+import Area exposing (Pixel)
 import GameView exposing (GameView(..))
 import Messages exposing (GameArea(..), Msg(..))
 import Model exposing (GameState(..), Model, PlacingTower)
 import Path
 import Random
 import Screen exposing (Screen(..))
-import Tower exposing (Towers(..))
+import Tower
 import Ui.Button as Button
 import Ui.Hud as Hud
 import Ui.Screens.LostScreen as LostScreen
 import Ui.Screens.PauseScreen as PauseScreen
 import Ui.Screens.StartScreen as StartScreen
 import Ui.Screens.WonScreen as WonScreen
-import Ui.Tower exposing (pixelToTower)
+import Ui.Tower
 
 
 update : Maybe Pixel -> GameArea -> Model -> ( Model, Cmd Msg )
@@ -196,7 +196,7 @@ update mPixel gameArea model =
                     { model
                         | clicked = Nothing
                         , placingTower =
-                            pixelToTower pixel
+                            Ui.Tower.pixelToTower pixel
                                 |> Maybe.map (\tower -> PlacingTower (Tower.toTower model.nextTowerId tower) False)
                     }
             , Cmd.none

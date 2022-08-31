@@ -1,4 +1,4 @@
-module Ui.Screens.PauseScreen exposing (..)
+module Ui.Screens.PauseScreen exposing (canvas, drawGameStats, resumeButton)
 
 import Area exposing (Field(..))
 import Canvas exposing (Renderable)

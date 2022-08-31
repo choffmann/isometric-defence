@@ -1,10 +1,8 @@
 module Update.MovePosition exposing (update)
 
-import Area exposing (Field(..), Pixel(..))
-import GameView exposing (GameView(..))
+import Area exposing (Field, Pixel)
 import Messages exposing (GameArea(..), Msg)
 import Model exposing (Model)
-import Point exposing (Point)
 import Ui.Button as Button
 import Ui.Hud as Hud
 

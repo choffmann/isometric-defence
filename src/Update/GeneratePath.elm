@@ -1,15 +1,14 @@
 module Update.GeneratePath exposing (update)
 
 import Area exposing (Field(..))
-import List.Extra as List
-import Messages exposing (Msg(..))
+import Messages exposing (Msg)
 import Model exposing (GameState(..), Model)
 import Path exposing (PathDirection(..), PathPoint)
 import Point exposing (Point)
 import Utils.Commands as Commands
 
 
-update : PathDirection -> Model -> ( Model, Cmd Messages.Msg )
+update : PathDirection -> Model -> ( Model, Cmd Msg )
 update direction model =
     let
         oldFieldToNewField (Field { x, y }) offsetX offsetY =

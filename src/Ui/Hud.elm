@@ -1,4 +1,4 @@
-module Ui.Hud exposing (..)
+module Ui.Hud exposing (drawBackground, drawWaitToStartButton, hud, renderSprite, renderText, waitToStartButton)
 
 import Area exposing (Field(..))
 import Canvas exposing (Renderable, Shape)
@@ -8,15 +8,15 @@ import Canvas.Texture exposing (Texture)
 import Color
 import Model exposing (GameState(..))
 import Point exposing (Point)
-import Sprite exposing (ButtonSprites, Sprite)
+import Sprite exposing (Sprite)
 import Ui.Button as Button exposing (Button)
 import Ui.DrawUtils as DrawUtils
 import Utils.Data exposing (Load(..))
 
 
 renderSprite : Field -> Texture -> Renderable
-renderSprite field texture =
-    Canvas.texture [] (DrawUtils.fieldToCanvas field) texture
+renderSprite field =
+    Canvas.texture [] (DrawUtils.fieldToCanvas field)
 
 
 drawBackground : Field -> Float -> Shape
@@ -25,11 +25,10 @@ drawBackground fromField width =
 
 
 renderText : Field -> String -> Renderable
-renderText (Field { x, y }) text =
+renderText (Field { x, y }) =
     Canvas.text
         [ Text.font { size = 24, family = "Silkscreen" }, Text.align Left, Text.baseLine Middle ]
         ( toFloat ((x + 1) * Area.fieldSize), toFloat (y * Area.fieldSize) + (toFloat Area.fieldSize / 2) )
-        text
 
 
 position : Int -> Field

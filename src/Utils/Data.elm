@@ -1,4 +1,4 @@
-module Utils.Data exposing (..)
+module Utils.Data exposing (Load(..))
 
 
 type Load a

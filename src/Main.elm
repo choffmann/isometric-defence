@@ -23,7 +23,6 @@ import Update.LeftClick as LeftClick
 import Update.MovePosition as MovePosition
 import Update.PathPointGenerate as PathPointGenerate
 import Update.RightClick as RightClick
-import Update.Screen
 import Update.Texture
 import Update.Tick as Tick
 import Utils.Data exposing (Load(..))
@@ -102,7 +101,16 @@ view model =
                         ]
                     ]
 
-                _ ->
+                PauseScreen ->
+                    []
+
+                StartScreen ->
+                    []
+
+                WonScreen ->
+                    []
+
+                LostScreen ->
                     []
             )
         ]
@@ -143,9 +151,6 @@ update msg =
 
         TextureLoaded texture ->
             Update.Texture.update texture
-
-        ChangeScreen screen ->
-            Update.Screen.update screen
 
 
 subscriptions : Model -> Sub Msg
@@ -202,7 +207,7 @@ subscriptions model =
                         Browser.Events.onMouseMove (Decoder.mouseMoveDecoder model) :: running
 
                     Nothing ->
-                        Browser.Events.onMouseMove (Decoder.mouseMoveDecoder model) :: running
+                        running
 
             Paused ->
                 paused
@@ -222,7 +227,7 @@ subscriptions model =
                         Browser.Events.onMouseMove (Decoder.mouseMoveDecoder model) :: waitToStart
 
                     Nothing ->
-                        Browser.Events.onMouseMove (Decoder.mouseMoveDecoder model) :: waitToStart
+                        waitToStart
 
             StartScreenAnimation ->
                 startScreenAnimation

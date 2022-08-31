@@ -32,8 +32,8 @@ drawUiButton button text =
 
 
 drawSpriteButton : Button -> Texture -> Renderable
-drawSpriteButton button texture =
-    Canvas.texture [] (DrawUtils.fieldToCanvas button.position) texture
+drawSpriteButton button =
+    Canvas.texture [] (DrawUtils.fieldToCanvas button.position)
 
 
 onButton : Button -> Field -> Bool

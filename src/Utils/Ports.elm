@@ -11,22 +11,20 @@ port sendEventMessage : Encode.Value -> Cmd msg
 
 
 sendEventMessageEncoder : SendingEvents -> Encode.Value
-sendEventMessageEncoder event =
-    case event of
-        ChangeFullScreen msg ->
-            Encode.object
-                [ ( "event", Encode.string "changeFullScreen" )
-                , ( "message"
-                  , Encode.string
-                        (case msg of
-                            Open ->
-                                "open"
+sendEventMessageEncoder (ChangeFullScreen msg) =
+    Encode.object
+        [ ( "event", Encode.string "changeFullScreen" )
+        , ( "message"
+          , Encode.string
+                (case msg of
+                    Open ->
+                        "open"
 
-                            Close ->
-                                "close"
-                        )
-                  )
-                ]
+                    Close ->
+                        "close"
+                )
+          )
+        ]
 
 
 changeFullScreen : SendingEvents -> Cmd msg

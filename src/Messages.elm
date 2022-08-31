@@ -5,8 +5,6 @@ import Browser.Dom exposing (Element)
 import Canvas.Texture as Canvas
 import FullScreenMode exposing (FullScreenMode)
 import Path exposing (PathDirection)
-import Point exposing (Point)
-import Screen exposing (Screen)
 
 
 type Key
@@ -46,4 +44,3 @@ type Msg
     | PathDirectionGenerate PathDirection
     | PathPointGenerate Field
     | TextureLoaded (Maybe Canvas.Texture)
-    | ChangeScreen Screen
