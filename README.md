@@ -1,30 +1,26 @@
-# Abschlussprojekt
+# Isometric-Defence
+in cooperation with [@akatranlp](https://github.com/akatranlp)
 
-Bitte an dieser Stelle eine kurze Beschreibung hinzufügen, wie die Anwendung gestartet bzw. ggf. übersetzt wird.
+| TopDown                               | Isometric                                 |
+|---------------------------------------|-------------------------------------------|
+| ![TopDown](docs/img/topdown-view.png) | ![Isometric](docs/img/isometric-view.png) |
 
-Zuerst muss das Elm-Programm transpiliert werden mit:
+Tower-Defence Game developed in Elm. You can switch between TopDown- and Isometric View
+
+## Get started
+To run the game, build the `src/Main.elm` file into `public/elm.js`, like
 ```bash
 elm make src/Main.elm --output=public/elm.js
 ```
 
-Im Anschluss muss die index.html im Browser geöffnet werden.
+After that, you can open the `index.html` file in your browser.
 
-<s>Da keine externen Ressourcen angefordert werden reicht ein einfaches drag and drop in den Browser.</s>
-
-Da ein Image durch Elm geladen werden muss benötigt man einen Webserver, hier eignet sich zum Beispiel 
-der in Python integrierte Webserver der mit
-
+The Game request an internal Tileset Image, so you have to host your own server (e.g. `python http.server`)
 ```bash
 cd public
 python3 -m http.server
 ```
 
-gestartet wird.
+Now you can open the game over `http://localhost:8000` 
 
-Dann ist das Spiel über `http:localhost:8000/` erreichbar.
-
-Unser Spiel ist ein Tower-Defense Spiel wo Türme auf Evil Boxes schießen.
-Es gibt 7 Runden mit insgesamt 7 verschiedene Gegnertypen, darunter ein Boss, und 5 verschiedene Türme.
-Unser Spiel verfügt dabei über zwei verschiedene Ansichten (TopDown und Isometrisch).
-
-Zudem benutzen wir Ports um einen FullscreenMode zu ermöglichen.
+Or open the game over GitHub-Pages on https://choffmann.github.io/isometric-defence/
