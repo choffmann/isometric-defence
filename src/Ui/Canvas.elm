@@ -6,6 +6,7 @@ import Model exposing (GameState(..), Model)
 import Round
 import Screen exposing (Screen(..))
 import Ui.Hud as Hud
+import Ui.Screens.HelpScreen as HelpScreen
 import Ui.Screens.LostScreen as LostScreen
 import Ui.Screens.PauseScreen as PauseScreen
 import Ui.Screens.PlayScreen as PlayScreen
@@ -86,3 +87,6 @@ canvas model =
 
         LostScreen ->
             LostScreen.canvas
+
+        HelpScreen ->
+            HelpScreen.canvas

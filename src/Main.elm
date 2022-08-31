@@ -5,7 +5,7 @@ import Browser
 import Browser.Events
 import Canvas
 import Canvas.Texture as Texture
-import Html exposing (Html, div, text)
+import Html exposing (Html, div)
 import Html.Attributes exposing (id)
 import Html.Events exposing (onMouseEnter)
 import Messages exposing (Msg(..))
@@ -35,33 +35,6 @@ textures =
     [ Texture.loadFromImageUrl "./assets/tileset.png" TextureLoaded ]
 
 
-debugModel : Model -> Html Msg
-debugModel model =
-    div []
-        [ div [] [ text (String.fromFloat model.delta) ]
-        , div [] [ text "PlayCanvas: ", text (Debug.toString model.playCanvas) ]
-        , div [] [ text "ToolCanvas: ", text (Debug.toString model.toolCanvas) ]
-        , div [] [ text "Clicked: ", text (Debug.toString model.clicked) ]
-        , div [] [ text "Gamestate: ", text (Debug.toString model.gameState) ]
-        , div [] [ text "SpeedMult: ", text (Debug.toString model.speedMulti) ]
-        , div [] [ text "HP: ", text (Debug.toString model.hp) ]
-        , div [] [ text "Money: ", text (Debug.toString model.money) ]
-        , div [] [ text "Fullscreen: ", text (Debug.toString model.fullscreen) ]
-        , div [] [ text "PlacingTower: ", text (Debug.toString model.placingTower) ]
-        , div [] [ text "InspectingTower: ", text (Debug.toString model.inspectingTower) ]
-
-        --, div [] [ text "Enemies: ", text (Debug.toString model.enemies) ]
-        , div [] [ text "Towers: ", text (Debug.toString model.towers) ]
-        , div [] [ text "GameView: ", text (Debug.toString model.gameView) ]
-        , div [] [ text "CurrentScreen: ", text (Debug.toString model.screen) ]
-        , div [] [ text "FiredShots: ", text (Debug.toString model.shotsFired) ]
-
-        --, div [] [ text "Animation: ", text (Debug.toString model.animation) ]
-        --, div [] [ text "TowerAreaSprite: ", text (Debug.toString model.sprite) ]
-        --, div [] [ text "Path: ", text (Debug.toString model.path) ]
-        ]
-
-
 onContextMenuEvent : Html.Attribute Msg
 onContextMenuEvent =
     Html.Events.custom "contextmenu" Decoder.onContextMenuDecoder
@@ -70,8 +43,7 @@ onContextMenuEvent =
 view : Model -> Html Msg
 view model =
     div (id "app" :: onContextMenuEvent :: Styles.appContainer)
-        [ debugModel model
-        , div Styles.canvasContainerStyles
+        [ div Styles.canvasContainerStyles
             [ div
                 (Html.Events.onMouseEnter Messages.EnterCanvas :: id "playAreaContainer" :: Styles.canvasStyles Area.area)
                 [ Canvas.toHtmlWith
@@ -111,6 +83,9 @@ view model =
                     []
 
                 LostScreen ->
+                    []
+
+                HelpScreen ->
                     []
             )
         ]

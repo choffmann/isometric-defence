@@ -7,3 +7,4 @@ type Screen
     | PauseScreen
     | WonScreen
     | LostScreen
+    | HelpScreen

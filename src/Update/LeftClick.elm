@@ -10,6 +10,7 @@ import Screen exposing (Screen(..))
 import Tower
 import Ui.Button as Button
 import Ui.Hud as Hud
+import Ui.Screens.HelpScreen as HelpScreen
 import Ui.Screens.LostScreen as LostScreen
 import Ui.Screens.PauseScreen as PauseScreen
 import Ui.Screens.StartScreen as StartScreen
@@ -139,6 +140,9 @@ update mPixel gameArea model =
                             if Button.onButton StartScreen.startButton field then
                                 ( { model | clicked = Just field, screen = PlayScreen }, Random.generate PathPointGenerate Path.pointGenerator )
 
+                            else if Button.onButton StartScreen.helpButton field then
+                                ( { model | clicked = Just field, screen = HelpScreen }, Random.generate PathPointGenerate Path.pointGenerator )
+
                             else
                                 ( { model | clicked = Just field }, Cmd.none )
 
@@ -183,6 +187,21 @@ update mPixel gameArea model =
                         Just field ->
                             if Button.onButton LostScreen.restartButton field then
                                 Model.restart model
+
+                            else
+                                ( { model | clicked = Just field }, Cmd.none )
+
+                HelpScreen ->
+                    case
+                        mPixel
+                            |> Maybe.map (Area.pixelToField TopDown)
+                    of
+                        Nothing ->
+                            ( { model | clicked = Nothing }, Cmd.none )
+
+                        Just field ->
+                            if Button.onButton HelpScreen.backButton field then
+                                ( { model | clicked = Just field, screen = StartScreen }, Cmd.none )
 
                             else
                                 ( { model | clicked = Just field }, Cmd.none )

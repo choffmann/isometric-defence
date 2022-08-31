@@ -1,4 +1,4 @@
-module Ui.Screens.StartScreen exposing (canvas, generateFloor, startButton)
+module Ui.Screens.StartScreen exposing (canvas, generateFloor, helpButton, startButton)
 
 import Area exposing (Field(..))
 import Canvas exposing (Renderable)
@@ -24,6 +24,14 @@ title =
 
 startButton : Button
 startButton =
+    { position = Field (Point 8 13)
+    , width = 4
+    , height = 2
+    }
+
+
+helpButton : Button
+helpButton =
     { position = Field (Point 8 16)
     , width = 4
     , height = 2
@@ -33,9 +41,8 @@ startButton =
 canvas : Load Sprite -> Maybe Animation -> List Renderable
 canvas floorTexture mFloor =
     [ Canvas.shapes [ Settings.fill Color.white ] [ Canvas.rect ( 0, 0 ) (toFloat Area.area.width) (toFloat Area.area.height) ]
-
-    --, DrawUtils.drawCanvasGrid2d Area.area Area.fieldSize
     , Button.drawUiButton startButton "Start"
+    , Button.drawUiButton helpButton "Help"
     ]
         ++ (case mFloor of
                 Nothing ->
