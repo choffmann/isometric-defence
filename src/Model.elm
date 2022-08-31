@@ -75,6 +75,8 @@ restart model =
                 , fullscreen = model.fullscreen
                 , speedMulti = model.speedMulti
                 , gameView = model.gameView
+                , animation = model.animation
+                , sprite = model.sprite
               }
             , command
             )
@@ -92,7 +94,7 @@ init =
       , enemies = Enemy.round1
       , towers = []
       , nextTowerId = 1
-      , delta = 0
+      , delta = 6.95
       , placingTower = Nothing
       , inspectingTower = Nothing
       , playCanvas = Nothing

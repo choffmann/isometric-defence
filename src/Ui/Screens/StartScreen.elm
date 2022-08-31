@@ -24,7 +24,7 @@ title =
 
 startButton : Button
 startButton =
-    { position = Field (Point 8 13)
+    { position = Field (Point 8 11)
     , width = 4
     , height = 2
     }
@@ -32,7 +32,7 @@ startButton =
 
 helpButton : Button
 helpButton =
-    { position = Field (Point 8 16)
+    { position = Field (Point 8 15)
     , width = 4
     , height = 2
     }
