@@ -17,7 +17,12 @@ drawShot gameView towerList enemyList =
     let
         centerPoint : Point -> Canvas.Point
         centerPoint { x, y } =
-            ( toFloat x + 0.5, toFloat y + 0.5 )
+            case gameView of
+                Isometric ->
+                    ( toFloat x + 0.5, toFloat y - 0.75 )
+
+                TopDown ->
+                    ( toFloat x + 0.5, toFloat y + 0.5 )
 
         createVector : ( Canvas.Point, Canvas.Point ) -> ( Float, Float )
         createVector ( ( ex, ey ), ( tx, ty ) ) =
