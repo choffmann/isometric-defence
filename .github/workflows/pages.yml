@@ -26,7 +26,7 @@ jobs:
 
     steps:
     - name: Checkout current repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - run: yarn --frozen-lockfile
 
@@ -41,7 +41,7 @@ jobs:
 
     steps:
     - name: Checkout current repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Sparse-Checkout review repository with script
       run: ./.github/elm-review-pltp.sh
