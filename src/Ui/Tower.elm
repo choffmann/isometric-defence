@@ -1,6 +1,6 @@
 module Ui.Tower exposing (pixelToTower, placingTowerToCanvas, renderPlacingTowerSprite, renderTowerSprite, towerArea, towerCanvas, towerRadius, towersToCanvas)
 
-import Area exposing (Area, Field(..))
+import Area exposing (Area, Field(..), Pixel(..))
 import Canvas exposing (Renderable, Shape)
 import Canvas.Settings
 import Canvas.Settings.Advanced
@@ -10,7 +10,6 @@ import Canvas.Texture exposing (Texture)
 import Color
 import GameView exposing (GameView(..))
 import Model exposing (PlacingTower)
-import Pixel exposing (Pixel(..))
 import Point exposing (Point)
 import Sprite exposing (TowerAreaSprite, TowerTexture)
 import Tower exposing (Tower, Towers(..))
@@ -28,7 +27,7 @@ towerRadius mTower gameView =
         towerPositionToPixel point =
             Field point
                 |> Area.fieldToPixel
-                |> Pixel.pixelToPoint
+                |> Area.pixelToPoint
                 |> centerPoint
                 |> DrawUtils.pointToFloat
 

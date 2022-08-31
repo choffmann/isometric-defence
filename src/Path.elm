@@ -1,9 +1,6 @@
 module Path exposing (Path, PathDirection(..), PathPoint, addPathPoint, directionGenerator, distanceToPathPoint, distanceToPixel, pointGenerator, testPath)
 
-import Area exposing (Field(..), heightTiles)
-import Html.Attributes exposing (height)
-import List.Extra
-import Pixel exposing (Pixel(..))
+import Area exposing (Field(..), Pixel(..), heightTiles)
 import Point exposing (Point)
 import Random
 

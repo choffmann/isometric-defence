@@ -1,10 +1,10 @@
 module Utils.Decoder exposing (keyDecoder, leftClickDecoder, mouseMoveDecoder, onContextMenuDecoder, receiveEventDecoder)
 
+import Area exposing (Pixel(..))
 import FullScreenMode exposing (FullScreenMode(..))
 import Json.Decode as Decode exposing (Decoder)
 import Messages exposing (GameArea(..), Key(..), Msg, ReceivingEvents(..))
 import Model exposing (Model)
-import Pixel exposing (Pixel(..))
 import Point exposing (Point)
 
 

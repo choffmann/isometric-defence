@@ -1,11 +1,9 @@
 module Update.MovePosition exposing (update)
 
-import Area exposing (Field(..))
+import Area exposing (Field(..), Pixel(..))
 import GameView exposing (GameView(..))
 import Messages exposing (GameArea(..), Msg)
 import Model exposing (Model)
-import Path exposing (Path)
-import Pixel exposing (Pixel)
 import Point exposing (Point)
 import Ui.Button as Button
 import Ui.Hud as Hud
@@ -33,14 +31,7 @@ update mPixel gameArea model =
         PlayArea ->
             ( case
                 mPixel
-                    |> Maybe.map
-                        (case model.gameView of
-                            TopDown ->
-                                Area.pixelToField
-
-                            Isometric ->
-                                Area.isometricPixelToField
-                        )
+                    |> Maybe.map (Area.pixelToField model.gameView)
                     |> Area.isOutOfBounds
                     |> Maybe.map (\(Field point) -> point)
               of

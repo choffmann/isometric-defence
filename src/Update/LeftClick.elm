@@ -1,10 +1,10 @@
 module Update.LeftClick exposing (update)
 
-import Area exposing (Field(..))
+import Area exposing (Field(..), Pixel)
+import GameView exposing (GameView(..))
 import Messages exposing (GameArea(..), Msg(..))
 import Model exposing (GameState(..), Model, PlacingTower)
 import Path
-import Pixel exposing (Pixel)
 import Random
 import Screen exposing (Screen(..))
 import Tower exposing (Towers(..))
@@ -15,7 +15,6 @@ import Ui.Screens.PauseScreen as PauseScreen
 import Ui.Screens.StartScreen as StartScreen
 import Ui.Screens.WonScreen as WonScreen
 import Ui.Tower exposing (pixelToTower)
-import GameView exposing (GameView(..))
 
 
 update : Maybe Pixel -> GameArea -> Model -> ( Model, Cmd Msg )
@@ -41,29 +40,21 @@ update mPixel gameArea model =
                         Running ->
                             ( case
                                 ( mPixel
-                                    |> Maybe.map
-                                        (case model.gameView of
-                                            TopDown ->
-                                                Area.pixelToField
-
-                                            Isometric ->
-                                                Area.isometricPixelToField
-                                        )
+                                    |> Maybe.map (Area.pixelToField model.gameView)
                                     |> Area.isOutOfBounds
-                                    |> Maybe.map (\(Field point) -> point)
                                 , model.placingTower
                                 )
                               of
                                 ( Nothing, _ ) ->
                                     { model | clicked = Nothing }
 
-                                ( Just point, Nothing ) ->
+                                ( Just (Field point), Nothing ) ->
                                     { model
                                         | clicked = Just point
                                         , inspectingTower = checkInspectTower point model.towers
                                     }
 
-                                ( Just point, Just placingTower ) ->
+                                ( Just (Field point), Just placingTower ) ->
                                     if placingTower.canBePlaced then
                                         { model
                                             | clicked = Just point
@@ -81,14 +72,7 @@ update mPixel gameArea model =
                         WaitToStart ->
                             ( case
                                 ( mPixel
-                                    |> Maybe.map
-                                        (case model.gameView of
-                                            TopDown ->
-                                                Area.pixelToField
-
-                                            Isometric ->
-                                                Area.isometricPixelToField
-                                        )
+                                    |> Maybe.map (Area.pixelToField model.gameView)
                                     |> Area.isOutOfBounds
                                     |> Maybe.map (\(Field point) -> point)
                                 , model.placingTower
@@ -147,7 +131,7 @@ update mPixel gameArea model =
                 StartScreen ->
                     case
                         mPixel
-                            |> Maybe.map Area.pixelToField
+                            |> Maybe.map (Area.pixelToField TopDown)
                             |> Maybe.map (\(Field point) -> point)
                     of
                         Nothing ->
@@ -163,7 +147,7 @@ update mPixel gameArea model =
                 PauseScreen ->
                     case
                         mPixel
-                            |> Maybe.map Area.pixelToField
+                            |> Maybe.map (Area.pixelToField TopDown)
                             |> Maybe.map (\(Field point) -> point)
                     of
                         Nothing ->
@@ -179,7 +163,7 @@ update mPixel gameArea model =
                 WonScreen ->
                     case
                         mPixel
-                            |> Maybe.map Area.pixelToField
+                            |> Maybe.map (Area.pixelToField TopDown)
                             |> Maybe.map (\(Field point) -> point)
                     of
                         Nothing ->
@@ -195,7 +179,7 @@ update mPixel gameArea model =
                 LostScreen ->
                     case
                         mPixel
-                            |> Maybe.map Area.pixelToField
+                            |> Maybe.map (Area.pixelToField TopDown)
                             |> Maybe.map (\(Field point) -> point)
                     of
                         Nothing ->

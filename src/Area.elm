@@ -1,6 +1,6 @@
-module Area exposing (Area, Field(..), IsometricMatrix, area, canvasPointToIsometric, fieldSize, fieldToPixel, heightTiles, isOutOfBounds, isometricMatrix, isometricOffset, isometricPixelToField, pixelToField, widthTiles)
+module Area exposing (Area, Field(..), IsometricMatrix, Pixel(..), area, canvasPointToIsometric, fieldSize, fieldToPixel, fieldToPoint, heightTiles, isOutOfBounds, isometricMatrix, isometricOffset, pixelToField, pixelToPoint, widthTiles)
 
-import Pixel exposing (Pixel(..))
+import GameView exposing (GameView(..))
 import Point exposing (Point)
 
 
@@ -34,8 +34,32 @@ type Field
     = Field Point
 
 
-pixelToField : Pixel -> Field
-pixelToField (Pixel { x, y }) =
+type Pixel
+    = Pixel Point
+
+
+fieldToPoint : Field -> Point
+fieldToPoint (Field point) =
+    point
+
+
+pixelToPoint : Pixel -> Point
+pixelToPoint (Pixel point) =
+    point
+
+
+pixelToField : GameView -> Pixel -> Field
+pixelToField gameView pixel =
+    case gameView of
+        TopDown ->
+            topDownPixelToField pixel
+
+        Isometric ->
+            isometricPixelToField pixel
+
+
+topDownPixelToField : Pixel -> Field
+topDownPixelToField (Pixel { x, y }) =
     Field { x = min (x // fieldSize) (widthTiles - 1), y = min (y // fieldSize) (heightTiles - 1) }
 
 

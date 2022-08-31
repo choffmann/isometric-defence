@@ -1,10 +1,10 @@
 module Messages exposing (GameArea(..), Key(..), Msg(..), ReceivingEvents(..), SendingEvents(..))
 
+import Area exposing (Pixel)
 import Browser.Dom exposing (Element)
 import Canvas.Texture as Canvas
 import FullScreenMode exposing (FullScreenMode)
 import Path exposing (PathDirection)
-import Pixel exposing (Pixel)
 import Point exposing (Point)
 import Screen exposing (Screen)
 
