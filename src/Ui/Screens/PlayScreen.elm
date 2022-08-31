@@ -69,4 +69,4 @@ topDownCanvas model =
                     Ui.Tower.placingTowerToCanvas placingTower
            )
         ++ renderTopDownSprites model
-        ++ FiredShot.drawShot model.towers model.enemies model.shotsFired
+        ++ FiredShot.drawShot model.gameView model.towers model.enemies model.shotsFired

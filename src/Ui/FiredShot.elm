@@ -6,17 +6,18 @@ import Canvas.Settings as Settings
 import Canvas.Settings.Line as Line
 import Color
 import Enemy exposing (Enemy)
+import GameView exposing (GameView(..))
 import Model exposing (FiredShot)
 import Point exposing (Point)
 import Tower exposing (Tower)
 
 
-drawShot : List Tower -> List Enemy -> List FiredShot -> List Renderable
-drawShot towerList enemyList firedShotList =
+drawShot : GameView -> List Tower -> List Enemy -> List FiredShot -> List Renderable
+drawShot gameView towerList enemyList =
     let
         centerPoint : Point -> Canvas.Point
         centerPoint { x, y } =
-            ( (toFloat x * toFloat Area.fieldSize) + toFloat Area.fieldSize / 2, (toFloat y * toFloat Area.fieldSize) + toFloat Area.fieldSize / 2 )
+            ( toFloat x + 0.5, toFloat y + 0.5 )
 
         createVector : ( Canvas.Point, Canvas.Point ) -> ( Float, Float )
         createVector ( ( ex, ey ), ( tx, ty ) ) =
@@ -63,14 +64,18 @@ drawShot towerList enemyList firedShotList =
                                     |> addTowerPosition (centerPoint tower.position)
                                 )
 
-        -- 1. Enemy - Tower => Richtungsvektor
-        -- 2. distance +- 0.1
-        -- 3. range / neue distance => Verhältnis
-        -- Verhältnis * Richtungsvektor => zwei neue Richtungsvektor
-        -- Addieren mit Tower Position
         fieldToPoint : Field -> Point
         fieldToPoint (Field point) =
             point
+
+        toTopDown : Canvas.Point -> Canvas.Point
+        toTopDown ( x, y ) =
+            ( x * toFloat Area.fieldSize, y * toFloat Area.fieldSize )
+
+        toIsometric : Canvas.Point -> Canvas.Point
+        toIsometric point =
+            Area.canvasPointToIsometric Area.isometricMatrix point
+                |> Area.isometricOffset
     in
     List.map
         (\shot ->
@@ -79,9 +84,16 @@ drawShot towerList enemyList firedShotList =
                     Canvas.shapes [] []
 
                 Just ( towerPoint, enemyPoint ) ->
-                    Canvas.shapes [ Settings.stroke (Color.rgb255 0 0 0), Line.lineWidth 4 ]
-                        [ Canvas.path towerPoint
-                            [ Canvas.lineTo enemyPoint ]
-                        ]
+                    case gameView of
+                        TopDown ->
+                            Canvas.shapes [ Settings.stroke (Color.rgb255 0 0 0), Line.lineWidth 4 ]
+                                [ Canvas.path (toTopDown towerPoint)
+                                    [ Canvas.lineTo (toTopDown enemyPoint) ]
+                                ]
+
+                        Isometric ->
+                            Canvas.shapes [ Settings.stroke (Color.rgb255 0 0 0), Line.lineWidth 4 ]
+                                [ Canvas.path (toIsometric towerPoint)
+                                    [ Canvas.lineTo (toIsometric enemyPoint) ]
+                                ]
         )
-        firedShotList
